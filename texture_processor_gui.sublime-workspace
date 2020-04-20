@@ -1,0 +1,2088 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"un",
+				"unwrap"
+			],
+			[
+				"Phy",
+				"PhysicalSize"
+			],
+			[
+				"max",
+				"max_by"
+			],
+			[
+				"norma",
+				"normalize"
+			],
+			[
+				"convo",
+				"convolution_vertical"
+			],
+			[
+				"oupt",
+				"output_buffers"
+			],
+			[
+				"input_",
+				"input_node_datas"
+			],
+			[
+				"should",
+				"should_be"
+			],
+			[
+				"Tex",
+				"TexProError"
+			],
+			[
+				"node",
+				"node_with_id"
+			],
+			[
+				"err",
+				"Err"
+			],
+			[
+				"resize_",
+				"resize_policy"
+			],
+			[
+				"Node",
+				"NodeProcessing"
+			],
+			[
+				"left_side",
+				"left_side_node_data"
+			],
+			[
+				"unwra",
+				"unwrap_or"
+			],
+			[
+				"deb",
+				"debugging"
+			],
+			[
+				"new_no",
+				"new_node_data"
+			],
+			[
+				"relevant",
+				"relevant_edge"
+			],
+			[
+				"width",
+				"width_2"
+			],
+			[
+				"slot",
+				"slot_id"
+			],
+			[
+				"Resize",
+				"ResizePolicy"
+			],
+			[
+				"Resi",
+				"ResizePolicy"
+			],
+			[
+				"external",
+				"external_slots"
+			],
+			[
+				"input",
+				"input_mapping"
+			],
+			[
+				"extern",
+				"external_slot"
+			],
+			[
+				"slot_",
+				"slot_occupied"
+			],
+			[
+				"node_",
+				"node_graph"
+			],
+			[
+				"Slot",
+				"SlotId"
+			],
+			[
+				"nested",
+				"nested_input_node"
+			],
+			[
+				"asser",
+				"assert\tassert!(…)"
+			],
+			[
+				"curre",
+				"current_id"
+			],
+			[
+				"cur",
+				"current_channel"
+			],
+			[
+				"filter",
+				"filter_type"
+			],
+			[
+				"filter_",
+				"filter_type_printable"
+			],
+			[
+				"ed",
+				"edges"
+			],
+			[
+				"node_da",
+				"node_data"
+			],
+			[
+				"pixel",
+				"pixel_vec"
+			],
+			[
+				"Buffer",
+				"BufferCountError"
+			],
+			[
+				"Error",
+				"ErrorKind"
+			],
+			[
+				"Image",
+				"ImageError"
+			],
+			[
+				"Speci",
+				"SpecificNode"
+			],
+			[
+				"iter",
+				"into_iter"
+			],
+			[
+				"macr",
+				"macro\t[macro_use]"
+			],
+			[
+				"tests",
+				"tests-mod\ttests-mod"
+			],
+			[
+				"fil",
+				"FilterType"
+			],
+			[
+				"bu",
+				"buffers"
+			],
+			[
+				"sort",
+				"sorted_input"
+			],
+			[
+				"target",
+				"target_size"
+			],
+			[
+				"wi",
+				"width"
+			],
+			[
+				"into",
+				"into_iter"
+			],
+			[
+				"int",
+				"into_iter"
+			],
+			[
+				"enum",
+				"enumerate"
+			],
+			[
+				"Chanenl",
+				"ChannelPixel"
+			],
+			[
+				"add_",
+				"add_node"
+			],
+			[
+				"Pixel",
+				"ChannelPixel"
+			],
+			[
+				"sor",
+				"sorted_input"
+			],
+			[
+				"Channel",
+				"ChannelPixel"
+			],
+			[
+				"output",
+				"output_id"
+			],
+			[
+				"curr",
+				"current_id"
+			],
+			[
+				"cu",
+				"current_id"
+			],
+			[
+				"add_node_",
+				"add_node_with_id"
+			],
+			[
+				"I",
+				"NodeId"
+			],
+			[
+				"destin",
+				"destination_id"
+			],
+			[
+				"push",
+				"push"
+			],
+			[
+				"with_",
+				"with_capacity"
+			],
+			[
+				"de",
+				"destination_id"
+			],
+			[
+				"des",
+				"destination_slot"
+			],
+			[
+				"Hash",
+				"HashMap"
+			],
+			[
+				"Mesh",
+				"MeshCollider"
+			],
+			[
+				"game",
+				"gameObject"
+			],
+			[
+				"children",
+				"children_gos"
+			],
+			[
+				"ballistic_",
+				"ballistic_material_special"
+			],
+			[
+				"Ball",
+				"BallisticProperties"
+			],
+			[
+				"mate",
+				"material_path"
+			],
+			[
+				"new",
+				"new_parent"
+			],
+			[
+				"go_2",
+				"go_2_components"
+			],
+			[
+				"changed",
+				"changed_prefabs"
+			],
+			[
+				"Prefan",
+				"PrefabInstanceEqualsSourceRecursive"
+			],
+			[
+				"Bullet",
+				"BulletScriptEvent"
+			],
+			[
+				"Bu",
+				"BulletScriptEvent"
+			],
+			[
+				"simple",
+				"simple_breakable_glass"
+			],
+			[
+				"Simple",
+				"SimpleBreakableGlass"
+			],
+			[
+				"Make",
+				"MakeBreakableGlass"
+			],
+			[
+				"Prefab",
+				"PrefabExists"
+			],
+			[
+				"GetP",
+				"GetPrefabParent"
+			],
+			[
+				"Prefa",
+				"PrefabUtility"
+			],
+			[
+				"Edi",
+				"EditorUtility"
+			],
+			[
+				"Get",
+				"GetPropertyModifications"
+			],
+			[
+				"prefab",
+				"prefab_parent"
+			],
+			[
+				"for",
+				"foreach"
+			],
+			[
+				"_",
+				"_parent"
+			],
+			[
+				"Set",
+				"SetParent"
+			],
+			[
+				"SetUp",
+				"SetUpPhysicsCollider"
+			],
+			[
+				"pre",
+				"prefab_instance"
+			],
+			[
+				"EnsureHas",
+				"EnsureHasPhysicsSuffix"
+			],
+			[
+				"go_",
+				"go_physics_collider_mesh_collider"
+			],
+			[
+				"mesh",
+				"mesh_collider"
+			],
+			[
+				"Find",
+				"FindMeshRecursive"
+			],
+			[
+				"Ens",
+				"EnsureChildExists"
+			],
+			[
+				"Physi",
+				"PhysicsCollider"
+			],
+			[
+				"Selec",
+				"SelectedObject"
+			],
+			[
+				"selec",
+				"SelectedObject"
+			],
+			[
+				"Receiver",
+				"receiver_git"
+			],
+			[
+				"overgrow",
+				"overgrowth_git"
+			],
+			[
+				"prefab_",
+				"prefab_locked"
+			],
+			[
+				"image_",
+				"image_paths"
+			],
+			[
+				"print",
+				"println\tprintln!(…)"
+			],
+			[
+				"height",
+				"height_in"
+			],
+			[
+				"mat",
+				"matches"
+			],
+			[
+				"size",
+				"size_policy"
+			],
+			[
+				"im",
+				"img_iter"
+			],
+			[
+				"img",
+				"img_path"
+			],
+			[
+				"with",
+				"with_capacity"
+			],
+			[
+				"to",
+				"to_string"
+			],
+			[
+				"num",
+				"num_img"
+			],
+			[
+				"present",
+				"present_2"
+			],
+			[
+				"opt_",
+				"opt_present"
+			],
+			[
+				"get",
+				"get_pixel"
+			],
+			[
+				"Comm",
+				"commands"
+			],
+			[
+				"G",
+				"G"
+			],
+			[
+				"bitsper",
+				"bitsperpixel"
+			],
+			[
+				"Hei",
+				"Height1"
+			],
+			[
+				"Wid",
+				"Width2"
+			],
+			[
+				"Widt",
+				"Width1"
+			],
+			[
+				"YO",
+				"YOrigin2"
+			],
+			[
+				"XO",
+				"XOrigin2"
+			],
+			[
+				"ColourMap",
+				"ColourMapLength2"
+			],
+			[
+				"ColourMapLe",
+				"ColourMapLength"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "src/main.rs",
+			"settings":
+			{
+				"buffer_size": 457,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/main_state.rs",
+			"settings":
+			{
+				"buffer_size": 174,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/main_view.rs",
+			"settings":
+			{
+				"buffer_size": 419,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/node_state.rs",
+			"settings":
+			{
+				"buffer_size": 129,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/node_view.rs",
+			"settings":
+			{
+				"buffer_size": 931,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/D/Workspace/Programming/orbtk/examples/calculator.rs",
+			"settings":
+			{
+				"buffer_size": 12070,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/D/Workspace/Programming/orbtk/examples/README.md",
+			"settings":
+			{
+				"buffer_size": 624,
+				"line_ending": "Windows"
+			}
+		}
+	],
+	"build_system": "Packages/Rust Enhanced/RustEnhanced.sublime-build",
+	"build_system_choices":
+	[
+		[
+			[
+				[
+					"Packages/AutoHotkey/AutoHotkey.sublime-build",
+					""
+				],
+				[
+					"Packages/AutoHotkey/AutoHotkey.sublime-build",
+					"Run"
+				]
+			],
+			[
+				"Packages/AutoHotkey/AutoHotkey.sublime-build",
+				"Run"
+			]
+		],
+		[
+			[
+				[
+					"Packages/Rust Enhanced/RustEnhanced.sublime-build",
+					""
+				],
+				[
+					"Packages/Rust Enhanced/RustEnhanced.sublime-build",
+					"Automatic"
+				],
+				[
+					"Packages/Rust Enhanced/RustEnhanced.sublime-build",
+					"Run"
+				],
+				[
+					"Packages/Rust Enhanced/RustEnhanced.sublime-build",
+					"Run (with args)..."
+				],
+				[
+					"Packages/Rust Enhanced/RustEnhanced.sublime-build",
+					"Check"
+				],
+				[
+					"Packages/Rust Enhanced/RustEnhanced.sublime-build",
+					"Test"
+				],
+				[
+					"Packages/Rust Enhanced/RustEnhanced.sublime-build",
+					"Test (with args)..."
+				],
+				[
+					"Packages/Rust Enhanced/RustEnhanced.sublime-build",
+					"Bench"
+				],
+				[
+					"Packages/Rust Enhanced/RustEnhanced.sublime-build",
+					"Clean"
+				],
+				[
+					"Packages/Rust Enhanced/RustEnhanced.sublime-build",
+					"Document"
+				],
+				[
+					"Packages/Rust Enhanced/RustEnhanced.sublime-build",
+					"Clippy"
+				],
+				[
+					"Packages/Rust Enhanced/RustEnhanced.sublime-build",
+					"Script"
+				]
+			],
+			[
+				"Packages/Rust Enhanced/RustEnhanced.sublime-build",
+				"Check"
+			]
+		],
+		[
+			[
+				[
+					"Packages/Rust/Cargo.sublime-build",
+					""
+				],
+				[
+					"Packages/Rust/Cargo.sublime-build",
+					"Run"
+				],
+				[
+					"Packages/Rust/Cargo.sublime-build",
+					"Test"
+				],
+				[
+					"Packages/Rust/Cargo.sublime-build",
+					"Bench"
+				],
+				[
+					"Packages/Rust/Cargo.sublime-build",
+					"Clean"
+				],
+				[
+					"Packages/Rust/Rust.sublime-build",
+					""
+				],
+				[
+					"Packages/Rust/Rust.sublime-build",
+					"Run"
+				]
+			],
+			[
+				"Packages/Rust/Cargo.sublime-build",
+				"Run"
+			]
+		]
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 73.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"color",
+				"UI: Select Color Scheme"
+			],
+			[
+				"syntax rust",
+				"Set Syntax: Rust Enhanced"
+			],
+			[
+				"theme",
+				"UI: Select Color Scheme"
+			],
+			[
+				"md",
+				"Set Syntax: Markdown"
+			],
+			[
+				"packagecontrol",
+				"Package Control: List Packages"
+			],
+			[
+				"lukas",
+				"Set Syntax: Lukas"
+			],
+			[
+				"merge",
+				"Sublimerge: Resolve Conflicts in Current File"
+			],
+			[
+				"menu ",
+				"View: Toggle Menu"
+			],
+			[
+				"vmen",
+				"View: Toggle Menu"
+			],
+			[
+				"color sche",
+				"UI: Select Color Scheme"
+			],
+			[
+				"select theme",
+				"UI: Select Theme"
+			],
+			[
+				"select color",
+				"UI: Select Color Scheme"
+			],
+			[
+				"remove pa",
+				"Package Control: Remove Package"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"luk",
+				"Set Syntax: Lukas"
+			],
+			[
+				"git",
+				"Git: Init"
+			],
+			[
+				"xml",
+				"Set Syntax: XML"
+			],
+			[
+				"C++",
+				"Set Syntax: C++"
+			],
+			[
+				"c++",
+				"Set Syntax: C++"
+			],
+			[
+				"ahk",
+				"Set Syntax: AutoHotkey"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"enable",
+				"Package Control: Enable Package"
+			],
+			[
+				"disable",
+				"Package Control: Disable Package"
+			],
+			[
+				"sublimerge",
+				"Sublimerge: Show Uncommited Changes..."
+			],
+			[
+				"git diff",
+				"Git: Diff Current File"
+			],
+			[
+				"compa",
+				"Sublimerge: Compare to Clipboard"
+			],
+			[
+				"angelsc",
+				"Set Syntax: AngelScript"
+			],
+			[
+				"package",
+				"Package Control: Install Package"
+			],
+			[
+				"add pa",
+				"Package Control: Advanced Install Package"
+			],
+			[
+				"html",
+				"Set Syntax: HTML"
+			],
+			[
+				"material theme",
+				"Material Theme: Advanced configuration"
+			],
+			[
+				"settings",
+				"Preferences: Settings"
+			],
+			[
+				"markdown",
+				"Set Syntax: Markdown"
+			],
+			[
+				"plain ",
+				"Set Syntax: Plain Text"
+			],
+			[
+				"mark",
+				"Set Syntax: Markdown"
+			],
+			[
+				"plain",
+				"Set Syntax: Plain Text"
+			],
+			[
+				"markdo",
+				"Set Syntax: Markdown"
+			],
+			[
+				"key",
+				"Preferences: Key Bindings"
+			],
+			[
+				"preferences",
+				"Preferences: Key Bindings"
+			],
+			[
+				"remo",
+				"Package Control: Remove Package"
+			],
+			[
+				"wiki",
+				"Set Syntax: Mediawiki NG"
+			],
+			[
+				"linter sett",
+				"Preferences: SublimeLinter Settings – User"
+			],
+			[
+				"sublimelinter sett",
+				"Preferences: SublimeLinter Settings – Default"
+			],
+			[
+				"colorsu",
+				"Colorsublime: Install Theme"
+			],
+			[
+				"colorsublime",
+				"Colorsublime: Install Theme"
+			],
+			[
+				"text",
+				"Set Syntax: Plain Text"
+			]
+		],
+		"width": 392.0
+	},
+	"console":
+	{
+		"height": 146.0,
+		"history":
+		[
+			"sublime.log_commands(False)",
+			"sublime.log_commands(True)",
+			"view.encoding()"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/D/Workspace/Programming/texture_processor_gui"
+	],
+	"file_history":
+	[
+		"/E/SyncThing/Project/work/Wolfire/Script/work_morning.bat",
+		"/D/Workspace/Programming/orbtk/crates/api/src/properties/widget/selected_entities.rs",
+		"/D/Workspace/Programming/orbtk/examples/widgets.rs",
+		"/D/Workspace/Programming/orbtk/examples/canvas.rs",
+		"/D/Workspace/Programming/texture_processor_gui/src/main_view.rs",
+		"/C/Users/Lukas/Downloads/BlendLuxCore/nodes/base.py",
+		"/C/Users/Lukas/Downloads/BlendLuxCore/nodes/__init__.py",
+		"/C/Users/Lukas/Downloads/BlendLuxCore/nodes/materials/glass.py",
+		"/C/Users/Lukas/Downloads/BlendLuxCore/nodes/materials/metal.py",
+		"/C/Users/Lukas/Downloads/BlendLuxCore/nodes/materials/carpaint.py",
+		"/C/Users/Lukas/Downloads/BlendLuxCore/nodes/output.py",
+		"/C/Users/Lukas/Downloads/BlendLuxCore/nodes/nodeitems.py",
+		"/C/Users/Lukas/Downloads/BlendLuxCore/export/material.py",
+		"/C/Users/Lukas/Downloads/BlendLuxCore/export/hair.py",
+		"/C/Users/Lukas/Downloads/BlendLuxCore/export/light.py",
+		"/C/Users/Lukas/Downloads/BlendLuxCore/draw/viewport.py",
+		"/D/Workspace/Programming/texture_processor_gui/Cargo.toml",
+		"/D/Workspace/Programming/orbtk/crates/widgets/src/button.rs",
+		"/D/Workspace/Programming/orbtk-template/src/main_view.rs",
+		"/D/Workspace/Programming/orbtk/crates/widgets/README.md",
+		"/D/Workspace/Programming/orbtk-template/src/main.rs",
+		"/D/Workspace/Programming/orbtk-template/Cargo.toml",
+		"/D/Workspace/Programming/orbtk-template/src/main_state.rs",
+		"/E/Project/program/rust/channel_shuffle_combined/Cargo.toml",
+		"/D/Workspace/Programming/conrod/Cargo.toml",
+		"/C/Users/Lukas/AppData/LocalLow/Wolfire Games/Receiver2/profiles/0.json",
+		"/D/Workspace/Programming/conrod/conrod_derive/Cargo.toml",
+		"/E/Project/program/rust/channel_shuffle/Cargo.toml",
+		"/D/Workspace/Programming/texture_processor/tests/integration_tests.rs",
+		"/D/Workspace/Programming/texture_processor/src/node.rs",
+		"/D/Workspace/Programming/texture_processor/Cargo.toml",
+		"/D/Workspace/Programming/texture_processor/src/shared.rs",
+		"/D/Workspace/Programming/texture_processor/src/process.rs",
+		"/D/Workspace/Programming/texture_processor/src/lib.rs",
+		"/D/Workspace/Programming/orbtk-template/Node.toml",
+		"/D/Workspace/Programming/texture_processor/.gitignore",
+		"/D/Workspace/Programming/texture_processor/src/node_data.rs",
+		"/D/Workspace/Programming/texture_processor/src/dag.rs",
+		"/D/Workspace/Programming/texture_processor/out/invert_graph.json",
+		"/D/Workspace/Programming/texture_processor/src/node_graph.rs",
+		"/D/Workspace/Programming/texture_processor/src/error.rs",
+		"/D/Workspace/Programming/texture_processor/data/invert_graph.json",
+		"/C/Users/Lukas/AppData/LocalLow/Wolfire Games/Receiver2/receiver2_config_global.json",
+		"/C/Users/Lukas/.cargo/registry/src/github.com-1ecc6299db9ec823/image-0.20.1/src/imageops/sample.rs",
+		"/C/Users/Lukas/AppData/Local/Temp/7zO47AEC3A3/confusablesSummary.txt",
+		"/D/Workspace/Programming/safe_client_libs/scripts/package.rs",
+		"/E/Project/program/rust/safe_test/Cargo.toml",
+		"/E/Project/program/rust/safe_test/src/main.rs",
+		"/E/Data/Document/important/min filosofi.md",
+		"/E/Data/Document/important/SECRET for MAID 1.txt",
+		"/D/Workspace/Programming/texturelab/src/App.vue",
+		"/D/Workspace/Programming/texturelab/src/lib/designer/properties.ts",
+		"/D/Workspace/Programming/texturelab/public/index.html",
+		"/D/Workspace/Programming/texturelab/src/background.ts",
+		"/D/Workspace/Programming/texturelab/README.md",
+		"/D/Workspace/Programming/texture_processor/target/debug/.fingerprint/proc-macro2-1118f68395f2a9b7/invoked.timestamp",
+		"/D/Workspace/Programming/texture_processor/texture_processor.sublime-project",
+		"/D/Workspace/Receiver2/git/Assets/Scripts/LightSwitch.cs",
+		"/D/Workspace/Programming/time_track_cli/src/main.rs",
+		"/D/Workspace/Programming/time_track_cli/Cargo.toml",
+		"/D/Workspace/Programming/time_track_cli/test_db.json",
+		"/D/Workspace/Receiver2/git/Assets/Scripts/Balloon.cs",
+		"/D/Workspace/Receiver2/git/Assets/Scripts/ParticleOneShot.cs",
+		"/D/Workspace/ssh/id_rsa.ppk",
+		"/D/Workspace/ssh/id_rsa",
+		"/E/Project/program/rust/channel_shuffle_combined/src/main.rs",
+		"/E/Project/program/rust/image/src/imageops/sample.rs",
+		"/D/Workspace/Programming/texture_processor/.git/info/exclude",
+		"/D/Workspace/Receiver2/git/Assets/Scripts/RuntimeTileLevelGenerator.cs",
+		"/E/Project/work/Wolfire/Wolfire Note/to_do.txt",
+		"/D/Workspace/Receiver2/git/Assets/Scripts/Receiver2/LevelManagerScript.cs",
+		"/D/Workspace/Receiver2/git/Assets/Scripts/ObjectSpawn.cs",
+		"/E/Project/work/Wolfire/Wolfire Note/daily_startup.txt",
+		"/E/Project/work/Wolfire/Receiver HD/Receiver HD Note/Play Test/2018-10-29_play-test.md",
+		"/D/Workspace/Receiver2/git/Assets/Scripts/Receiver2/Ladder.cs",
+		"/E/Project/work/Wolfire/Wolfire Note/money.txt",
+		"/C/Users/Lukas/AppData/Roaming/Sublime Merge/Packages/User/Preferences.sublime-settings",
+		"/D/Workspace/Receiver2/git/Assets/Editor/FixTransform.cs",
+		"/D/Workspace/Receiver2/git/Assets/Editor/MakeBallistics.cs",
+		"/D/Workspace/Receiver2/git/Assets/Scripts/Receiver2/PhysicsGallery.cs",
+		"/D/Workspace/Receiver2/git/Assets/WolfirePhysicsDebug/DrawPhysicsMaterial.cs",
+		"/D/Workspace/Receiver2/git/Assets/WolfirePhysicsDebug/PhysDbgSettings.cs",
+		"/D/Workspace/timetrack_database/time_track_db.json",
+		"/D/Workspace/Receiver2/git/Assets/Scripts/Receiver2/BulletTrajectoryManager.cs",
+		"/D/Workspace/Receiver2/git/Assets/Scripts/Receiver2/Robot/TurretScript.cs",
+		"/E/Project/work/Wolfire/Receiver HD/Receiver HD Note/Meeting/2018-09-25_weekly-meeting.txt",
+		"/D/Workspace/Receiver2/git/Assets/BallisticMaterialSpecial.cs",
+		"/E/Project/work/Wolfire/Receiver HD/Receiver HD Note/Meeting/2018-10-02_team-meeting.txt",
+		"/E/Project/path/ttpush.bat",
+		"/E/Project/path/gg.bat",
+		"/D/Program/PATH/smerge.bat",
+		"/E/Project/work/Wolfire/script/start_work_programs.bat",
+		"/E/Project/work/Wolfire/Receiver HD/Receiver HD Note/Meeting/2018-09-04_game-design.txt",
+		"/E/Project/program/rust/time_track_cli/src/main.rs",
+		"/E/Project/program/rust/time_track_cli/Cargo.toml",
+		"/D/Workspace/Receiver2/git/Assets/Editor/MakeSimpleBreakableGlass.cs",
+		"/E/Project/work/Wolfire/Receiver HD/Receiver HD Note/Play Test/2018-08-17_play-test.txt",
+		"/E/Project/path/gll.bat",
+		"/D/Workspace/Receiver2/git/Assets/PickupSphere.cs",
+		"/D/Workspace/Receiver2/git/Assets/Scripts/BreakableGlass.cs",
+		"/E/Project/work/Wolfire/Receiver HD/Receiver HD Note/Play Test/2018-09-10_play-test.txt",
+		"/D/Workspace/Receiver2/git/Assets/Scripts/ShootableLightGroup.cs",
+		"/E/Project/work/Wolfire/Receiver HD/Receiver HD Note/Meeting/2018-09-03_game-design-notes.txt",
+		"/E/Project/work/Wolfire/Receiver HD/Receiver HD Note/Meeting/2018-09-05_game-design.txt",
+		"/D/Workspace/Receiver2/git/.gitignore",
+		"/D/Workspace/Receiver2/git/Assets/Scripts/Receiver2/FlashlightScript.cs",
+		"/D/Workspace/Receiver2/git/Assets/Scripts/Receiver2/InventoryItem.cs",
+		"/D/Workspace/Receiver2/git/Assets/Scripts/Receiver2/LocalAimHandler.cs",
+		"/D/Workspace/Receiver2/git/Assets/Scripts/Receiver2/GunScript.cs",
+		"/D/Workspace/Receiver2/git/Assets/Scripts/Receiver2/PlayerScript.cs",
+		"/D/Workspace/Receiver2/git/Assets/Scripts/Receiver2/Robot/DroneScript.cs",
+		"/D/Workspace/Receiver2/git/Assets/Editor/ReceiverHDBuildScript.cs",
+		"/D/Workspace/Receiver2/git/Assets/Scripts/Receiver2/KillTrigger.cs",
+		"/D/Workspace/Receiver2/git/Assets/Scripts/Receiver2/Robot/RobotScript.cs",
+		"/D/Workspace/Receiver2/git/Assets/sneakbot.cs",
+		"/D/Workspace/Receiver2/git/Assets/SniperBot.cs",
+		"/E/SECRET for MAID 1.txt",
+		"/D/Workspace/Receiver2/git/Assets/Scripts/Receiver2/SimpleBreakableGlass.cs",
+		"/E/Project/work/Wolfire/Receiver HD/Receiver HD Note/Play Test/2018-08-20_play-test.txt",
+		"/D/Workspace/Receiver2/git/.git/info/exclude",
+		"/D/Workspace/Receiver2/git/Assets/Scripts/Receiver2/LevelObject.cs",
+		"/D/Workspace/Receiver2/git/Assets/Scripts/Receiver2/AudioManager.cs",
+		"/D/Workspace/Receiver2/git/Assets/Scripts/Receiver2/BulletScript.cs",
+		"/D/Workspace/Receiver2/git/Assets/_external/OVR/Scripts/OVRPlugin.cs",
+		"/E/Project/program/rust/time_track/Cargo.toml",
+		"/D/Workspace/Receiver2/git/Assets/Scripts/BallisticMaterials.cs",
+		"/D/Workspace/Receiver2/git/fmod.log",
+		"/D/Workspace/Receiver2/git/Assets/Scripts/ReceiverCoreScript.cs"
+	],
+	"find":
+	{
+		"height": 27.0
+	},
+	"find_in_files":
+	{
+		"height": 151.0,
+		"where_history":
+		[
+			"<open folders>",
+			"D:\\Workspace\\Receiver2\\git\\Assets\\Scripts\\",
+			"D:\\Workspace\\Receiver2\\git\\Assets\\",
+			"D:\\Workspace\\Receiver2\\git\\Assets\\Scripts\\",
+			"D:\\Workspace\\Receiver2\\git\\Assets\\Scripts\\Receiver2",
+			"D:\\Workspace\\Receiver2\\git\\Assets\\Scripts\\",
+			"D:\\Workspace\\Receiver2\\git\\Assets\\",
+			"D:\\Workspace\\Receiver2\\git\\Assets\\Scripts",
+			"D:\\Workspace\\Receiver2\\git\\Assets\\",
+			"D:\\Workspace\\Receiver2\\git\\Assets\\Scripts"
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"List",
+			"selection_list",
+			"MainView",
+			"MainState",
+			"title",
+			".text",
+			"\"text\"",
+			"text",
+			"changed_width",
+			"f64",
+			"action",
+			"LINK_WATER_COLOR",
+			"colors",
+			"Button",
+			"main_view",
+			"self",
+			"vulka",
+			"{{project-name}}",
+			"multiply_node",
+			"Multiply",
+			"multiply.png",
+			"subtract_node",
+			"multiply",
+			"NodeType::Invert",
+			"Subtract =>",
+			"NodeType::Invert",
+			"f32",
+			"NodeData::new(",
+			"sample_down",
+			"sample_right",
+			"sample_left",
+			"sample_down",
+			"sample_up",
+			"sample_left",
+			"sample_down",
+			"sample_up",
+			"buffer",
+			"imagebuffer",
+			"height_buffer",
+			"Normalize",
+			"Wrapping",
+			"wrapping_",
+			"wrapping_subtract",
+			"impl",
+			"Nearest",
+			"FilterType",
+			"node_datas",
+			"sorted_value_vecs",
+			"empty_buffer",
+			"node",
+			"id",
+			"Buffer::new",
+			"usize",
+			"get_output_rgba",
+			"\"data/white",
+			"white",
+			"white_node",
+			"slot: ",
+			"pixel:",
+			"pixel",
+			"unwrap_or",
+			"get_pixel",
+			"tex_pro",
+			"invert_graph_node",
+			"white_node",
+			"white_node_nested",
+			"invert_graph",
+			"add_node",
+			"();\n",
+			"add_node",
+			"nested_graph",
+			"Add",
+			"dbg!",
+			"0",
+			"[0]",
+			".pixels",
+			"buffer",
+			"data",
+			"buffer.data",
+			"NodeId",
+			"add_node_with_id",
+			"NodeId",
+			"add_node_with_id",
+			"nodeid(2",
+			"add_node",
+			"mix_images",
+			"x",
+			"node_id",
+			"parent_ids",
+			"id",
+			"input_node",
+			"inputs",
+			"slot_2",
+			"slot_1",
+			"id_2",
+			"id_1",
+			"input_1_node",
+			"output",
+			"size",
+			"input",
+			"input_1",
+			"process_resize",
+			"Person",
+			"output_256",
+			"output_128",
+			"node_256",
+			"node_128",
+			"output_2",
+			"output_1",
+			"256_node",
+			"128_node",
+			"node_id",
+			"node",
+			"node_id",
+			"SpecificNode",
+			"max_by",
+			"width",
+			"256",
+			"output_size",
+			"SlotOccupied",
+			"Err",
+			"y",
+			"x",
+			"todo",
+			"nodetype::resize",
+			"unwrap",
+			"_client",
+			"rayon"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 2,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "src/main.rs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 457,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								314,
+								314
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Rust Enhanced/RustEnhanced.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "src/main_state.rs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 174,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								72,
+								72
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Rust Enhanced/RustEnhanced.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "src/main_view.rs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 419,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								182,
+								182
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Rust Enhanced/RustEnhanced.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "src/node_state.rs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 129,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								127,
+								127
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Rust Enhanced/RustEnhanced.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "src/node_view.rs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 931,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								394,
+								394
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Rust Enhanced/RustEnhanced.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "/D/Workspace/Programming/orbtk/examples/calculator.rs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 12070,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								6969,
+								6969
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Rust Enhanced/RustEnhanced.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 1324.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "/D/Workspace/Programming/orbtk/examples/README.md",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 624,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/MarkdownHighlighting/Markdown.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 27.0
+	},
+	"input":
+	{
+		"height": 53.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": false,
+	"output.SublimeLinter":
+	{
+		"height": 0.0
+	},
+	"output.SublimeLinter Messages":
+	{
+		"height": 157.0
+	},
+	"output.exec":
+	{
+		"height": 439.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.git":
+	{
+		"height": 118.0
+	},
+	"output.unsaved_changes":
+	{
+		"height": 174.0
+	},
+	"pinned_build_system": "",
+	"project": "texture_processor_gui.sublime-project",
+	"replace":
+	{
+		"height": 50.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"mainview",
+				"src\\main_view.rs"
+			],
+			[
+				"carg",
+				"Cargo.toml"
+			],
+			[
+				"proces",
+				"src\\process.rs"
+			],
+			[
+				"node",
+				"src\\node.rs"
+			],
+			[
+				"lib",
+				"src\\lib.rs"
+			],
+			[
+				"pr",
+				"src\\process.rs"
+			],
+			[
+				"car",
+				"Cargo.toml"
+			],
+			[
+				"proc",
+				"src\\process.rs"
+			],
+			[
+				"node gra",
+				"src\\node_graph.rs"
+			],
+			[
+				"tom",
+				"Cargo.toml"
+			],
+			[
+				"cargo",
+				"Cargo.toml"
+			],
+			[
+				"dag",
+				"src\\dag.rs"
+			],
+			[
+				"inte",
+				"tests\\integration_tests.rs"
+			],
+			[
+				"err",
+				"src\\error.rs"
+			],
+			[
+				"error",
+				"src\\error.rs"
+			],
+			[
+				"sha",
+				"src\\shared.rs"
+			],
+			[
+				"graph",
+				"src\\node_graph.rs"
+			],
+			[
+				"pro",
+				"src\\process.rs"
+			],
+			[
+				"main",
+				"target\\debug\\.fingerprint\\proc-macro2-1118f68395f2a9b7\\invoked.timestamp"
+			],
+			[
+				"texture",
+				"texture_processor.sublime-project"
+			],
+			[
+				"shared",
+				"src\\shared.rs"
+			],
+			[
+				"node_gra",
+				"src\\node_graph.rs"
+			],
+			[
+				"share",
+				"src\\shared.rs"
+			],
+			[
+				"toml",
+				"Cargo.toml"
+			],
+			[
+				"spawn",
+				"Scripts\\ObjectSpawn.cs"
+			],
+			[
+				"dail",
+				"Wolfire Note\\daily_startup.txt"
+			],
+			[
+				"mon",
+				"Wolfire Note\\money.txt"
+			],
+			[
+				"physi",
+				"Scripts\\Receiver2\\PhysicsGallery.cs"
+			],
+			[
+				"ballist",
+				"Editor\\MakeBallistics.cs"
+			],
+			[
+				"2018-10-",
+				"Receiver HD Note\\Meeting\\2018-10-12_team-meeting.txt"
+			],
+			[
+				"to",
+				"Wolfire Note\\to_do.txt"
+			],
+			[
+				"make ba",
+				"Editor\\MakeBallistics.cs"
+			],
+			[
+				"meeting",
+				"Receiver HD Note\\Meeting\\2018-09-04_game-design.txt"
+			],
+			[
+				"money",
+				"Wolfire Note\\money.txt"
+			],
+			[
+				"breakableglass",
+				"Editor\\MakeSimpleBreakableGlass.cs"
+			],
+			[
+				"physics",
+				"Scripts\\Receiver2\\PhysicsGallery.cs"
+			],
+			[
+				"break",
+				"Editor\\MakeSimpleBreakableGlass.cs"
+			],
+			[
+				"breakable",
+				"Scripts\\BreakableGlass.cs"
+			],
+			[
+				"audioma",
+				"Scripts\\Receiver2\\AudioManager.cs"
+			],
+			[
+				"bulletsc",
+				"Scripts\\Receiver2\\BulletScript.cs"
+			],
+			[
+				"phys",
+				"Scripts\\Receiver2\\PhysicsGallery.cs"
+			],
+			[
+				"meet",
+				"Receiver HD Note\\Meeting\\2018-08-08 Team meeting, post Trello.txt"
+			],
+			[
+				"di",
+				"Wolfire Note\\daily_startup.txt"
+			],
+			[
+				"todo",
+				"Wolfire Note\\to_do.txt"
+			],
+			[
+				"copy",
+				"note/copy_paste.txt"
+			],
+			[
+				"da",
+				"note/daily_startup.txt"
+			],
+			[
+				"daill",
+				"Overgrowth\\Data\\LevelInfo\\og_story\\08_Ice_Cliff_Landing_linfo.xml"
+			],
+			[
+				"video",
+				"note\\videos.txt"
+			],
+			[
+				"conf",
+				"Overgrowth\\Data\\config.txt"
+			],
+			[
+				"asch",
+				"Overgrowth\\aschar_docs.h"
+			],
+			[
+				"star",
+				"note\\daily_startup.txt"
+			],
+			[
+				"mo",
+				"note\\money.txt"
+			],
+			[
+				"photyo",
+				"note\\photogrammetry.txt"
+			],
+			[
+				"pho",
+				"note\\photogrammetry.txt"
+			],
+			[
+				"photo",
+				"note\\photogrammetry.txt"
+			],
+			[
+				"mone",
+				"note\\money.txt"
+			],
+			[
+				"wiki",
+				"note\\wiki.txt"
+			],
+			[
+				"monet",
+				"note\\money.txt"
+			],
+			[
+				"release",
+				"note\\alpha_release.txt"
+			],
+			[
+				"bugs",
+				"note\\bugs.txt"
+			],
+			[
+				"wii",
+				"note\\wiki.txt"
+			],
+			[
+				"month",
+				"note\\monthly_payments.txt"
+			],
+			[
+				"19b_magma_arena.xml",
+				"D:\\Project\\work\\overgrowth\\git\\Overgrowth\\Data\\Levels\\og_story\\19b_Magma_Arena.xml"
+			],
+			[
+				"campa",
+				"Overgrowth\\Data\\Levels\\campaign.xml"
+			],
+			[
+				"config",
+				"Overgrowth\\Data\\config.txt"
+			],
+			[
+				"23_rock",
+				"Overgrowth\\Data\\Levels\\og_story\\23_Rock_Arena.xml"
+			],
+			[
+				"wipice",
+				"Overgrowth\\Data\\Levels\\wip_ice_cliff.xml"
+			],
+			[
+				"wip",
+				"Overgrowth\\Data\\Levels\\wip_beach.xml"
+			],
+			[
+				"startup",
+				"note\\daily_startup.txt"
+			],
+			[
+				"git",
+				"note\\overgrowth_git.sublime-project"
+			],
+			[
+				"prefab",
+				"note\\pine_prefabs.xml"
+			],
+			[
+				"dailt",
+				"note\\daily_startup.txt"
+			],
+			[
+				"vide",
+				"note\\video_release.txt"
+			],
+			[
+				"wip_ice",
+				"Overgrowth\\Data\\Levels\\wip_ice_cliff.xml"
+			],
+			[
+				"wip_ic",
+				"Overgrowth\\Data\\Levels\\wip_ice_cliff.xml"
+			],
+			[
+				"sta",
+				"note\\standup.txt"
+			],
+			[
+				"stand",
+				"note\\standup.txt"
+			],
+			[
+				"wip.",
+				"Overgrowth\\Data\\Levels\\wip.xml"
+			],
+			[
+				"videore",
+				"note\\video_release.txt"
+			],
+			[
+				"test",
+				"Overgrowth\\Data\\Levels\\test.xml"
+			],
+			[
+				"b",
+				"note\\random\\bugs.txt"
+			],
+			[
+				"work",
+				"note\\workweek.txt"
+			],
+			[
+				"bug",
+				"note\\random\\bugs.txt"
+			],
+			[
+				"dai",
+				"note\\daily_startup.txt"
+			],
+			[
+				"vid",
+				"note\\random\\videos.txt"
+			],
+			[
+				"cargo.to",
+				"channel_shuffle\\Cargo.toml"
+			],
+			[
+				"check",
+				"checklist\\ogw_check.txt"
+			],
+			[
+				"ru",
+				"channel_shuffle\\run.txt"
+			],
+			[
+				"run",
+				"channel_shuffle\\run.txt"
+			],
+			[
+				"alpha",
+				"note\\checklist\\alpha_release.txt"
+			],
+			[
+				"dial",
+				"note\\checklist\\daily_startup.txt"
+			],
+			[
+				"paste",
+				"note\\random\\copy_paste.txt"
+			],
+			[
+				"ogw",
+				"note\\checklist\\ogw_check.txt"
+			],
+			[
+				"chec",
+				"checklist\\ogw_check.txt"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"E:\\Project\\work\\Wolfire\\Receiver HD\\Receiver HD Note\\Receiver HD.sublime-project"
+			],
+			[
+				"rece",
+				"E:\\Project\\work\\Wolfire\\Receiver HD\\Receiver HD Note\\Receiver HD.sublime-project"
+			],
+			[
+				"dag",
+				"E:\\Project\\program\\rust\\dag\\directed_acyclic_graph.sublime-project"
+			],
+			[
+				"chann",
+				"E:\\Project\\program\\rust\\channel_shuffle\\channel_shuffle.sublime-project"
+			],
+			[
+				"safe",
+				"E:\\Project\\program\\rust\\safe_test\\safe_test.sublime-project"
+			],
+			[
+				"timetrack",
+				"E:\\Project\\program\\rust\\time_track\\time_track.sublime-project"
+			],
+			[
+				"timetra",
+				"E:\\Project\\program\\rust\\time_track\\time_track.sublime-project"
+			],
+			[
+				"git",
+				"D:\\Project\\work\\overgrowth\\note\\overgrowth_git.sublime-workspace"
+			],
+			[
+				"time",
+				"E:\\Project\\program\\rust\\time_track\\time_track.sublime-project"
+			],
+			[
+				"timetr",
+				"E:\\Project\\program\\rust\\timetrack\\timetrack.sublime-workspace"
+			],
+			[
+				"chan",
+				"D:\\Project\\program\\rust\\channel_shuffle\\channel_shuffle.sublime-project"
+			],
+			[
+				"chane",
+				"D:\\Project\\program\\rust\\channel_shuffle\\channel_shuffle.sublime-project"
+			],
+			[
+				"portfo",
+				"D:\\Project\\portfolio_kube\\portfolio_kube.sublime-project"
+			],
+			[
+				"got",
+				"D:\\Project\\work\\overgrowth\\note\\overgrowth_git.sublime-project"
+			],
+			[
+				"port",
+				"D:\\Project\\portfolio_kube\\portfolio_kube.sublime-project"
+			],
+			[
+				"note",
+				"D:\\Project\\work\\overgrowth\\note\\overgrowth_note.sublime-project"
+			],
+			[
+				"portf",
+				"D:\\Project\\portfolio_kube\\portfolio_kube.sublime-project"
+			],
+			[
+				"kube",
+				"D:\\Project\\portfolio_kube\\portfolio_kube.sublime-project"
+			],
+			[
+				"kub",
+				"D:\\Project\\portfolio_kube\\portfolio_kube.sublime-project"
+			],
+			[
+				"GIT",
+				"D:\\Project\\work\\overgrowth\\note\\overgrowth_git.sublime-project"
+			],
+			[
+				"notes",
+				"D:\\Project\\work\\overgrowth\\note\\overgrowth_note.sublime-project"
+			],
+			[
+				"channe",
+				"D:\\Project\\program\\rust\\channel_shuffle\\channel_shuffle.sublime-project"
+			],
+			[
+				"CHANNEL",
+				"D:\\Project\\program\\rust\\channel_shuffle\\channel_shuffle.sublime-project"
+			],
+			[
+				"channel",
+				"D:\\Project\\program\\rust\\channel_shuffle\\channel_shuffle.sublime-project"
+			],
+			[
+				"steam",
+				"D:\\Project\\work\\overgrowth\\note\\overgrowth_steam.sublime-project"
+			],
+			[
+				"canne",
+				"D:\\Project\\program\\rust\\channel_shuffle\\channel_shuffle.sublime-project"
+			],
+			[
+				"stea",
+				"D:\\Project\\work\\overgrowth\\note\\overgrowth_steam.sublime-project"
+			],
+			[
+				"ima",
+				"D:\\Workspace\\Programming\\image.sublime-project"
+			],
+			[
+				"chnan",
+				"D:\\Project\\program\\rust\\channel_shuffle\\channel_shuffle.sublime-project"
+			]
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 165.0,
+		"last_filter": "buffer",
+		"selected_items":
+		[
+			[
+				"buffer",
+				"Buffer"
+			],
+			[
+				"normal",
+				"process_height_to_normal"
+			],
+			[
+				"node",
+				"Node"
+			],
+			[
+				"resizef",
+				"ResizeFilter"
+			],
+			[
+				"nodeid",
+				"NodeId"
+			],
+			[
+				"nodedata",
+				"NodeData"
+			],
+			[
+				"texpro",
+				"TexProError"
+			],
+			[
+				"Node",
+				"Node"
+			],
+			[
+				"slot",
+				"SlotId"
+			],
+			[
+				"texr",
+				"TexProError"
+			],
+			[
+				"add",
+				"add"
+			],
+			[
+				"resizepo",
+				"ResizePolicy"
+			],
+			[
+				"size",
+				"Size"
+			],
+			[
+				"resize",
+				"ResizePolicy"
+			],
+			[
+				"node data",
+				"NodeData"
+			],
+			[
+				"tpe",
+				"TexProError"
+			],
+			[
+				"nodetype",
+				"NodeType"
+			],
+			[
+				"bu",
+				"Buffer"
+			],
+			[
+				"buff",
+				"Buffer"
+			]
+		],
+		"width": 592.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": false,
+	"side_bar_width": 193.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
