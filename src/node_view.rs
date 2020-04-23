@@ -1,7 +1,7 @@
 use orbtk::prelude::*;
 use orbtk::behaviors::MouseBehavior;
 
-use crate::NodeState;
+use crate::node_state::NodeState;
 
 
 widget!(
@@ -22,7 +22,8 @@ impl Template for NodeView {
                         TextBlock::create()
                             .width(0.0)
                             .height(14.0)
-                            .text("title")
+                            .text("Node")
+                            .foreground(colors::LYNCH_COLOR)
                             .element("text-block")
                             .vertical_alignment("start")
                             .id("title")

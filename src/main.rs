@@ -6,6 +6,9 @@ use self::main_view::*;
 mod main_state;
 mod main_view;
 
+mod node_state;
+mod node_view;
+
 fn main() {
     Application::new()
        .window(|ctx| {
