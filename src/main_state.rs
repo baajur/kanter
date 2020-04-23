@@ -23,11 +23,12 @@ impl MainState {
 // }
 
 impl State for MainState {
-    fn update(&mut self, _: &mut Registry, _ctx: &mut Context) {
+    fn update(&mut self, _: &mut Registry, ctx: &mut Context) {
         if let Some(action) = self.action {
             match action {
                 Action::NewNode => {
                     println!("New Node");
+                    *ctx.child("node_container_view").get_mut::<usize>("count") += 1;
                 }
             }
             self.action = None;
