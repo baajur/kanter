@@ -1,9 +1,8 @@
 use orbtk::prelude::*;
-use orbtk::behaviors::MouseBehavior;
 
 use crate::{
     MainState,
-    node_view::NodeView,
+    node_container_view::NodeContainerView,
 };
 
 #[derive(Debug)]
@@ -23,11 +22,10 @@ widget!(
 );
 
 impl Template for MainView {
-    fn template(self, id: Entity, ctx: &mut BuildContext) -> Self {
+    fn template(self, _id: Entity, ctx: &mut BuildContext) -> Self {
         self.name("MainView")
             .child(
-                NodeView::create()
-                .title("hehe")
+                NodeContainerView::create()
                 .build(ctx),
             )
     }

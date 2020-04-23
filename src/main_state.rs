@@ -5,6 +5,6 @@ pub struct MainState {
 }
 
 impl State for MainState {
-    fn update(&mut self, _: &mut Registry, ctx: &mut Context) {
+    fn update(&mut self, _: &mut Registry, _ctx: &mut Context) {
     }
 }

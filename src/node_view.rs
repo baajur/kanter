@@ -1,12 +1,11 @@
 use orbtk::prelude::*;
-use orbtk::behaviors::MouseBehavior;
 
 use crate::node_state::NodeState;
 
-
 widget!(
     NodeView<NodeState> {
-        title: String16
+        title: String16,
+        my_margin: Thickness
     }
 );
 
@@ -15,20 +14,27 @@ impl Template for NodeView {
         self.name("NodeView")
             .child(
                 Container::create()
-                    .background(colors::LINK_WATER_COLOR)
-                    .width(100.0)
-                    .height(100.0)
+                    .width(100.)
+                    .height(100.)
+                    .id("container")
+                    .margin(("my_margin", id))
+                    // .margin((*ctx.get_widget(id).get::<f64>("pos_x"), 10., 0., 0.))
                     .child(
-                        TextBlock::create()
-                            .width(0.0)
-                            .height(14.0)
-                            .text("Node")
-                            .foreground(colors::LYNCH_COLOR)
-                            .element("text-block")
-                            .vertical_alignment("start")
-                            .id("title")
-                            .build(ctx),
-                        )
+                        Container::create()
+                        .background(colors::LINK_WATER_COLOR)
+                        .child(
+                            TextBlock::create()
+                                .width(0.)
+                                .height(14.)
+                                .text(("title", id))
+                                .foreground(colors::LYNCH_COLOR)
+                                .element("text-block")
+                                .horizontal_alignment("center")
+                                .id("title")
+                                .build(ctx),
+                            )
+                        .build(ctx)
+                    )
                     .build(ctx)
             )
     }
