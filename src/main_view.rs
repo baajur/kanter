@@ -1,9 +1,6 @@
 use orbtk::prelude::*;
 
-use crate::{
-    MainState,
-    node_container_view::NodeContainerView,
-};
+use crate::{main_state::Action, node_container_view::NodeContainerView, MainState};
 
 #[derive(Debug)]
 pub struct NodeType {
@@ -22,11 +19,22 @@ widget!(
 );
 
 impl Template for MainView {
-    fn template(self, _id: Entity, ctx: &mut BuildContext) -> Self {
+    fn template(self, id: Entity, ctx: &mut BuildContext) -> Self {
         self.name("MainView")
+            .child(NodeContainerView::create().build(ctx))
             .child(
-                NodeContainerView::create()
-                .build(ctx),
+                Button::create()
+                    .element("button")
+                    .on_click(move |states, _| {
+                        state(id, states).action(Action::NewNode);
+                        true
+                    })
+                    .build(ctx),
             )
     }
+}
+
+// helper to request MainViewState
+fn state<'a>(id: Entity, states: &'a mut StatesContext) -> &'a mut MainState {
+    states.get_mut(id)
 }
