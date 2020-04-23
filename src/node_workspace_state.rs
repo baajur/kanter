@@ -24,7 +24,7 @@ impl State for NodeWorkspaceState {
             for i in 0..count {
                 let my_margin_a = Thickness {
                     left: 50. + 110. * i as f64,
-                    top: 30.,
+                    top: 50.,
                     right: 0.,
                     bottom: 0.,
                 };
