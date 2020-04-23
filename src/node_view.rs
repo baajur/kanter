@@ -3,7 +3,6 @@ use orbtk::{behaviors::MouseBehavior, prelude::*};
 
 widget!(
     NodeView<NodeState>: MouseHandler {
-        pressed: bool,
         title: String16,
         my_margin: Thickness
     }
@@ -15,17 +14,15 @@ impl Template for NodeView {
             .width(100.)
             .height(100.)
             .margin(("my_margin", id))
-            .on_click(move |states, _| {
-                states.get::<NodeState>(id).pressed();
+            .on_mouse_down(move |states, _| {
+                states.get::<NodeState>(id).set_mouse_down(true);
                 false
             })
-            .child(
-                MouseBehavior::create()
-                    .pressed(id)
-                    .enabled(id)
-                    .target(id.0)
-                    .build(ctx),
-            )
+            .on_mouse_up(move |states, _| {
+                states.get::<NodeState>(id).set_mouse_down(false);
+                false
+            })
+            .child(MouseBehavior::create().enabled(id).target(id.0).build(ctx))
             .child(
                 Container::create()
                     .background(Color::rgb(0, 255, 0))
