@@ -8,8 +8,5 @@ pub struct NodeState {
 }
 
 impl State for NodeState {
-    fn update(&mut self, _: &mut Registry, ctx: &mut Context<'_>) {
-        // let margin = (*ctx.widget().get::<f64>("pos_x"), 0., 0., 0.);
-        // ctx.child("container").set("margin", margin);
-    }
+    fn update(&mut self, _: &mut Registry, _ctx: &mut Context<'_>) {}
 }

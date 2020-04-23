@@ -3,16 +3,14 @@ use orbtk::prelude::*;
 use self::main_state::*;
 use self::main_view::*;
 
-mod shared;
-
 mod main_state;
 mod main_view;
 
 mod node_state;
 mod node_view;
 
-mod node_container_state;
-mod node_container_view;
+mod node_workspace_state;
+mod node_workspace_view;
 
 fn main() {
     Application::new()

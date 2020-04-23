@@ -2,26 +2,24 @@ use crate::node_view::NodeView;
 use orbtk::prelude::*;
 
 #[derive(Default, AsAny)]
-pub struct NodeContainerState {
+pub struct NodeWorkspaceState {
     pub builder: WidgetBuildContext,
     count: usize,
-    node_container: Entity,
+    node_workspace: Entity,
 }
 
-impl State for NodeContainerState {
+impl State for NodeWorkspaceState {
     fn init(&mut self, _: &mut Registry, ctx: &mut Context) {
-        self.node_container = ctx
-            .entity_of_child("node_container")
-            .expect("ListViewState.init: ItemsPanel child could not be found.");
+        self.node_workspace = ctx
+            .entity_of_child("node_workspace")
+            .expect("`node_workspace` child could not be found.");
     }
 
     fn update(&mut self, _: &mut Registry, ctx: &mut Context<'_>) {
-        // let count = 5;
         let count = ctx.widget().clone_or_default::<usize>("count");
 
         if count != self.count {
-            println!("ja 1");
-            ctx.clear_children_of(self.node_container);
+            ctx.clear_children_of(self.node_workspace);
 
             for i in 0..count {
                 let my_margin_a = Thickness {
@@ -36,7 +34,7 @@ impl State for NodeContainerState {
                     .my_margin(my_margin_a)
                     .title("My node")
                     .build(build_context);
-                build_context.append_child(self.node_container, item);
+                build_context.append_child(self.node_workspace, item);
             }
 
             self.count = count;
