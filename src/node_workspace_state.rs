@@ -30,15 +30,11 @@ impl State for NodeWorkspaceState {
     }
 
     fn update(&mut self, _: &mut Registry, ctx: &mut Context<'_>) {
-        let count = ctx.widget().clone_or_default::<usize>("count");
-
-        if count != self.count {
-            let build_context = &mut ctx.build_context();
-            let item = NodeView::create().title("My node").build(build_context);
-            build_context.append_child(self.node_workspace, item);
-
-            self.count = count;
-        }
+        // if count != self.count {
+        //     let build_context = &mut ctx.build_context();
+        //     let item = NodeView::create().title("My node").build(build_context);
+        //     build_context.append_child(self.node_workspace, item);
+        // }
 
         if !self.mouse_down && ctx.widget().get::<Option<Entity>>("dragged_node").is_some() {
             ctx.widget().set::<Option<Entity>>("dragged_node", None);
@@ -85,5 +81,12 @@ impl NodeWorkspaceState {
         let node_graph = NodeGraph::from_path(path).unwrap();
 
         ctx.clear_children();
+
+        for node in node_graph.nodes() {
+            let build_context = &mut ctx.build_context();
+            let node_title = format!("{:?}", node.node_type);
+            let item = NodeView::create().title(node_title).build(build_context);
+            build_context.append_child(self.node_workspace, item);
+        }
     }
 }
