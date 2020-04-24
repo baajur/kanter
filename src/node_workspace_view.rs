@@ -9,7 +9,8 @@ type DraggedNode = Option<Entity>;
 widget!(
     NodeWorkspaceView<NodeWorkspaceState>: MouseHandler {
         count: usize,
-        dragged_node: DraggedNode
+        dragged_node: DraggedNode,
+        load_graph: String16
     }
 );
 

@@ -45,6 +45,12 @@ impl Template for MainView {
                             .width(100.)
                             .build(ctx),
                     )
+                    .child(
+                        TextBox::create()
+                            .id("load_graph_path")
+                            .text("data/invert_graph.json")
+                            .build(ctx),
+                    )
                     .build(ctx),
             )
     }

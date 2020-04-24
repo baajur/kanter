@@ -24,7 +24,11 @@ impl State for MainState {
                 Action::NewNode => {
                     *ctx.child("node_workspace").get_mut::<usize>("count") += 1;
                 }
-                Action::LoadGraph => todo!(),
+                Action::LoadGraph => {
+                    let path = ctx.child("load_graph_path").clone::<String16>("text");
+                    ctx.child("node_workspace")
+                        .set::<String16>("load_graph", path);
+                }
             }
             self.action = None;
         }

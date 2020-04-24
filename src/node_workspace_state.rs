@@ -1,5 +1,6 @@
 use crate::node_view::NodeView;
 use orbtk::prelude::*;
+use texture_processor::node_graph::{NodeGraph, NodeId};
 
 #[derive(Default, AsAny)]
 pub struct NodeWorkspaceState {
@@ -8,6 +9,16 @@ pub struct NodeWorkspaceState {
     node_workspace: Entity,
     mouse_position: (f64, f64),
     mouse_down: bool,
+}
+
+struct Location {
+    node_id: NodeId,
+    point: Point,
+}
+
+struct NodeGraphSpatial {
+    locations: Vec<Location>,
+    node_graph: NodeGraph,
 }
 
 impl State for NodeWorkspaceState {
@@ -48,6 +59,11 @@ impl State for NodeWorkspaceState {
                 },
             );
         }
+
+        if !ctx.widget().get::<String16>("load_graph").is_empty() {
+            self.load_graph(ctx);
+            ctx.widget().set::<String16>("load_graph", String16::new());
+        }
     }
 }
 
@@ -62,5 +78,12 @@ impl NodeWorkspaceState {
 
     pub fn mouse_up(&mut self) {
         self.mouse_down = false;
+    }
+
+    fn load_graph(&mut self, ctx: &mut Context) {
+        let path = ctx.widget().get::<String16>("load_graph").to_string();
+        let node_graph = NodeGraph::from_path(path).unwrap();
+
+        ctx.clear_children();
     }
 }
