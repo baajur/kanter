@@ -1,25 +1,24 @@
 use crate::node_view::NodeView;
 use orbtk::prelude::*;
-use texture_processor::node_graph::{NodeGraph, NodeId};
+use texture_processor::node_graph::NodeGraph;
 
 #[derive(Default, AsAny)]
 pub struct NodeWorkspaceState {
     pub builder: WidgetBuildContext,
-    count: usize,
     node_workspace: Entity,
     mouse_position: (f64, f64),
     mouse_down: bool,
 }
 
-struct Location {
-    node_id: NodeId,
-    point: Point,
-}
+// struct Location {
+//     node_id: NodeId,
+//     point: Point,
+// }
 
-struct NodeGraphSpatial {
-    locations: Vec<Location>,
-    node_graph: NodeGraph,
-}
+// struct NodeGraphSpatial {
+//     locations: Vec<Location>,
+//     node_graph: NodeGraph,
+// }
 
 impl State for NodeWorkspaceState {
     fn init(&mut self, _: &mut Registry, ctx: &mut Context) {
@@ -30,12 +29,6 @@ impl State for NodeWorkspaceState {
     }
 
     fn update(&mut self, _: &mut Registry, ctx: &mut Context<'_>) {
-        // if count != self.count {
-        //     let build_context = &mut ctx.build_context();
-        //     let item = NodeView::create().title("My node").build(build_context);
-        //     build_context.append_child(self.node_workspace, item);
-        // }
-
         if !self.mouse_down && ctx.widget().get::<Option<Entity>>("dragged_node").is_some() {
             ctx.widget().set::<Option<Entity>>("dragged_node", None);
         }
@@ -77,6 +70,20 @@ impl NodeWorkspaceState {
     }
 
     fn load_graph(&mut self, ctx: &mut Context) {
+        let path = ctx.widget().get::<String16>("load_graph").to_string();
+        let node_graph = NodeGraph::from_path(path).unwrap();
+
+        ctx.clear_children();
+
+        for node in node_graph.nodes() {
+            let build_context = &mut ctx.build_context();
+            let node_title = format!("{:?}", node.node_type);
+            let item = NodeView::create().title(node_title).build(build_context);
+            build_context.append_child(self.node_workspace, item);
+        }
+    }
+
+    fn save_graph(&mut self, ctx: &mut Context) {
         let path = ctx.widget().get::<String16>("load_graph").to_string();
         let node_graph = NodeGraph::from_path(path).unwrap();
 
