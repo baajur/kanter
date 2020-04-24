@@ -35,6 +35,9 @@ impl State for NodeWorkspaceState {
 
     fn update(&mut self, _: &mut Registry, ctx: &mut Context<'_>) {
         if !self.mouse_down && ctx.widget().get::<Option<Entity>>("dragged_node").is_some() {
+            let dragged_entity = ctx.widget().get::<Option<Entity>>("dragged_node").unwrap();
+            self.update_node(ctx, dragged_entity);
+
             ctx.widget().set::<Option<Entity>>("dragged_node", None);
         }
 
@@ -55,7 +58,7 @@ impl State for NodeWorkspaceState {
         }
 
         if !ctx.widget().get::<String16>("path_load").is_empty() {
-            self.load_graph_non_spatial(ctx);
+            self.load_graph(ctx);
             ctx.widget().set::<String16>("path_load", String16::new());
         }
 
@@ -79,30 +82,60 @@ impl NodeWorkspaceState {
         self.mouse_down = false;
     }
 
-    fn load_graph_non_spatial(&mut self, ctx: &mut Context<'_>) {
-        let path = ctx.widget().get::<String16>("path_load").to_string();
-        let node_graph = NodeGraph::from_path(path).unwrap();
+    fn update_node(&mut self, ctx: &mut Context<'_>, entity: Entity) {
+        let widget = ctx.get_widget(entity);
 
-        self.node_graph_spatial = self.node_graph_to_spatial(node_graph);
+        let margin = widget.get::<Thickness>("margin");
+
+        let node_id = widget.get::<String16>("node_id").to_string();
+        let node_id: NodeId = NodeId(node_id.parse().unwrap());
+
+        for mut location in &mut self.node_graph_spatial.locations {
+            if location.node_id == node_id {
+                location.point.0 = margin.left;
+                location.point.1 = margin.top;
+            }
+        }
+    }
+
+    // fn load_graph_non_spatial(&mut self, ctx: &mut Context<'_>) {
+    //     let path = ctx.widget().get::<String16>("path_load").to_string();
+    //     let node_graph = NodeGraph::from_path(path).unwrap();
+
+    //     self.node_graph_spatial = self.node_graph_to_spatial(node_graph);
+
+    //     self.populate_workspace(ctx);
+    // }
+
+    fn load_graph(&mut self, ctx: &mut Context<'_>) {
+        let path = ctx.widget().get::<String16>("path_load").to_string();
+        let file = File::open(path).unwrap();
+        self.node_graph_spatial = serde_json::from_reader(file).unwrap();
 
         self.populate_workspace(ctx);
     }
 
-    fn node_graph_to_spatial(&mut self, node_graph: NodeGraph) -> NodeGraphSpatial {
-        let mut locations = Vec::with_capacity(node_graph.nodes().len());
-
-        for node in node_graph.nodes() {
-            locations.push(Location {
-                node_id: node.node_id,
-                point: (0., 0.),
-            });
-        }
-
-        NodeGraphSpatial {
-            locations,
-            node_graph,
-        }
+    fn save_graph(&mut self, ctx: &mut Context) {
+        let path = ctx.widget().get::<String16>("path_save").to_string();
+        let file = File::create(path).unwrap();
+        serde_json::to_writer_pretty(&file, &self.node_graph_spatial).unwrap();
     }
+
+    // fn node_graph_to_spatial(&mut self, node_graph: NodeGraph) -> NodeGraphSpatial {
+    //     let mut locations = Vec::with_capacity(node_graph.nodes().len());
+
+    //     for node in node_graph.nodes() {
+    //         locations.push(Location {
+    //             node_id: node.node_id,
+    //             point: (0., 0.),
+    //         });
+    //     }
+
+    //     NodeGraphSpatial {
+    //         locations,
+    //         node_graph,
+    //     }
+    // }
 
     fn populate_workspace(&mut self, ctx: &mut Context<'_>) {
         ctx.clear_children();
@@ -110,14 +143,28 @@ impl NodeWorkspaceState {
         for node in self.node_graph_spatial.node_graph.nodes() {
             let build_context = &mut ctx.build_context();
             let node_title = format!("{:?}", node.node_type);
-            let item = NodeView::create().title(node_title).build(build_context);
+
+            let location = self
+                .node_graph_spatial
+                .locations
+                .iter()
+                .find(|loc| loc.node_id == node.node_id)
+                .unwrap();
+
+            let margin = Thickness {
+                left: location.point.0,
+                top: location.point.1,
+                right: 0.,
+                bottom: 0.,
+            };
+
+            let item = NodeView::create()
+                .title(node_title)
+                .node_id(node.node_id.0.to_string())
+                .my_margin(margin)
+                .build(build_context);
+
             build_context.append_child(self.node_workspace, item);
         }
-    }
-
-    fn save_graph(&mut self, ctx: &mut Context) {
-        let path = ctx.widget().get::<String16>("path_save").to_string();
-        let file = File::create(path).unwrap();
-        serde_json::to_writer_pretty(&file, &self.node_graph_spatial).unwrap();
     }
 }

@@ -5,7 +5,8 @@ widget!(
     NodeView<NodeState>: MouseHandler {
         title: String16,
         my_margin: Thickness,
-        node_workspace: Entity
+        node_workspace: Entity,
+        node_id: String16
     }
 );
 
@@ -14,6 +15,7 @@ impl Template for NodeView {
         self.name("NodeView")
             .width(100.)
             .height(100.)
+            .node_id(("node_id", id))
             .margin(("my_margin", id))
             .on_mouse_down(move |states, _| {
                 states.get_mut::<NodeState>(id).action(Action::MousePressed);
