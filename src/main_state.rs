@@ -4,6 +4,7 @@ use orbtk::prelude::*;
 pub enum Action {
     NewNode,
     LoadGraph,
+    SaveGraph,
 }
 
 #[derive(Default, AsAny)]
@@ -27,7 +28,12 @@ impl State for MainState {
                 Action::LoadGraph => {
                     let path = ctx.child("graph_path").clone::<String16>("text");
                     ctx.child("node_workspace")
-                        .set::<String16>("load_graph", path);
+                        .set::<String16>("path_load", path);
+                }
+                Action::SaveGraph => {
+                    let path = ctx.child("graph_path").clone::<String16>("text");
+                    ctx.child("node_workspace")
+                        .set::<String16>("path_save", path);
                 }
             }
             self.action = None;

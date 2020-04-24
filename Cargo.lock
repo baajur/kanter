@@ -1480,6 +1480,8 @@ name = "texture_processor_gui"
 version = "0.1.0"
 dependencies = [
  "orbtk",
+ "serde",
+ "serde_json",
  "texture_processor",
 ]
 

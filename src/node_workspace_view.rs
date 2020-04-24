@@ -10,7 +10,8 @@ widget!(
     NodeWorkspaceView<NodeWorkspaceState>: MouseHandler {
         count: usize,
         dragged_node: DraggedNode,
-        load_graph: String16
+        path_load: String16,
+        path_save: String16
     }
 );
 

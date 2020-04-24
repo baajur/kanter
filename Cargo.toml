@@ -10,3 +10,5 @@ edition = "2018"
 
 orbtk = { git = "https://github.com/redox-os/orbtk.git", branch = "develop" }
 texture_processor = { git = "https://lukors@bitbucket.org/lukors/texture_processor.git", branch = "master" }
+serde = { version = "1.0", features = ["derive", "rc"] }
+serde_json = "1.0"

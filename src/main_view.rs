@@ -46,6 +46,17 @@ impl Template for MainView {
                             .build(ctx),
                     )
                     .child(
+                        Button::create()
+                            .element("button")
+                            .on_click(move |states, _| {
+                                state(id, states).action(Action::SaveGraph);
+                                true
+                            })
+                            .text("Save graph")
+                            .width(100.)
+                            .build(ctx),
+                    )
+                    .child(
                         TextBox::create()
                             .id("graph_path")
                             .text("data/invert_graph.json")
