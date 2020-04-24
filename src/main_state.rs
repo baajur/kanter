@@ -3,6 +3,7 @@ use orbtk::prelude::*;
 #[derive(Copy, Clone)]
 pub enum Action {
     NewNode,
+    LoadGraph,
 }
 
 #[derive(Default, AsAny)]
@@ -23,6 +24,7 @@ impl State for MainState {
                 Action::NewNode => {
                     *ctx.child("node_workspace").get_mut::<usize>("count") += 1;
                 }
+                Action::LoadGraph => todo!(),
             }
             self.action = None;
         }

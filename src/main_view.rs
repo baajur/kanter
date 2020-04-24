@@ -21,12 +21,30 @@ impl Template for MainView {
         self.name("MainView")
             .child(NodeWorkspaceView::create().build(ctx))
             .child(
-                Button::create()
-                    .element("button")
-                    .on_click(move |states, _| {
-                        state(id, states).action(Action::NewNode);
-                        true
-                    })
+                Stack::create()
+                    .orientation(Orientation::Horizontal)
+                    .child(
+                        Button::create()
+                            .element("button")
+                            .on_click(move |states, _| {
+                                state(id, states).action(Action::NewNode);
+                                true
+                            })
+                            .text("Add node")
+                            .width(100.)
+                            .build(ctx),
+                    )
+                    .child(
+                        Button::create()
+                            .element("button")
+                            .on_click(move |states, _| {
+                                state(id, states).action(Action::LoadGraph);
+                                true
+                            })
+                            .text("Load graph")
+                            .width(100.)
+                            .build(ctx),
+                    )
                     .build(ctx),
             )
     }

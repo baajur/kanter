@@ -224,7 +224,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5bb1c84e87c717666564ec056105052331431803d606bd45529b28547b611eef"
 dependencies = [
  "phf_codegen",
- "proc-macro2",
+ "proc-macro2 1.0.10",
  "procedural-masquerade",
  "quote 1.0.3",
  "syn 1.0.17",
@@ -262,7 +262,7 @@ version = "0.99.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e2323f3f47db9a0e77ce7a300605d8d2098597fc451ed1a97bb1f6411bb550a7"
 dependencies = [
- "proc-macro2",
+ "proc-macro2 1.0.10",
  "quote 1.0.3",
  "syn 1.0.17",
 ]
@@ -354,6 +354,24 @@ dependencies = [
 
 [[package]]
 name = "image"
+version = "0.20.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "44665b4395d1844c96e7dc8ed5754782a1cdfd9ef458a80bbe45702681450504"
+dependencies = [
+ "byteorder",
+ "gif",
+ "jpeg-decoder",
+ "lzw",
+ "num-iter",
+ "num-rational 0.2.4",
+ "num-traits",
+ "png 0.12.0",
+ "scoped_threadpool",
+ "tiff 0.2.2",
+]
+
+[[package]]
+name = "image"
 version = "0.23.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9117f4167a8f21fa2bb3f17a652a760acd7572645281c98e3b612a26242c96ee"
@@ -363,11 +381,11 @@ dependencies = [
  "gif",
  "jpeg-decoder",
  "num-iter",
- "num-rational",
+ "num-rational 0.2.4",
  "num-traits",
  "png 0.16.3",
  "scoped_threadpool",
- "tiff",
+ "tiff 0.4.0",
 ]
 
 [[package]]
@@ -481,6 +499,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "nalgebra"
+version = "0.10.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f754f64bd1a5f5899285c2e182df7ddebcecf466369663be2277ca01b6da5d5d"
+dependencies = [
+ "num",
+ "rand 0.3.23",
+ "rustc-serialize",
+]
+
+[[package]]
 name = "nix"
 version = "0.17.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -499,9 +528,45 @@ version = "0.1.42"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4703ad64153382334aa8db57c637364c322d3372e097840c72000dabdcf6156e"
 dependencies = [
+ "num-bigint",
+ "num-complex",
  "num-integer",
  "num-iter",
+ "num-rational 0.1.42",
  "num-traits",
+]
+
+[[package]]
+name = "num-bigint"
+version = "0.1.44"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e63899ad0da84ce718c14936262a41cee2c79c981fc0a0e7c7beb47d5a07e8c1"
+dependencies = [
+ "num-integer",
+ "num-traits",
+ "rand 0.4.6",
+ "rustc-serialize",
+]
+
+[[package]]
+name = "num-complex"
+version = "0.1.43"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b288631d7878aaf59442cffd36910ea604ecd7745c36054328595114001c9656"
+dependencies = [
+ "num-traits",
+ "rustc-serialize",
+]
+
+[[package]]
+name = "num-derive"
+version = "0.2.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "eafd0b45c5537c3ba526f79d3e75120036502bebacbb3f3220914067ce39dbf2"
+dependencies = [
+ "proc-macro2 0.4.30",
+ "quote 0.6.13",
+ "syn 0.15.44",
 ]
 
 [[package]]
@@ -523,6 +588,18 @@ dependencies = [
  "autocfg 1.0.0",
  "num-integer",
  "num-traits",
+]
+
+[[package]]
+name = "num-rational"
+version = "0.1.42"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ee314c74bd753fc86b4780aa9475da469155f3848473a261d2d18e35245a784e"
+dependencies = [
+ "num-bigint",
+ "num-integer",
+ "num-traits",
+ "rustc-serialize",
 ]
 
 [[package]]
@@ -633,7 +710,7 @@ name = "orbtk-render"
 version = "0.3.1-alpha3"
 source = "git+https://github.com/redox-os/orbtk.git?branch=develop#593b6649af9df1513da4f5fd0318037d4947c875"
 dependencies = [
- "image",
+ "image 0.23.4",
  "orbtk-utils",
  "raqote",
  "rusttype",
@@ -646,7 +723,7 @@ version = "0.3.1-alpha3"
 source = "git+https://github.com/redox-os/orbtk.git?branch=develop#593b6649af9df1513da4f5fd0318037d4947c875"
 dependencies = [
  "console_error_panic_hook",
- "image",
+ "image 0.23.4",
  "lazy_static",
  "minifb",
  "orbtk-render",
@@ -747,6 +824,18 @@ checksum = "05da548ad6865900e60eaba7f589cc0783590a92e940c26953ff81ddbab2d677"
 
 [[package]]
 name = "png"
+version = "0.12.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f54b9600d584d3b8a739e1662a595fab051329eff43f20e7d8cc22872962145b"
+dependencies = [
+ "bitflags",
+ "deflate 0.7.20",
+ "inflate",
+ "num-iter",
+]
+
+[[package]]
+name = "png"
 version = "0.15.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ef859a23054bbfee7811284275ae522f0434a3c8e7f4b74bd4a35ae7e1c4a283"
@@ -777,6 +866,15 @@ checksum = "74490b50b9fbe561ac330df47c08f3f33073d2d00c150f719147d7c54522fa1b"
 
 [[package]]
 name = "proc-macro2"
+version = "0.4.30"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cf3d2011ab5c909338f7887f4fc896d35932e29146c12c8d01da6b22a80ba759"
+dependencies = [
+ "unicode-xid 0.1.0",
+]
+
+[[package]]
+name = "proc-macro2"
 version = "1.0.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "df246d292ff63439fea9bc8c0a270bed0e390d5ebd4db4ba15aba81111b5abe3"
@@ -798,11 +896,56 @@ checksum = "7a6e920b65c65f10b2ae65c831a81a073a89edd28c7cce89475bff467ab4167a"
 
 [[package]]
 name = "quote"
+version = "0.6.13"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6ce23b6b870e8f94f81fb0a363d65d86675884b34a09043c81e5562f11c1f8e1"
+dependencies = [
+ "proc-macro2 0.4.30",
+]
+
+[[package]]
+name = "quote"
 version = "1.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2bdc6c187c65bca4260c9011c9e3132efe4909da44726bad24cf7572ae338d7f"
 dependencies = [
- "proc-macro2",
+ "proc-macro2 1.0.10",
+]
+
+[[package]]
+name = "rand"
+version = "0.3.23"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "64ac302d8f83c0c1974bf758f6b041c6c8ada916fbb44a609158ca8b064cc76c"
+dependencies = [
+ "libc",
+ "rand 0.4.6",
+]
+
+[[package]]
+name = "rand"
+version = "0.4.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "552840b97013b1a26992c11eac34bdd778e464601a4c2054b5f0bff7c6761293"
+dependencies = [
+ "fuchsia-cprng",
+ "libc",
+ "rand_core 0.3.1",
+ "rdrand",
+ "winapi",
+]
+
+[[package]]
+name = "rand"
+version = "0.5.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c618c47cd3ebd209790115ab837de41425723956ad3ce2e6a7f09890947cacb9"
+dependencies = [
+ "cloudabi",
+ "fuchsia-cprng",
+ "libc",
+ "rand_core 0.3.1",
+ "winapi",
 ]
 
 [[package]]
@@ -1057,6 +1200,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "rustc-serialize"
+version = "0.3.24"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dcf128d1287d2ea9d80910b5f1120d0b8eede3fbf1abe91c40d39ea7d51e6fda"
+
+[[package]]
 name = "rustc_version"
 version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1148,7 +1297,7 @@ version = "1.0.106"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9e549e3abf4fb8621bd1609f11dfc9f5e50320802273b12f3811a67e6716ea6c"
 dependencies = [
- "proc-macro2",
+ "proc-macro2 1.0.10",
  "quote 1.0.3",
  "syn 1.0.17",
 ]
@@ -1223,7 +1372,7 @@ version = "0.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c87a60a40fccc84bef0652345bbbbbe20a605bf5d0ce81719fc476f5c03b50ef"
 dependencies = [
- "proc-macro2",
+ "proc-macro2 1.0.10",
  "quote 1.0.3",
  "serde",
  "serde_derive",
@@ -1237,7 +1386,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "58fa5ff6ad0d98d1ffa8cb115892b6e69d67799f6763e162a1c9db421dc22e11"
 dependencies = [
  "base-x",
- "proc-macro2",
+ "proc-macro2 1.0.10",
  "quote 1.0.3",
  "serde",
  "serde_derive",
@@ -1271,11 +1420,22 @@ dependencies = [
 
 [[package]]
 name = "syn"
+version = "0.15.44"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9ca4b3b69a77cbe1ffc9e198781b7acb0c7365a883670e8f1c1bc66fba79a5c5"
+dependencies = [
+ "proc-macro2 0.4.30",
+ "quote 0.6.13",
+ "unicode-xid 0.1.0",
+]
+
+[[package]]
+name = "syn"
 version = "1.0.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0df0eb663f387145cab623dea85b09c2c5b4b0aef44e945d928e682fce71bb03"
 dependencies = [
- "proc-macro2",
+ "proc-macro2 1.0.10",
  "quote 1.0.3",
  "unicode-xid 0.2.0",
 ]
@@ -1304,10 +1464,35 @@ dependencies = [
 ]
 
 [[package]]
+name = "texture_processor"
+version = "0.1.0"
+source = "git+https://lukors@bitbucket.org/lukors/texture_processor.git#de5c84c21e9da7575799610a23b90ebed33006e3"
+dependencies = [
+ "image 0.20.1",
+ "nalgebra",
+ "rand 0.5.6",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "texture_processor_gui"
 version = "0.1.0"
 dependencies = [
  "orbtk",
+ "texture_processor",
+]
+
+[[package]]
+name = "tiff"
+version = "0.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1e4834f28a0330cb9f3f2c87d2649dca723cb33802e2bdcf18da32759fbec7ce"
+dependencies = [
+ "byteorder",
+ "lzw",
+ "num-derive",
+ "num-traits",
 ]
 
 [[package]]
@@ -1341,6 +1526,12 @@ name = "unicode-xid"
 version = "0.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8c1f860d7d29cf02cb2f3f359fd35991af3d30bac52c57d265a3c461074cb4dc"
+
+[[package]]
+name = "unicode-xid"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fc72304796d0818e357ead4e000d19c9c174ab23dc11093ac919054d20a6a7fc"
 
 [[package]]
 name = "unicode-xid"
@@ -1379,7 +1570,7 @@ dependencies = [
  "bumpalo",
  "lazy_static",
  "log",
- "proc-macro2",
+ "proc-macro2 1.0.10",
  "quote 1.0.3",
  "syn 1.0.17",
  "wasm-bindgen-shared",
@@ -1401,7 +1592,7 @@ version = "0.2.60"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d68a5b36eef1be7868f668632863292e37739656a80fc4b9acec7b0bd35a4931"
 dependencies = [
- "proc-macro2",
+ "proc-macro2 1.0.10",
  "quote 1.0.3",
  "syn 1.0.17",
  "wasm-bindgen-backend",
@@ -1459,7 +1650,7 @@ version = "0.25.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f45ddc08a8078f3efa96b5f413268cc9c53b30712891de081fbc1d5846fbc736"
 dependencies = [
- "proc-macro2",
+ "proc-macro2 1.0.10",
  "quote 1.0.3",
  "xml-rs",
 ]
