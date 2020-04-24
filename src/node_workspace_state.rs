@@ -87,8 +87,7 @@ impl NodeWorkspaceState {
 
         let margin = widget.get::<Thickness>("margin");
 
-        let node_id = widget.get::<String16>("node_id").to_string();
-        let node_id: NodeId = NodeId(node_id.parse().unwrap());
+        let node_id = NodeId(*widget.get::<u32>("node_id"));
 
         for mut location in &mut self.node_graph_spatial.locations {
             if location.node_id == node_id {
@@ -160,7 +159,7 @@ impl NodeWorkspaceState {
 
             let item = NodeView::create()
                 .title(node_title)
-                .node_id(node.node_id.0.to_string())
+                .node_id(node.node_id.0)
                 .my_margin(margin)
                 .build(build_context);
 

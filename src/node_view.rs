@@ -6,7 +6,7 @@ widget!(
         title: String16,
         my_margin: Thickness,
         node_workspace: Entity,
-        node_id: String16
+        node_id: u32
     }
 );
 
