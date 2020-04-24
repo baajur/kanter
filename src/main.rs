@@ -9,6 +9,9 @@ mod main_view;
 mod node_state;
 mod node_view;
 
+mod slot_state;
+mod slot_view;
+
 mod node_workspace_state;
 mod node_workspace_view;
 

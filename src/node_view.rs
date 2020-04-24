@@ -1,4 +1,7 @@
-use crate::node_state::{Action, NodeState};
+use crate::{
+    node_state::{Action, NodeState},
+    slot_view::SlotView,
+};
 use orbtk::{behaviors::MouseBehavior, prelude::*};
 
 widget!(
@@ -43,6 +46,12 @@ impl Template for NodeView {
                             .horizontal_alignment("center")
                             .id("title")
                             .build(ctx),
+                    )
+                    .child(
+                        Stack::create()
+                            .orientation(Orientation::Vertical)
+                            .child(SlotView::create().build(ctx))
+                            .build(ctx)
                     )
                     .build(ctx),
             )
