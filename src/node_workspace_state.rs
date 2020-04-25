@@ -1,5 +1,5 @@
 use crate::{
-    line_view::LineView,
+    edge_view::EdgeView,
     node_view::{NodeView, NODE_SIZE},
     slot_view::{SLOT_SIZE, SLOT_SIZE_HALF, SLOT_SPACING},
 };
@@ -48,9 +48,8 @@ impl State for NodeWorkspaceState {
             ctx.widget().set::<Option<Entity>>("dragged_node", None);
         }
 
-        if let Some(dragged_node_property) = *ctx.widget().get::<Option<Entity>>("dragged_node") {
-            let mut dragged_node = ctx.get_widget(dragged_node_property);
-
+        if let Some(dragged_node_entity) = *ctx.widget().get::<Option<Entity>>("dragged_node") {
+            let mut dragged_node = ctx.get_widget(dragged_node_entity);
             let current_margin = *dragged_node.get::<Thickness>("my_margin");
 
             dragged_node.set::<Thickness>(
@@ -62,6 +61,8 @@ impl State for NodeWorkspaceState {
                     bottom: current_margin.bottom,
                 },
             );
+
+            self.refresh_edges(ctx, dragged_node_entity);
         }
 
         if !ctx.widget().get::<String16>("path_load").is_empty() {
@@ -87,6 +88,60 @@ impl NodeWorkspaceState {
 
     pub fn mouse_up(&mut self) {
         self.mouse_down = false;
+    }
+
+    fn refresh_edges(&mut self, ctx: &mut Context, entity: Entity) {
+        let widget = ctx.get_widget(entity);
+        let node_id = widget.get::<u32>("node_id").clone();
+
+        for i in 0.. {
+            // Take out the `start_node` value from the edge.
+            let start_node = {
+                let edge = ctx.try_child_from_index(i);
+                if edge.is_none() {
+                    break
+                }
+                let edge = edge.unwrap();
+
+                println!("get edge?");
+                dbg!(edge.try_get::<String16>("id"));
+                if edge.try_get::<String16>("id") != Some(&String16::from("edge")) {
+                    continue
+                }
+                println!("yes");
+                edge.get::<u32>("start_node").clone()
+            };
+            println!("3");
+
+            // If the `start_node` value is the current node, update this edge.
+            if start_node != node_id {
+                continue
+            }
+            // let end_node = child.get::<u32>("end_node");
+
+            println!("4");
+            let output_node_widget = ctx.child(&*node_id.to_string());
+            let output_node_margin = output_node_widget.get::<Thickness>("my_margin");
+            let output_node_pos = Point {
+                x: output_node_margin.left,
+                y: output_node_margin.top,
+            };
+            let output_slot: f64 = 0.;
+
+            let mut child = ctx.child_from_index(i);
+
+            println!("5");
+            child.set("start_point", Point {
+                x: 10.,
+                // x: output_node_pos.x + NODE_SIZE,
+                y: output_node_pos.y + SLOT_SIZE_HALF + ((SLOT_SIZE + SLOT_SPACING) * output_slot),
+            });
+
+            // let end_point = Point {
+            //     x: input_node_pos.x,
+            //     y: input_node_pos.y + SLOT_SIZE_HALF + ((SLOT_SIZE + SLOT_SPACING) * input_slot),
+            // };
+        }
     }
 
     fn update_node(&mut self, ctx: &mut Context<'_>, entity: Entity) {
@@ -229,9 +284,12 @@ impl NodeWorkspaceState {
                 y: input_node_pos.y + SLOT_SIZE_HALF + ((SLOT_SIZE + SLOT_SPACING) * input_slot),
             };
 
-            let item = LineView::create()
+            let item = EdgeView::create()
+                .id("edge")
                 .start_point(start_point)
                 .end_point(end_point)
+                .start_node(edge.output_id.0)
+                .end_node(edge.input_id.0)
                 .build(bc);
 
             bc.append_child(self.node_workspace, item);

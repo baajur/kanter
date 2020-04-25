@@ -15,15 +15,15 @@ widget!(
     }
 );
 
-impl NodeWorkspaceView {
-    pub fn items_builder<F: Fn(&mut BuildContext, usize) -> Entity + 'static>(
-        mut self,
-        builder: F,
-    ) -> Self {
-        self.state_mut().builder = Some(Box::new(builder));
-        self
-    }
-}
+// impl NodeWorkspaceView {
+//     pub fn items_builder<F: Fn(&mut BuildContext, usize) -> Entity + 'static>(
+//         mut self,
+//         builder: F,
+//     ) -> Self {
+//         self.state_mut().builder = Some(Box::new(builder));
+//         self
+//     }
+// }
 
 impl Template for NodeWorkspaceView {
     fn template(self, id: Entity, _ctx: &mut BuildContext) -> Self {

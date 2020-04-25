@@ -15,6 +15,9 @@ mod node_view;
 mod slot_state;
 mod slot_view;
 
+mod edge_state;
+mod edge_view;
+
 mod line_render_object;
 mod line_state;
 mod line_view;
