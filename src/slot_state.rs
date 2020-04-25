@@ -27,7 +27,7 @@ impl Default for SlotState {
     }
 }
 
-impl State for SlotState { }
+impl State for SlotState {}
 
 impl SlotState {
     pub fn action(&mut self, action: Action) {

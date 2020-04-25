@@ -6,14 +6,18 @@ use self::main_view::*;
 mod main_state;
 mod main_view;
 
+mod node_workspace_state;
+mod node_workspace_view;
+
 mod node_state;
 mod node_view;
 
 mod slot_state;
 mod slot_view;
 
-mod node_workspace_state;
-mod node_workspace_view;
+mod line_render_object;
+mod line_state;
+mod line_view;
 
 fn main() {
     Application::new()

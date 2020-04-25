@@ -1,6 +1,4 @@
-use crate::{
-    node_state::{Action, NodeState},
-};
+use crate::node_state::{Action, NodeState};
 use orbtk::{behaviors::MouseBehavior, prelude::*};
 
 widget!(
@@ -53,13 +51,13 @@ impl Template for NodeView {
                         Stack::create()
                             .id("input_slot_container")
                             .orientation(Orientation::Vertical)
-                            .build(ctx)
+                            .build(ctx),
                     )
                     .child(
                         Stack::create()
                             .id("output_slot_container")
                             .orientation(Orientation::Vertical)
-                            .build(ctx)
+                            .build(ctx),
                     )
                     .build(ctx),
             )

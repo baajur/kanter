@@ -1,4 +1,8 @@
-use crate::node_view::NodeView;
+use crate::{
+    line_view::LineView,
+    node_view::{NodeView, NODE_SIZE},
+    slot_view::{SLOT_SIZE, SLOT_SIZE_HALF, SLOT_SPACING},
+};
 use orbtk::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::fs::File;
@@ -170,11 +174,48 @@ impl NodeWorkspaceState {
             };
 
             let item = NodeView::create()
+                .id(node.node_id.0.to_string())
                 .title(node_title)
                 .node_id(node.node_id.0)
                 .my_margin(margin)
                 .slot_count_input(slot_count_input)
                 .slot_count_output(slot_count_output)
+                .build(build_context);
+
+            build_context.append_child(self.node_workspace, item);
+        }
+
+        for edge in &self.node_graph_spatial.node_graph.edges {
+            let output_node_widget = ctx.child(&*edge.output_id.0.to_string());
+            let output_node_pos = output_node_widget.get::<Thickness>("my_margin").clone();
+            let output_node_pos = Point {
+                x: output_node_pos.left,
+                y: output_node_pos.top,
+            };
+
+            let input_node_widget = ctx.child(&*edge.input_id.0.to_string());
+            let input_node_pos = input_node_widget.get::<Thickness>("my_margin").clone();
+            let input_node_pos = Point {
+                x: input_node_pos.left,
+                y: input_node_pos.top,
+            };
+
+            let output_slot = edge.output_slot.0 as f64;
+            let input_slot = edge.input_slot.0 as f64;
+
+            let start_point = Point {
+                x: output_node_pos.x + NODE_SIZE,
+                y: output_node_pos.y + SLOT_SIZE_HALF + ((SLOT_SIZE + SLOT_SPACING) * output_slot),
+            };
+            let end_point = Point {
+                x: input_node_pos.x,
+                y: input_node_pos.y + SLOT_SIZE_HALF + ((SLOT_SIZE + SLOT_SPACING) * input_slot),
+            };
+
+            let build_context = &mut ctx.build_context();
+            let item = LineView::create()
+                .start_point(start_point)
+                .end_point(end_point)
                 .build(build_context);
 
             build_context.append_child(self.node_workspace, item);
