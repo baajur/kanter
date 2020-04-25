@@ -95,52 +95,66 @@ impl NodeWorkspaceState {
         let node_id = widget.get::<u32>("node_id").clone();
 
         for i in 0.. {
-            // Take out the `start_node` value from the edge.
-            let start_node = {
+            // Take out the `start_node` and `end_node` values from the edge.
+            let (start_node, end_node, start_slot, end_slot): (u32, u32, u32, u32) = {
                 let edge = ctx.try_child_from_index(i);
                 if edge.is_none() {
-                    break
+                    break;
                 }
                 let edge = edge.unwrap();
 
-                println!("get edge?");
-                dbg!(edge.try_get::<String16>("id"));
-                if edge.try_get::<String16>("id") != Some(&String16::from("edge")) {
-                    continue
+                let (start_node, end_node, start_slot, end_slot) = {
+                    (
+                        edge.try_get::<u32>("start_node"),
+                        edge.try_get::<u32>("end_node"),
+                        edge.try_get::<u32>("start_slot"),
+                        edge.try_get::<u32>("end_slot"),
+                    )
+                };
+                if start_node.is_none()
+                    || end_node.is_none()
+                    || start_slot.is_none()
+                    || end_slot.is_none()
+                {
+                    continue;
                 }
-                println!("yes");
-                edge.get::<u32>("start_node").clone()
+                (
+                    *start_node.unwrap(),
+                    *end_node.unwrap(),
+                    *start_slot.unwrap(),
+                    *end_slot.unwrap(),
+                )
             };
-            println!("3");
 
-            // If the `start_node` value is the current node, update this edge.
-            if start_node != node_id {
-                continue
-            }
-            // let end_node = child.get::<u32>("end_node");
-
-            println!("4");
-            let output_node_widget = ctx.child(&*node_id.to_string());
-            let output_node_margin = output_node_widget.get::<Thickness>("my_margin");
-            let output_node_pos = Point {
-                x: output_node_margin.left,
-                y: output_node_margin.top,
+            let node_widget = ctx.child(&*node_id.to_string());
+            let node_margin = node_widget.get::<Thickness>("my_margin");
+            let node_pos = Point {
+                x: node_margin.left,
+                y: node_margin.top,
             };
-            let output_slot: f64 = 0.;
 
             let mut child = ctx.child_from_index(i);
-
-            println!("5");
-            child.set("start_point", Point {
-                x: 10.,
-                // x: output_node_pos.x + NODE_SIZE,
-                y: output_node_pos.y + SLOT_SIZE_HALF + ((SLOT_SIZE + SLOT_SPACING) * output_slot),
-            });
-
-            // let end_point = Point {
-            //     x: input_node_pos.x,
-            //     y: input_node_pos.y + SLOT_SIZE_HALF + ((SLOT_SIZE + SLOT_SPACING) * input_slot),
-            // };
+            if start_node == node_id {
+                child.set(
+                    "start_point",
+                    Point {
+                        x: node_pos.x + NODE_SIZE,
+                        y: node_pos.y
+                            + SLOT_SIZE_HALF
+                            + ((SLOT_SIZE + SLOT_SPACING) * start_slot as f64),
+                    },
+                );
+            } else if end_node == node_id {
+                child.set(
+                    "end_point",
+                    Point {
+                        x: node_pos.x,
+                        y: node_pos.y
+                            + SLOT_SIZE_HALF
+                            + ((SLOT_SIZE + SLOT_SPACING) * end_slot as f64),
+                    },
+                );
+            }
         }
     }
 
@@ -272,16 +286,20 @@ impl NodeWorkspaceState {
                 y: input_node_pos.1,
             };
 
-            let output_slot = edge.output_slot.0 as f64;
-            let input_slot = edge.input_slot.0 as f64;
+            let output_slot = edge.output_slot.0;
+            let input_slot = edge.input_slot.0;
 
             let start_point = Point {
                 x: output_node_pos.x + NODE_SIZE,
-                y: output_node_pos.y + SLOT_SIZE_HALF + ((SLOT_SIZE + SLOT_SPACING) * output_slot),
+                y: output_node_pos.y
+                    + SLOT_SIZE_HALF
+                    + ((SLOT_SIZE + SLOT_SPACING) * output_slot as f64),
             };
             let end_point = Point {
                 x: input_node_pos.x,
-                y: input_node_pos.y + SLOT_SIZE_HALF + ((SLOT_SIZE + SLOT_SPACING) * input_slot),
+                y: input_node_pos.y
+                    + SLOT_SIZE_HALF
+                    + ((SLOT_SIZE + SLOT_SPACING) * input_slot as f64),
             };
 
             let item = EdgeView::create()
@@ -290,6 +308,8 @@ impl NodeWorkspaceState {
                 .end_point(end_point)
                 .start_node(edge.output_id.0)
                 .end_node(edge.input_id.0)
+                .start_slot(output_slot)
+                .end_slot(input_slot)
                 .build(bc);
 
             bc.append_child(self.node_workspace, item);
