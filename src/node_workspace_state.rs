@@ -146,8 +146,13 @@ impl NodeWorkspaceState {
     fn populate_workspace(&mut self, ctx: &mut Context<'_>) {
         ctx.clear_children();
 
+        let bc = &mut ctx.build_context();
+        self.populate_nodes(bc);
+        self.populate_edges(bc);
+    }
+
+    fn populate_nodes(&mut self, bc: &mut BuildContext) {
         for node in self.node_graph_spatial.node_graph.nodes() {
-            let build_context = &mut ctx.build_context();
             let node_title = format!("{:?}", node.node_type);
 
             let location = self
@@ -180,11 +185,13 @@ impl NodeWorkspaceState {
                 .my_margin(margin)
                 .slot_count_input(slot_count_input)
                 .slot_count_output(slot_count_output)
-                .build(build_context);
+                .build(bc);
 
-            build_context.append_child(self.node_workspace, item);
+            bc.append_child(self.node_workspace, item);
         }
+    }
 
+    fn populate_edges(&mut self, bc: &mut BuildContext) {
         for edge in &self.node_graph_spatial.node_graph.edges {
             let output_node_pos = self
                 .node_graph_spatial
@@ -222,13 +229,12 @@ impl NodeWorkspaceState {
                 y: input_node_pos.y + SLOT_SIZE_HALF + ((SLOT_SIZE + SLOT_SPACING) * input_slot),
             };
 
-            let build_context = &mut ctx.build_context();
             let item = LineView::create()
                 .start_point(start_point)
                 .end_point(end_point)
-                .build(build_context);
+                .build(bc);
 
-            build_context.append_child(self.node_workspace, item);
+            bc.append_child(self.node_workspace, item);
         }
     }
 }
