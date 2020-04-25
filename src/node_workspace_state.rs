@@ -186,18 +186,28 @@ impl NodeWorkspaceState {
         }
 
         for edge in &self.node_graph_spatial.node_graph.edges {
-            let output_node_widget = ctx.child(&*edge.output_id.0.to_string());
-            let output_node_pos = output_node_widget.get::<Thickness>("my_margin").clone();
+            let output_node_pos = self
+                .node_graph_spatial
+                .locations
+                .iter()
+                .find(|loc| loc.node_id == edge.output_id)
+                .expect("Could not find output node location")
+                .point;
             let output_node_pos = Point {
-                x: output_node_pos.left,
-                y: output_node_pos.top,
+                x: output_node_pos.0,
+                y: output_node_pos.1,
             };
 
-            let input_node_widget = ctx.child(&*edge.input_id.0.to_string());
-            let input_node_pos = input_node_widget.get::<Thickness>("my_margin").clone();
+            let input_node_pos = self
+                .node_graph_spatial
+                .locations
+                .iter()
+                .find(|loc| loc.node_id == edge.input_id)
+                .expect("Could not find input node location")
+                .point;
             let input_node_pos = Point {
-                x: input_node_pos.left,
-                y: input_node_pos.top,
+                x: input_node_pos.0,
+                y: input_node_pos.1,
             };
 
             let output_slot = edge.output_slot.0 as f64;
