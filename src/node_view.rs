@@ -1,6 +1,5 @@
 use crate::{
     node_state::{Action, NodeState},
-    slot_view::{SlotView, SlotType},
 };
 use orbtk::{behaviors::MouseBehavior, prelude::*};
 
@@ -9,15 +8,19 @@ widget!(
         title: String16,
         my_margin: Thickness,
         node_workspace: Entity,
-        node_id: u32
+        node_id: u32,
+        slot_count_input: usize,
+        slot_count_output: usize
     }
 );
+
+pub const NODE_SIZE: f64 = 100.;
 
 impl Template for NodeView {
     fn template(self, id: Entity, ctx: &mut BuildContext) -> Self {
         self.name("NodeView")
-            .width(100.)
-            .height(100.)
+            .width(NODE_SIZE)
+            .height(NODE_SIZE)
             .margin(("my_margin", id))
             .on_mouse_down(move |states, _| {
                 states.get_mut::<NodeState>(id).action(Action::MousePressed);
@@ -50,18 +53,12 @@ impl Template for NodeView {
                         Stack::create()
                             .id("input_slot_container")
                             .orientation(Orientation::Vertical)
-                            .child(SlotView::create().slot_type(SlotType::Input).build(ctx))
-                            .child(SlotView::create().slot_type(SlotType::Input).build(ctx))
-                            .child(SlotView::create().slot_type(SlotType::Input).build(ctx))
                             .build(ctx)
                     )
                     .child(
                         Stack::create()
                             .id("output_slot_container")
                             .orientation(Orientation::Vertical)
-                            .child(SlotView::create().slot_type(SlotType::Output).build(ctx))
-                            .child(SlotView::create().slot_type(SlotType::Output).build(ctx))
-                            .child(SlotView::create().slot_type(SlotType::Output).build(ctx))
                             .build(ctx)
                     )
                     .build(ctx),

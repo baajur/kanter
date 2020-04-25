@@ -1,4 +1,5 @@
 use orbtk::prelude::*;
+use crate::slot_view::{SlotView, Side};
 
 #[derive(Copy, Clone)]
 pub enum Action {
@@ -36,6 +37,8 @@ impl State for NodeState {
         self.output_slot_container = ctx
             .entity_of_child("output_slot_container")
             .expect("`output_slot_container` child could not be found.");
+
+        self.set_up_slots(ctx);
     }
 
     fn update(&mut self, _: &mut Registry, ctx: &mut Context) {
@@ -63,5 +66,27 @@ impl State for NodeState {
 impl NodeState {
     pub fn action(&mut self, action: Action) {
         self.action = Some(action);
+    }
+
+    fn set_up_slots(&mut self, ctx: &mut Context) {
+        
+        for _ in 0..*ctx.widget().get::<usize>("slot_count_input") {
+            let build_context = &mut ctx.build_context();
+
+            let item = SlotView::create()
+                .side(Side::Input)
+                .build(build_context);
+
+            build_context.append_child(self.input_slot_container, item);
+        }
+        for _ in 0..*ctx.widget().get::<usize>("slot_count_output") {
+            let build_context = &mut ctx.build_context();
+
+            let item = SlotView::create()
+                .side(Side::Output)
+                .build(build_context);
+
+            build_context.append_child(self.output_slot_container, item);
+        }
     }
 }

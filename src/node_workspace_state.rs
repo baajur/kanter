@@ -2,7 +2,10 @@ use crate::node_view::NodeView;
 use orbtk::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::fs::File;
-use texture_processor::node_graph::{NodeGraph, NodeId};
+use texture_processor::{
+    node::{NodeType, Side},
+    node_graph::{NodeGraph, NodeId},
+};
 
 #[derive(Default, AsAny)]
 pub struct NodeWorkspaceState {
@@ -157,10 +160,21 @@ impl NodeWorkspaceState {
                 bottom: 0.,
             };
 
+            let slot_count_input = match node.node_type {
+                NodeType::InputGray | NodeType::InputRgba => 0,
+                _ => node.capacity(Side::Input),
+            };
+            let slot_count_output = match node.node_type {
+                NodeType::OutputGray | NodeType::OutputRgba => 0,
+                _ => node.capacity(Side::Output),
+            };
+
             let item = NodeView::create()
                 .title(node_title)
                 .node_id(node.node_id.0)
                 .my_margin(margin)
+                .slot_count_input(slot_count_input)
+                .slot_count_output(slot_count_output)
                 .build(build_context);
 
             build_context.append_child(self.node_workspace, item);
