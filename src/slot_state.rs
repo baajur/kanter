@@ -28,6 +28,9 @@ impl Default for NodeState {
 }
 
 impl State for NodeState {
+    fn init(&mut self, _: &mut Registry, ctx: &mut Context) {
+        println!("INIT SLOT");
+    }
 }
 
 impl NodeState {

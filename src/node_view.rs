@@ -1,6 +1,6 @@
 use crate::{
     node_state::{Action, NodeState},
-    slot_view::SlotView,
+    slot_view::{SlotView, SlotType},
 };
 use orbtk::{behaviors::MouseBehavior, prelude::*};
 
@@ -18,7 +18,6 @@ impl Template for NodeView {
         self.name("NodeView")
             .width(100.)
             .height(100.)
-            .node_id(("node_id", id))
             .margin(("my_margin", id))
             .on_mouse_down(move |states, _| {
                 states.get_mut::<NodeState>(id).action(Action::MousePressed);
@@ -38,19 +37,31 @@ impl Template for NodeView {
                     .border_brush(Brush::SolidColor(Color::rgb(0, 0, 0)))
                     .child(
                         TextBlock::create()
-                            .width(0.)
-                            .height(14.)
+                            .id("title")
                             .text(("title", id))
-                            .foreground(Color::rgb(255, 0, 0))
                             .element("text-block")
                             .horizontal_alignment("center")
-                            .id("title")
+                            .foreground(Color::rgb(255, 0, 0))
+                            .width(0.)
+                            .height(14.)
                             .build(ctx),
                     )
                     .child(
                         Stack::create()
+                            .id("input_slot_container")
                             .orientation(Orientation::Vertical)
-                            .child(SlotView::create().build(ctx))
+                            .child(SlotView::create().slot_type(SlotType::Input).build(ctx))
+                            .child(SlotView::create().slot_type(SlotType::Input).build(ctx))
+                            .child(SlotView::create().slot_type(SlotType::Input).build(ctx))
+                            .build(ctx)
+                    )
+                    .child(
+                        Stack::create()
+                            .id("output_slot_container")
+                            .orientation(Orientation::Vertical)
+                            .child(SlotView::create().slot_type(SlotType::Output).build(ctx))
+                            .child(SlotView::create().slot_type(SlotType::Output).build(ctx))
+                            .child(SlotView::create().slot_type(SlotType::Output).build(ctx))
                             .build(ctx)
                     )
                     .build(ctx),

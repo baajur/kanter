@@ -6,6 +6,7 @@ pub enum SlotType {
     Input,
     Output,
 }
+into_property_source!(SlotType);
 
 impl Default for SlotType {
     fn default() -> Self {
@@ -29,7 +30,7 @@ impl Template for SlotView {
             left: -(size*0.5),
             right: 0.,
             top: 0.,
-            bottom: 0.,
+            bottom: size*0.5,
         };
 
         self.name("SlotView")

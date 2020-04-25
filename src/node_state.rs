@@ -12,25 +12,41 @@ enum MouseState {
     MouseUp,
 }
 
-#[derive(AsAny)]
+impl Default for MouseState {
+    fn default() -> Self {
+        Self::MouseUp
+    }
+}
+
+#[derive(Default, AsAny)]
 pub struct NodeState {
     pub title: String16,
     pub action: Option<Action>,
     mouse_state: MouseState,
-}
-
-impl Default for NodeState {
-    fn default() -> Self {
-        Self {
-            title: String16::default(),
-            action: None,
-            mouse_state: MouseState::MouseUp,
-        }
-    }
+    pub builder: WidgetBuildContext,
+    input_slot_container: Entity,
+    output_slot_container: Entity,
 }
 
 impl State for NodeState {
+    fn init(&mut self, _: &mut Registry, ctx: &mut Context) {
+        if ctx.try_child("input_slot_container").is_none() {
+            println!("NONE");
+        } else {
+            println!("SOME");
+        }
+
+
+        // self.input_slot_container = ctx
+        //     .entity_of_child("input_slot_container")
+        //     .expect("`input_slot_container` child could not be found.");
+        // self.output_slot_container = ctx
+        //     .entity_of_child("output_slot_container")
+        //     .expect("`output_slot_container` child could not be found.");
+    }
+
     fn update(&mut self, _: &mut Registry, ctx: &mut Context) {
+
         if let Some(action) = self.action {
             match action {
                 Action::MousePressed => {
