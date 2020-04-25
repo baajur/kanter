@@ -137,24 +137,26 @@ impl NodeWorkspaceState {
             if start_node == node_id {
                 child.set(
                     "start_point",
-                    Point {
-                        x: node_pos.x + NODE_SIZE,
-                        y: node_pos.y
-                            + SLOT_SIZE_HALF
-                            + ((SLOT_SIZE + SLOT_SPACING) * start_slot as f64),
-                    },
+                    Self::position_edge(Side::Output, start_slot, node_pos),
                 );
             } else if end_node == node_id {
                 child.set(
                     "end_point",
-                    Point {
-                        x: node_pos.x,
-                        y: node_pos.y
-                            + SLOT_SIZE_HALF
-                            + ((SLOT_SIZE + SLOT_SPACING) * end_slot as f64),
-                    },
+                    Self::position_edge(Side::Input, end_slot, node_pos),
                 );
             }
+        }
+    }
+
+    fn position_edge(side: Side, slot: u32, node_position: Point) -> Point {
+        let x = node_position.x;
+        let y = node_position.y + SLOT_SIZE_HALF + ((SLOT_SIZE + SLOT_SPACING) * slot as f64);
+        match side {
+            Side::Input => Point { x, y },
+            Side::Output => Point {
+                x: x + NODE_SIZE,
+                y,
+            },
         }
     }
 
@@ -289,18 +291,8 @@ impl NodeWorkspaceState {
             let output_slot = edge.output_slot.0;
             let input_slot = edge.input_slot.0;
 
-            let start_point = Point {
-                x: output_node_pos.x + NODE_SIZE,
-                y: output_node_pos.y
-                    + SLOT_SIZE_HALF
-                    + ((SLOT_SIZE + SLOT_SPACING) * output_slot as f64),
-            };
-            let end_point = Point {
-                x: input_node_pos.x,
-                y: input_node_pos.y
-                    + SLOT_SIZE_HALF
-                    + ((SLOT_SIZE + SLOT_SPACING) * input_slot as f64),
-            };
+            let start_point = Self::position_edge(Side::Output, output_slot, output_node_pos);
+            let end_point = Self::position_edge(Side::Input, input_slot, input_node_pos);
 
             let item = EdgeView::create()
                 .id("edge")
