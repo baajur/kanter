@@ -27,7 +27,6 @@ struct NodeGraphSpatial {
 
 impl State for NodeWorkspaceState {
     fn init(&mut self, _: &mut Registry, ctx: &mut Context) {
-        println!("INIT");
         self.node_workspace = ctx
             .entity_of_child("node_workspace")
             .expect("`node_workspace` child could not be found.");

@@ -30,19 +30,12 @@ pub struct NodeState {
 
 impl State for NodeState {
     fn init(&mut self, _: &mut Registry, ctx: &mut Context) {
-        if ctx.try_child("input_slot_container").is_none() {
-            println!("NONE");
-        } else {
-            println!("SOME");
-        }
-
-
-        // self.input_slot_container = ctx
-        //     .entity_of_child("input_slot_container")
-        //     .expect("`input_slot_container` child could not be found.");
-        // self.output_slot_container = ctx
-        //     .entity_of_child("output_slot_container")
-        //     .expect("`output_slot_container` child could not be found.");
+        self.input_slot_container = ctx
+            .entity_of_child("input_slot_container")
+            .expect("`input_slot_container` child could not be found.");
+        self.output_slot_container = ctx
+            .entity_of_child("output_slot_container")
+            .expect("`output_slot_container` child could not be found.");
     }
 
     fn update(&mut self, _: &mut Registry, ctx: &mut Context) {

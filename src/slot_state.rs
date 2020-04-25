@@ -13,12 +13,12 @@ enum MouseState {
 }
 
 #[derive(AsAny)]
-pub struct NodeState {
+pub struct SlotState {
     pub action: Option<Action>,
     mouse_state: MouseState,
 }
 
-impl Default for NodeState {
+impl Default for SlotState {
     fn default() -> Self {
         Self {
             action: None,
@@ -27,13 +27,9 @@ impl Default for NodeState {
     }
 }
 
-impl State for NodeState {
-    fn init(&mut self, _: &mut Registry, ctx: &mut Context) {
-        println!("INIT SLOT");
-    }
-}
+impl State for SlotState { }
 
-impl NodeState {
+impl SlotState {
     pub fn action(&mut self, action: Action) {
         self.action = Some(action);
     }

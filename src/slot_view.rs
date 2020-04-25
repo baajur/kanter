@@ -1,4 +1,4 @@
-use crate::node_state::{Action, NodeState};
+use crate::slot_state::{Action, SlotState};
 use orbtk::{behaviors::MouseBehavior, prelude::*};
 
 #[derive(Copy, Clone, Debug)]
@@ -15,7 +15,7 @@ impl Default for SlotType {
 }
 
 widget!(
-    SlotView<NodeState>: MouseHandler {
+    SlotView<SlotState>: MouseHandler {
         slot_type: SlotType,
         node_workspace: Entity,
         slot_id: String16
