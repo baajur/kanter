@@ -44,23 +44,25 @@ impl NodeState {
     fn set_up_slots(&mut self, ctx: &mut Context) {
         let node_id = *ctx.widget().get::<u32>("node_id");
 
-        for _ in 0..*ctx.widget().get::<usize>("slot_count_input") {
+        for i in 0..*ctx.widget().get::<usize>("slot_count_input") {
             let build_context = &mut ctx.build_context();
 
             let item = SlotView::create()
                 .node_id(node_id)
                 .side(WidgetSide::Input)
+                .slot_id(i as u32)
                 .build(build_context);
 
             build_context.append_child(self.input_slot_container, item);
         }
 
-        for _ in 0..*ctx.widget().get::<usize>("slot_count_output") {
+        for i in 0..*ctx.widget().get::<usize>("slot_count_output") {
             let build_context = &mut ctx.build_context();
 
             let item = SlotView::create()
                 .node_id(node_id)
                 .side(WidgetSide::Output)
+                .slot_id(i as u32)
                 .build(build_context);
 
             build_context.append_child(self.output_slot_container, item);

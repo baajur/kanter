@@ -75,23 +75,49 @@ impl State for NodeWorkspaceState {
                 let held_slot_side = *ctx.get_widget(held_entity).get::<WidgetSide>("side");
                 match held_slot_side {
                     WidgetSide::Input => {
+                        let edge: Entity = *self
+                            .get_child_edges(ctx)
+                            .iter()
+                            .find(|entity| {
+                                let widget = ctx.get_widget(**entity);
+
+                                let edge_input_node = *widget.get::<u32>("input_node");
+                                let edge_input_slot = *widget.get::<u32>("input_slot");
+
+                                let slot_input_node =
+                                    *ctx.get_widget(held_entity).get::<u32>("node_id");
+                                let slot_id = *ctx.get_widget(held_entity).get::<u32>("slot_id");
+
+                                edge_input_node == slot_input_node && edge_input_slot == slot_id
+                            })
+                            .expect("Tried grabbing an edge, but it didn't exist");
+
+                        ctx.get_widget(edge).set::<Point>(
+                            "input_point",
+                            Point {
+                                x: self.mouse_position.0,
+                                y: self.mouse_position.1,
+                            },
+                        );
+                    }
+                    WidgetSide::Output => {
                         let mut held_edges: Vec<Entity> = self
                             .get_child_edges(ctx)
                             .iter()
                             .filter(|entity| {
                                 let widget = ctx.get_widget(**entity);
-                                let edge_input_node = *widget.get::<u32>("input_node");
-                                let slot_input_node =
+                                let edge_output_node = *widget.get::<u32>("output_node");
+                                let slot_output_node =
                                     *ctx.get_widget(held_entity).get::<u32>("node_id");
 
-                                edge_input_node == slot_input_node
+                                edge_output_node == slot_output_node
                             })
                             .copied()
                             .collect();
 
                         for edge in &mut held_edges {
                             ctx.get_widget(*edge).set::<Point>(
-                                "input_point",
+                                "output_point",
                                 Point {
                                     x: self.mouse_position.0,
                                     y: self.mouse_position.1,
@@ -99,7 +125,6 @@ impl State for NodeWorkspaceState {
                             );
                         }
                     }
-                    WidgetSide::Output => todo!(),
                 };
             }
             Some(_) => (),

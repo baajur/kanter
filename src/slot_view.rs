@@ -6,7 +6,7 @@ widget!(
         side: WidgetSide,
         node_workspace: Entity,
         node_id: u32,
-        slot_id: String16
+        slot_id: u32
     }
 );
 
