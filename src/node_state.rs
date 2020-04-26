@@ -1,7 +1,4 @@
-use crate::{
-    shared::*,
-    slot_view::{Side, SlotView},
-};
+use crate::{shared::*, slot_view::SlotView};
 use orbtk::prelude::*;
 
 #[derive(Default, AsAny)]
@@ -52,7 +49,7 @@ impl NodeState {
 
             let item = SlotView::create()
                 .node_id(node_id)
-                .side(Side::Input)
+                .side(WidgetSide::Input)
                 .build(build_context);
 
             build_context.append_child(self.input_slot_container, item);
@@ -63,7 +60,7 @@ impl NodeState {
 
             let item = SlotView::create()
                 .node_id(node_id)
-                .side(Side::Output)
+                .side(WidgetSide::Output)
                 .build(build_context);
 
             build_context.append_child(self.output_slot_container, item);

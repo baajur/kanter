@@ -19,3 +19,16 @@ impl Default for WidgetType {
         Self::Edge
     }
 }
+
+#[derive(Debug, Copy, Clone, PartialEq)]
+pub enum WidgetSide {
+    Input,
+    Output,
+}
+into_property_source!(WidgetSide);
+
+impl Default for WidgetSide {
+    fn default() -> Self {
+        Self::Input
+    }
+}

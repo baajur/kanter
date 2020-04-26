@@ -1,22 +1,9 @@
 use crate::{node_view::NODE_SIZE, shared::*, slot_state::SlotState};
 use orbtk::{behaviors::MouseBehavior, prelude::*};
 
-#[derive(Copy, Clone, Debug)]
-pub enum Side {
-    Input,
-    Output,
-}
-into_property_source!(Side);
-
-impl Default for Side {
-    fn default() -> Self {
-        Self::Input
-    }
-}
-
 widget!(
     SlotView<SlotState>: MouseHandler {
-        side: Side,
+        side: WidgetSide,
         node_workspace: Entity,
         node_id: u32,
         slot_id: String16
@@ -30,10 +17,10 @@ pub const SLOT_SPACING: f64 = SLOT_SIZE_HALF;
 impl Template for SlotView {
     fn template(self, id: Entity, ctx: &mut BuildContext) -> Self {
         let margin_left = match self.side.as_ref().unwrap() {
-            PropertySource::Value(Side::Input) => -SLOT_SIZE_HALF,
-            PropertySource::Value(Side::Output) => NODE_SIZE - SLOT_SIZE_HALF,
+            PropertySource::Value(WidgetSide::Input) => -SLOT_SIZE_HALF,
+            PropertySource::Value(WidgetSide::Output) => NODE_SIZE - SLOT_SIZE_HALF,
             _ => {
-                panic!("Side is not properly set");
+                panic!("WidgetSide is not properly set");
             }
         };
 

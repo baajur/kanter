@@ -72,26 +72,26 @@ impl State for NodeWorkspaceState {
                 if !self.mouse_down {}
 
                 // Update the visual location of the edge.
-                let held_slot_side = *ctx.get_widget(held_entity).get::<Side>("side");
+                let held_slot_side = *ctx.get_widget(held_entity).get::<WidgetSide>("side");
                 match held_slot_side {
-                    Side::Input => {
+                    WidgetSide::Input => {
                         let mut held_edges: Vec<Entity> = self
                             .get_child_edges(ctx)
                             .iter()
                             .filter(|entity| {
                                 let widget = ctx.get_widget(**entity);
-                                let edge_start_node = *widget.get::<u32>("start_node");
-                                let slot_start_node =
+                                let edge_end_node = *widget.get::<u32>("end_node");
+                                let slot_end_node =
                                     *ctx.get_widget(held_entity).get::<u32>("node_id");
 
-                                edge_start_node == slot_start_node
+                                edge_end_node == slot_end_node
                             })
                             .map(|entity| *entity)
                             .collect();
 
                         for edge in &mut held_edges {
                             ctx.get_widget(*edge).set::<Point>(
-                                "start_point",
+                                "end_point",
                                 Point {
                                     x: self.mouse_position.0,
                                     y: self.mouse_position.1,
@@ -99,7 +99,7 @@ impl State for NodeWorkspaceState {
                             );
                         }
                     }
-                    Side::Output => todo!(),
+                    WidgetSide::Output => todo!(),
                 };
             }
             Some(_) => (),
@@ -195,23 +195,23 @@ impl NodeWorkspaceState {
             if start_node == node_id {
                 edge_widget.set(
                     "start_point",
-                    Self::position_edge(Side::Output, start_slot, node_pos),
+                    Self::position_edge(WidgetSide::Output, start_slot, node_pos),
                 );
             } else if end_node == node_id {
                 edge_widget.set(
                     "end_point",
-                    Self::position_edge(Side::Input, end_slot, node_pos),
+                    Self::position_edge(WidgetSide::Input, end_slot, node_pos),
                 );
             }
         }
     }
 
-    fn position_edge(side: Side, slot: u32, node_position: Point) -> Point {
+    fn position_edge(side: WidgetSide, slot: u32, node_position: Point) -> Point {
         let x = node_position.x;
         let y = node_position.y + SLOT_SIZE_HALF + ((SLOT_SIZE + SLOT_SPACING) * slot as f64);
         match side {
-            Side::Input => Point { x, y },
-            Side::Output => Point {
+            WidgetSide::Input => Point { x, y },
+            WidgetSide::Output => Point {
                 x: x + NODE_SIZE,
                 y,
             },
@@ -349,8 +349,8 @@ impl NodeWorkspaceState {
             let output_slot = edge.output_slot.0;
             let input_slot = edge.input_slot.0;
 
-            let start_point = Self::position_edge(Side::Output, output_slot, output_node_pos);
-            let end_point = Self::position_edge(Side::Input, input_slot, input_node_pos);
+            let start_point = Self::position_edge(WidgetSide::Output, output_slot, output_node_pos);
+            let end_point = Self::position_edge(WidgetSide::Input, input_slot, input_node_pos);
 
             let item = EdgeView::create()
                 .id("edge")
