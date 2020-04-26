@@ -1,6 +1,7 @@
 use crate::{
     edge_view::EdgeView,
     node_view::{NodeView, NODE_SIZE},
+    node_workspace_view::{DragDropEntity, DragDropEntityType},
     slot_view::{SLOT_SIZE, SLOT_SIZE_HALF, SLOT_SPACING},
 };
 use orbtk::prelude::*;
@@ -41,29 +42,38 @@ impl State for NodeWorkspaceState {
     }
 
     fn update(&mut self, _: &mut Registry, ctx: &mut Context<'_>) {
-        if !self.mouse_down && ctx.widget().get::<Option<Entity>>("dragged_node").is_some() {
-            let dragged_entity = ctx.widget().get::<Option<Entity>>("dragged_node").unwrap();
-            self.update_node(ctx, dragged_entity);
+        match *ctx.widget().get::<DragDropEntity>("dragged_entity") {
+            Some(DragDropEntityType::Node(held_entity)) => {
+                // Update the node position in the struct.
+                if !self.mouse_down {
+                    self.update_node(ctx, held_entity);
+                    ctx.widget().set::<DragDropEntity>("dragged_entity", None);
+                }
 
-            ctx.widget().set::<Option<Entity>>("dragged_node", None);
-        }
+                // Update the visual position of the node.
+                let mut held_widget = ctx.get_widget(held_entity);
+                let current_margin = *held_widget.get::<Thickness>("my_margin");
 
-        if let Some(dragged_node_entity) = *ctx.widget().get::<Option<Entity>>("dragged_node") {
-            let mut dragged_node = ctx.get_widget(dragged_node_entity);
-            let current_margin = *dragged_node.get::<Thickness>("my_margin");
+                held_widget.set::<Thickness>(
+                    "my_margin",
+                    Thickness {
+                        left: self.mouse_position.0 - NODE_SIZE * 0.5,
+                        right: current_margin.right,
+                        top: self.mouse_position.1 - NODE_SIZE * 0.5,
+                        bottom: current_margin.bottom,
+                    },
+                );
 
-            dragged_node.set::<Thickness>(
-                "my_margin",
-                Thickness {
-                    left: self.mouse_position.0 - 50.,
-                    right: current_margin.right,
-                    top: self.mouse_position.1 - 50.,
-                    bottom: current_margin.bottom,
-                },
-            );
-
-            self.refresh_edges(ctx, dragged_node_entity);
-        }
+                self.refresh_edges(ctx, held_entity);
+            }
+            Some(DragDropEntityType::Slot(held_entity)) => {
+                // Update the edge connection in the struct.
+                if !self.mouse_down {
+                    todo!()
+                }
+            }
+            None => {}
+        };
 
         if !ctx.widget().get::<String16>("path_load").is_empty() {
             self.load_graph(ctx);

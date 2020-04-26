@@ -1,29 +1,24 @@
-use orbtk::prelude::*;
-// use orbtk::behaviors::MouseBehavior;
-
 use crate::node_workspace_state::NodeWorkspaceState;
-// use crate::node_view::NodeView;
+use orbtk::prelude::*;
 
-type DraggedNode = Option<Entity>;
+#[derive(Debug, Copy, Clone)]
+pub enum DragDropEntityType {
+    Node(Entity),
+    Slot(Entity),
+}
+into_property_source!(DragDropEntityType);
+
+pub type DragDropEntity = Option<DragDropEntityType>;
 
 widget!(
     NodeWorkspaceView<NodeWorkspaceState>: MouseHandler {
         count: usize,
-        dragged_node: DraggedNode,
+        dragged_entity: DragDropEntity,
+        dropped_on_entity: DragDropEntity,
         path_load: String16,
         path_save: String16
     }
 );
-
-// impl NodeWorkspaceView {
-//     pub fn items_builder<F: Fn(&mut BuildContext, usize) -> Entity + 'static>(
-//         mut self,
-//         builder: F,
-//     ) -> Self {
-//         self.state_mut().builder = Some(Box::new(builder));
-//         self
-//     }
-// }
 
 impl Template for NodeWorkspaceView {
     fn template(self, id: Entity, _ctx: &mut BuildContext) -> Self {

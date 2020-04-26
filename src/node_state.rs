@@ -1,20 +1,14 @@
 use crate::{
+    node_workspace_view::DragDropEntityType,
     shared::*,
     slot_view::{Side, SlotView},
 };
 use orbtk::prelude::*;
 
-impl Default for MouseState {
-    fn default() -> Self {
-        Self::MouseUp
-    }
-}
-
 #[derive(Default, AsAny)]
 pub struct NodeState {
     pub title: String16,
     pub mouse_action: Option<MouseAction>,
-    mouse_state: MouseState,
     pub builder: WidgetBuildContext,
     input_slot_container: Entity,
     output_slot_container: Entity,
@@ -32,22 +26,15 @@ impl State for NodeState {
         self.set_up_slots(ctx);
     }
 
-    fn update(&mut self, _: &mut Registry, ctx: &mut Context) {
+    fn update_post_layout(&mut self, _: &mut Registry, ctx: &mut Context) {
         if let Some(mouse_action) = self.mouse_action {
             match mouse_action {
                 MouseAction::MousePressed => {
-                    if self.mouse_state == MouseState::MouseUp {
-                        let entity = ctx.widget().entity();
-                        ctx.parent_from_id("node_workspace")
-                            .set("dragged_node", Some(entity));
-                        self.mouse_state = MouseState::MouseDown;
-                    }
+                    let entity = ctx.widget().entity();
+                    ctx.parent_from_id("node_workspace")
+                        .set("dragged_entity", Some(DragDropEntityType::Node(entity)));
                 }
-                MouseAction::MouseReleased => {
-                    if self.mouse_state == MouseState::MouseDown {
-                        self.mouse_state = MouseState::MouseUp;
-                    }
-                }
+                MouseAction::MouseReleased => {}
             }
         }
     }
