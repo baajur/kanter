@@ -246,7 +246,7 @@ impl NodeWorkspaceState {
                 output_slot,
                 input_slot,
             );
-            
+
             ctx.remove_child(dragged_edge_entity);
         }
     }
