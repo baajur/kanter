@@ -22,7 +22,12 @@ impl State for SlotState {
                     ctx.parent_from_id("node_workspace")
                         .set("dragged_entity", Some(WidgetType::Slot(entity)));
                 }
-                MouseAction::MouseReleased => {}
+                MouseAction::MouseReleased => {
+                    let entity = ctx.widget().entity();
+
+                    ctx.parent_from_id("node_workspace")
+                        .set("dropped_on_entity", Some(WidgetType::Slot(entity)));
+                }
             }
         }
     }

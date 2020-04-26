@@ -1466,7 +1466,6 @@ dependencies = [
 [[package]]
 name = "texture_processor"
 version = "0.1.0"
-source = "git+https://github.com/lukors/kanter_core.git#d1de47f38e86c61fcb0d64be3285e6a22ae9f2f8"
 dependencies = [
  "image 0.20.1",
  "nalgebra",

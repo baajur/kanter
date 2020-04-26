@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 use std::fs::File;
 use texture_processor::{
     node::{NodeType, Side},
-    node_graph::{NodeGraph, NodeId},
+    node_graph::{NodeGraph, NodeId, SlotId},
 };
 
 #[derive(Default, AsAny)]
@@ -43,14 +43,37 @@ impl State for NodeWorkspaceState {
     }
 
     fn update(&mut self, _: &mut Registry, ctx: &mut Context<'_>) {
+        self.handle_dragged_entity(ctx);
+        self.handle_dropped_entity(ctx);
+
+        if !ctx.widget().get::<String16>("path_load").is_empty() {
+            self.load_graph(ctx);
+            ctx.widget().set::<String16>("path_load", String16::new());
+        }
+
+        if !ctx.widget().get::<String16>("path_save").is_empty() {
+            self.save_graph(ctx);
+            ctx.widget().set::<String16>("path_save", String16::new());
+        }
+    }
+}
+
+impl NodeWorkspaceState {
+    pub fn mouse_moved(&mut self, x: f64, y: f64) {
+        self.mouse_position = (x, y);
+    }
+
+    pub fn mouse_down(&mut self) {
+        self.mouse_down = true;
+    }
+
+    pub fn mouse_up(&mut self) {
+        self.mouse_down = false;
+    }
+
+    fn handle_dragged_entity(&mut self, ctx: &mut Context) {
         match *ctx.widget().get::<DragDropEntity>("dragged_entity") {
             Some(WidgetType::Node(held_entity)) => {
-                // Update the node position in the struct.
-                if !self.mouse_down {
-                    self.update_node(ctx, held_entity);
-                    ctx.widget().set::<DragDropEntity>("dragged_entity", None);
-                }
-
                 // Update the visual position of the node.
                 let mut held_widget = ctx.get_widget(held_entity);
                 let current_margin = *held_widget.get::<Thickness>("my_margin");
@@ -127,33 +150,105 @@ impl State for NodeWorkspaceState {
                     }
                 };
             }
-            Some(_) => (),
-            None => (),
+            _ => return,
+        };
+    }
+
+    fn handle_dropped_entity(&mut self, ctx: &mut Context) {
+        if self.mouse_down
+            || ctx
+                .widget()
+                .get::<DragDropEntity>("dragged_entity")
+                .is_none()
+        {
+            return;
+        }
+
+        match *ctx.widget().get::<DragDropEntity>("dropped_on_entity") {
+            Some(WidgetType::Slot(dropped_on_entity)) => {
+                // let dropped_on_node_id = *dropped_on_entity.get::<u32>("node_id");
+                // let dropped_on_side = *dropped_on_entity.get::<WidgetSide>("side");
+                // let dropped_on_slot = *dropped_on_entity.get::<u32>("slot_id");
+
+                // let node_margin = ctx.get_widget(node_id.to_string()).get::<Thickness>("my_margin");
+                // let node_pos = Point{
+                //     x: node_margin.left,
+                //     y: node_margin.top,
+                // };
+
+                // let goal_position Self::position_edge(side, slot, node_pos);
+
+                // for entity in self.get_child_edges(ctx) {
+                //     let widget = ctx.get_widget(entity);
+
+                //     let w_node_id = widget.get::<u32>("node_id");
+                //     let w_side = widget.get::<WidgetSide>("side");
+                //     let w_slot = widget.get::<u32>("slot");
+
+                //     if w_node_id != node_id
+                //         || w_side != side
+                //         || w_slot != slot {
+                //         continue
+                //     }
+
+                //     widget.set::
+                // }
+            }
+            _ => self.remove_dragged_edges(ctx),
         };
 
-        if !ctx.widget().get::<String16>("path_load").is_empty() {
-            self.load_graph(ctx);
-            ctx.widget().set::<String16>("path_load", String16::new());
+        self.update_dragged_node(ctx);
+        ctx.widget().set::<DragDropEntity>("dragged_entity", None);
+    }
+
+    fn get_dragged_edges(&mut self, ctx: &mut Context) -> Vec<Entity> {
+        let dragged_slot_entity = match *ctx.widget().get::<DragDropEntity>("dragged_entity") {
+            Some(WidgetType::Slot(entity)) => entity,
+            _ => return Vec::new(),
+        };
+
+        self.get_child_edges(ctx)
+            .iter()
+            .filter(|entity| {
+                let widget = ctx.get_widget(**entity);
+                let edge_output_node = *widget.get::<u32>("output_node");
+                let slot_output_node = *ctx.get_widget(dragged_slot_entity).get::<u32>("node_id");
+
+                edge_output_node == slot_output_node
+            })
+            .copied()
+            .collect()
+    }
+
+    fn remove_dragged_edges(&mut self, ctx: &mut Context) {
+        let dragged_edge_entities: Vec<Entity> = self.get_dragged_edges(ctx);
+
+        for dragged_edge_entity in dragged_edge_entities {
+            let dragged_edge_widget = ctx.get_widget(dragged_edge_entity);
+
+            let (output_node, input_node, output_slot, input_slot): (
+                NodeId,
+                NodeId,
+                SlotId,
+                SlotId,
+            ) = {
+                (
+                    NodeId(*dragged_edge_widget.get::<u32>("output_node")),
+                    NodeId(*dragged_edge_widget.get::<u32>("input_node")),
+                    SlotId(*dragged_edge_widget.get::<u32>("output_slot")),
+                    SlotId(*dragged_edge_widget.get::<u32>("input_slot")),
+                )
+            };
+
+            self.node_graph_spatial.node_graph.remove_edge(
+                output_node,
+                input_node,
+                output_slot,
+                input_slot,
+            );
+            
+            ctx.remove_child(dragged_edge_entity);
         }
-
-        if !ctx.widget().get::<String16>("path_save").is_empty() {
-            self.save_graph(ctx);
-            ctx.widget().set::<String16>("path_save", String16::new());
-        }
-    }
-}
-
-impl NodeWorkspaceState {
-    pub fn mouse_moved(&mut self, x: f64, y: f64) {
-        self.mouse_position = (x, y);
-    }
-
-    pub fn mouse_down(&mut self) {
-        self.mouse_down = true;
-    }
-
-    pub fn mouse_up(&mut self) {
-        self.mouse_down = false;
     }
 
     fn get_child_edges(&mut self, ctx: &mut Context) -> Vec<Entity> {
@@ -241,6 +336,15 @@ impl NodeWorkspaceState {
                 y,
             },
         }
+    }
+
+    fn update_dragged_node(&mut self, ctx: &mut Context) {
+        let dragged_node_entity = match *ctx.widget().get::<DragDropEntity>("dragged_entity") {
+            Some(WidgetType::Node(entity)) => entity,
+            _ => return,
+        };
+
+        self.update_node(ctx, dragged_node_entity);
     }
 
     fn update_node(&mut self, ctx: &mut Context<'_>, entity: Entity) {

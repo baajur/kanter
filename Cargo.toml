@@ -9,6 +9,7 @@ edition = "2018"
 [dependencies]
 
 orbtk = { git = "https://github.com/redox-os/orbtk.git", branch = "develop" }
-texture_processor = { git = "https://github.com/lukors/kanter_core.git", branch = "master" }
+# texture_processor = { git = "https://github.com/lukors/kanter_core.git", branch = "master" }
+texture_processor = { path = "../kanter_core" }
 serde = { version = "1.0", features = ["derive", "rc"] }
 serde_json = "1.0"
