@@ -1,7 +1,8 @@
 use crate::{
     edge_view::EdgeView,
     node_view::{NodeView, NODE_SIZE},
-    node_workspace_view::{DragDropEntity, DragDropEntityType},
+    node_workspace_view::DragDropEntity,
+    shared::*,
     slot_view::{SLOT_SIZE, SLOT_SIZE_HALF, SLOT_SPACING},
 };
 use orbtk::prelude::*;
@@ -43,7 +44,7 @@ impl State for NodeWorkspaceState {
 
     fn update(&mut self, _: &mut Registry, ctx: &mut Context<'_>) {
         match *ctx.widget().get::<DragDropEntity>("dragged_entity") {
-            Some(DragDropEntityType::Node(held_entity)) => {
+            Some(WidgetType::Node(held_entity)) => {
                 // Update the node position in the struct.
                 if !self.mouse_down {
                     self.update_node(ctx, held_entity);
@@ -66,13 +67,43 @@ impl State for NodeWorkspaceState {
 
                 self.refresh_edges(ctx, held_entity);
             }
-            Some(DragDropEntityType::Slot(held_entity)) => {
+            Some(WidgetType::Slot(held_entity)) => {
                 // Update the edge connection in the struct.
-                if !self.mouse_down {
-                    todo!()
-                }
+                if !self.mouse_down {}
+
+                // Update the visual location of the edge.
+                let held_slot_side = *ctx.get_widget(held_entity).get::<Side>("side");
+                match held_slot_side {
+                    Side::Input => {
+                        let mut held_edges: Vec<Entity> = self
+                            .get_child_edges(ctx)
+                            .iter()
+                            .filter(|entity| {
+                                let widget = ctx.get_widget(**entity);
+                                let edge_start_node = *widget.get::<u32>("start_node");
+                                let slot_start_node =
+                                    *ctx.get_widget(held_entity).get::<u32>("node_id");
+
+                                edge_start_node == slot_start_node
+                            })
+                            .map(|entity| *entity)
+                            .collect();
+
+                        for edge in &mut held_edges {
+                            ctx.get_widget(*edge).set::<Point>(
+                                "start_point",
+                                Point {
+                                    x: self.mouse_position.0,
+                                    y: self.mouse_position.1,
+                                },
+                            );
+                        }
+                    }
+                    Side::Output => todo!(),
+                };
             }
-            None => {}
+            Some(_) => (),
+            None => (),
         };
 
         if !ctx.widget().get::<String16>("path_load").is_empty() {
@@ -100,39 +131,55 @@ impl NodeWorkspaceState {
         self.mouse_down = false;
     }
 
+    fn get_child_edges(&mut self, ctx: &mut Context) -> Vec<Entity> {
+        let mut output: Vec<Entity> = Vec::new();
+
+        for i in 0.. {
+            let maybe_edge = ctx.try_child_from_index(i);
+            if maybe_edge.is_none() {
+                break;
+            }
+
+            let maybe_edge = maybe_edge.unwrap();
+
+            if let Some(widget_type) = maybe_edge.try_get::<WidgetType>("widget_type") {
+                if *widget_type == WidgetType::Edge {
+                    let edge_entity = maybe_edge.entity();
+                    output.push(edge_entity);
+                }
+            }
+        }
+
+        output
+    }
+
+    fn get_edges_of_node(&mut self, ctx: &mut Context, node_id: u32) -> Vec<Entity> {
+        self.get_child_edges(ctx)
+            .iter()
+            .filter(|entity| {
+                let widget = ctx.get_widget(**entity);
+                let start_node = *widget.get::<u32>("start_node");
+                let end_node = *widget.get::<u32>("end_node");
+
+                start_node == node_id || end_node == node_id
+            })
+            .map(|entity| *entity)
+            .collect()
+    }
+
     fn refresh_edges(&mut self, ctx: &mut Context, entity: Entity) {
         let widget = ctx.get_widget(entity);
         let node_id = *widget.get::<u32>("node_id");
+        let edges: Vec<Entity> = self.get_edges_of_node(ctx, node_id);
 
-        for i in 0.. {
-            // Take out the `start_node` and `end_node` values from the edge.
-            let (start_node, end_node, start_slot, end_slot): (u32, u32, u32, u32) = {
-                let edge = ctx.try_child_from_index(i);
-                if edge.is_none() {
-                    break;
-                }
-                let edge = edge.unwrap();
-
-                let (start_node, end_node, start_slot, end_slot) = {
-                    (
-                        edge.try_get::<u32>("start_node"),
-                        edge.try_get::<u32>("end_node"),
-                        edge.try_get::<u32>("start_slot"),
-                        edge.try_get::<u32>("end_slot"),
-                    )
-                };
-                if start_node.is_none()
-                    || end_node.is_none()
-                    || start_slot.is_none()
-                    || end_slot.is_none()
-                {
-                    continue;
-                }
+        for edge in edges {
+            let (start_node, end_node, start_slot, end_slot) = {
+                let edge_widget = ctx.get_widget(edge);
                 (
-                    *start_node.unwrap(),
-                    *end_node.unwrap(),
-                    *start_slot.unwrap(),
-                    *end_slot.unwrap(),
+                    *edge_widget.get::<u32>("start_node"),
+                    *edge_widget.get::<u32>("end_node"),
+                    *edge_widget.get::<u32>("start_slot"),
+                    *edge_widget.get::<u32>("end_slot"),
                 )
             };
 
@@ -143,14 +190,15 @@ impl NodeWorkspaceState {
                 y: node_margin.top,
             };
 
-            let mut child = ctx.child_from_index(i);
+            // let mut child = ctx.child_from_index(i);
+            let mut edge_widget = ctx.get_widget(edge);
             if start_node == node_id {
-                child.set(
+                edge_widget.set(
                     "start_point",
                     Self::position_edge(Side::Output, start_slot, node_pos),
                 );
             } else if end_node == node_id {
-                child.set(
+                edge_widget.set(
                     "end_point",
                     Self::position_edge(Side::Input, end_slot, node_pos),
                 );

@@ -1,4 +1,4 @@
-use crate::{node_workspace_view::DragDropEntityType, shared::*};
+use crate::shared::*;
 use orbtk::prelude::*;
 
 #[derive(AsAny)]
@@ -20,7 +20,7 @@ impl State for SlotState {
                     let entity = ctx.widget().entity();
 
                     ctx.parent_from_id("node_workspace")
-                        .set("dragged_entity", Some(DragDropEntityType::Slot(entity)));
+                        .set("dragged_entity", Some(WidgetType::Slot(entity)));
                 }
                 MouseAction::MouseReleased => {}
             }

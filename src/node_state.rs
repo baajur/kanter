@@ -1,5 +1,4 @@
 use crate::{
-    node_workspace_view::DragDropEntityType,
     shared::*,
     slot_view::{Side, SlotView},
 };
@@ -32,7 +31,7 @@ impl State for NodeState {
                 MouseAction::MousePressed => {
                     let entity = ctx.widget().entity();
                     ctx.parent_from_id("node_workspace")
-                        .set("dragged_entity", Some(DragDropEntityType::Node(entity)));
+                        .set("dragged_entity", Some(WidgetType::Node(entity)));
                 }
                 MouseAction::MouseReleased => {}
             }
@@ -46,17 +45,26 @@ impl NodeState {
     }
 
     fn set_up_slots(&mut self, ctx: &mut Context) {
+        let node_id = *ctx.widget().get::<u32>("node_id");
+
         for _ in 0..*ctx.widget().get::<usize>("slot_count_input") {
             let build_context = &mut ctx.build_context();
 
-            let item = SlotView::create().side(Side::Input).build(build_context);
+            let item = SlotView::create()
+                .node_id(node_id)
+                .side(Side::Input)
+                .build(build_context);
 
             build_context.append_child(self.input_slot_container, item);
         }
+
         for _ in 0..*ctx.widget().get::<usize>("slot_count_output") {
             let build_context = &mut ctx.build_context();
 
-            let item = SlotView::create().side(Side::Output).build(build_context);
+            let item = SlotView::create()
+                .node_id(node_id)
+                .side(Side::Output)
+                .build(build_context);
 
             build_context.append_child(self.output_slot_container, item);
         }

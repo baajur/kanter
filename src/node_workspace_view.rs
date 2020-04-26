@@ -1,14 +1,7 @@
-use crate::node_workspace_state::NodeWorkspaceState;
+use crate::{node_workspace_state::NodeWorkspaceState, shared::*};
 use orbtk::prelude::*;
 
-#[derive(Debug, Copy, Clone)]
-pub enum DragDropEntityType {
-    Node(Entity),
-    Slot(Entity),
-}
-into_property_source!(DragDropEntityType);
-
-pub type DragDropEntity = Option<DragDropEntityType>;
+pub type DragDropEntity = Option<WidgetType>;
 
 widget!(
     NodeWorkspaceView<NodeWorkspaceState>: MouseHandler {
