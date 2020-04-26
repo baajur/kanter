@@ -1,17 +1,8 @@
-use crate::slot_view::{Side, SlotView};
+use crate::{
+    shared::*,
+    slot_view::{Side, SlotView},
+};
 use orbtk::prelude::*;
-
-#[derive(Copy, Clone)]
-pub enum Action {
-    MousePressed,
-    MouseReleased,
-}
-
-#[derive(PartialEq)]
-enum MouseState {
-    MouseDown,
-    MouseUp,
-}
 
 impl Default for MouseState {
     fn default() -> Self {
@@ -22,7 +13,7 @@ impl Default for MouseState {
 #[derive(Default, AsAny)]
 pub struct NodeState {
     pub title: String16,
-    pub action: Option<Action>,
+    pub mouse_action: Option<MouseAction>,
     mouse_state: MouseState,
     pub builder: WidgetBuildContext,
     input_slot_container: Entity,
@@ -42,9 +33,9 @@ impl State for NodeState {
     }
 
     fn update(&mut self, _: &mut Registry, ctx: &mut Context) {
-        if let Some(action) = self.action {
-            match action {
-                Action::MousePressed => {
+        if let Some(mouse_action) = self.mouse_action {
+            match mouse_action {
+                MouseAction::MousePressed => {
                     if self.mouse_state == MouseState::MouseUp {
                         let entity = ctx.widget().entity();
                         ctx.parent_from_id("node_workspace")
@@ -52,7 +43,7 @@ impl State for NodeState {
                         self.mouse_state = MouseState::MouseDown;
                     }
                 }
-                Action::MouseReleased => {
+                MouseAction::MouseReleased => {
                     if self.mouse_state == MouseState::MouseDown {
                         self.mouse_state = MouseState::MouseUp;
                     }
@@ -63,8 +54,8 @@ impl State for NodeState {
 }
 
 impl NodeState {
-    pub fn action(&mut self, action: Action) {
-        self.action = Some(action);
+    pub fn mouse_action(&mut self, mouse_action: MouseAction) {
+        self.mouse_action = Some(mouse_action);
     }
 
     fn set_up_slots(&mut self, ctx: &mut Context) {

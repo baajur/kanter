@@ -3,6 +3,8 @@ use orbtk::prelude::*;
 use self::main_state::*;
 use self::main_view::*;
 
+mod shared;
+
 mod main_state;
 mod main_view;
 

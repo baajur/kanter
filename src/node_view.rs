@@ -1,4 +1,4 @@
-use crate::node_state::{Action, NodeState};
+use crate::{node_state::NodeState, shared::*};
 use orbtk::{behaviors::MouseBehavior, prelude::*};
 
 widget!(
@@ -21,13 +21,15 @@ impl Template for NodeView {
             .height(NODE_SIZE)
             .margin(("my_margin", id))
             .on_mouse_down(move |states, _| {
-                states.get_mut::<NodeState>(id).action(Action::MousePressed);
+                states
+                    .get_mut::<NodeState>(id)
+                    .mouse_action(MouseAction::MousePressed);
                 false
             })
             .on_mouse_up(move |states, _| {
                 states
                     .get_mut::<NodeState>(id)
-                    .action(Action::MouseReleased);
+                    .mouse_action(MouseAction::MouseReleased);
                 false
             })
             .child(MouseBehavior::create().enabled(id).target(id.0).build(ctx))

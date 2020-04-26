@@ -7,8 +7,8 @@ impl RenderObject for LineRenderObject {
         let (start_point, end_point) = {
             let widget = ctx.widget();
             (
-                widget.get::<Point>("start_point").clone(),
-                widget.get::<Point>("end_point").clone(),
+                *widget.get::<Point>("start_point"),
+                *widget.get::<Point>("end_point"),
             )
         };
 

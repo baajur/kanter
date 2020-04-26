@@ -92,7 +92,7 @@ impl NodeWorkspaceState {
 
     fn refresh_edges(&mut self, ctx: &mut Context, entity: Entity) {
         let widget = ctx.get_widget(entity);
-        let node_id = widget.get::<u32>("node_id").clone();
+        let node_id = *widget.get::<u32>("node_id");
 
         for i in 0.. {
             // Take out the `start_node` and `end_node` values from the edge.
