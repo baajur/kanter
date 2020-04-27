@@ -178,6 +178,43 @@ impl NodeWorkspaceState {
                             .copied()
                             .collect();
 
+                        if held_edges.is_empty() {
+                            let mouse_position = Point {
+                                x: self.mouse_position.0,
+                                y: self.mouse_position.1,
+                            };
+
+                            let output_node_margin = *ctx
+                                .child(&*dragged_slot_node_id.to_string())
+                                .get::<Thickness>("my_margin");
+                            let output_node_pos = Point {
+                                x: output_node_margin.left,
+                                y: output_node_margin.top,
+                            };
+                            let output_position = Self::position_edge(
+                                dragged_slot_side,
+                                dragged_slot_id,
+                                output_node_pos,
+                            );
+
+                            let bc = &mut ctx.build_context();
+                            let item = EdgeView::create()
+                                .id("edge")
+                                .output_point(mouse_position)
+                                .input_point(output_position)
+                                .output_node(dragged_slot_node_id)
+                                .input_node(0)
+                                .output_slot(dragged_slot_id)
+                                .input_slot(0)
+                                .build(bc);
+
+                            bc.append_child(self.node_workspace, item);
+
+                            let edge_entity =
+                                *self.get_child_edges(ctx).iter().rev().next().unwrap();
+                            held_edges.push(edge_entity);
+                        }
+
                         for edge in &mut held_edges {
                             ctx.get_widget(*edge).set::<Point>(
                                 "output_point",
