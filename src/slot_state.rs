@@ -17,7 +17,7 @@ impl Default for SlotState {
 }
 
 impl State for SlotState {
-    fn update_post_layout(&mut self, _: &mut Registry, ctx: &mut Context) {
+    fn update(&mut self, _: &mut Registry, ctx: &mut Context) {
         if let Some(mouse_action) = self.mouse_action {
             match mouse_action {
                 MouseAction::MousePressed => {
@@ -35,8 +35,14 @@ impl State for SlotState {
 
                     if bounds.contains(mouse_pos) {
                         let entity = ctx.widget().entity();
-                        ctx.parent_from_id("node_workspace")
-                            .set("dropped_on_entity", Some(WidgetType::Slot(entity)));
+                        let mut node_workspace = ctx.parent_from_id("node_workspace");
+                        // let node_workspace_entity = node_workspace.entity();
+
+                        node_workspace.set("dropped_on_entity", Some(WidgetType::Slot(entity)));
+
+                        // ctx.push_event_strategy(ChangedEvent(node_workspace_entity), EventStrategy::Direct);
+
+                        println!("setting dropped_on_entity to {:?}", entity);
                     }
                 }
             }

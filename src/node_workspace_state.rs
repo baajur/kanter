@@ -18,8 +18,9 @@ pub struct NodeWorkspaceState {
     pub builder: WidgetBuildContext,
     node_workspace: Entity,
     mouse_position: (f64, f64),
-    mouse_down: bool,
+    mouse_state: MouseState,
     node_graph_spatial: NodeGraphSpatial,
+    most_recently_dragged: Option<WidgetType>,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -39,7 +40,6 @@ impl State for NodeWorkspaceState {
         self.node_workspace = ctx
             .entity_of_child("node_workspace")
             .expect("`node_workspace` child could not be found.");
-        self.mouse_down = false;
     }
 
     fn update(&mut self, _: &mut Registry, ctx: &mut Context<'_>) {
@@ -63,16 +63,25 @@ impl NodeWorkspaceState {
         self.mouse_position = (x, y);
     }
 
-    pub fn mouse_down(&mut self) {
-        self.mouse_down = true;
-    }
-
-    pub fn mouse_up(&mut self) {
-        self.mouse_down = false;
+    pub fn mouse_action(&mut self, mouse_action: MouseAction) {
+        match mouse_action {
+            MouseAction::MousePressed => self.mouse_state = MouseState::Down,
+            MouseAction::MouseReleased => self.mouse_state = MouseState::Up,
+        };
     }
 
     fn handle_dragged_entity(&mut self, ctx: &mut Context) {
-        match *ctx.widget().get::<DragDropEntity>("dragged_entity") {
+        let dragged_entity = *ctx.widget().get::<DragDropEntity>("dragged_entity");
+
+        if dragged_entity.is_some() {
+            self.most_recently_dragged = dragged_entity;
+        }
+
+        if self.mouse_state == MouseState::Up {
+            ctx.widget().set::<DragDropEntity>("dragged_entity", None);
+        }
+
+        match dragged_entity {
             Some(WidgetType::Node(held_entity)) => {
                 // Update the visual position of the node.
                 let mut held_widget = ctx.get_widget(held_entity);
@@ -91,9 +100,6 @@ impl NodeWorkspaceState {
                 self.refresh_edges_of_node(ctx, held_entity);
             }
             Some(WidgetType::Slot(held_entity)) => {
-                // Update the edge connection in the struct.
-                if !self.mouse_down {}
-
                 // Update the visual location of the edge.
                 let dragged_slot_side = *ctx.get_widget(held_entity).get::<WidgetSide>("side");
                 let dragged_slot_node_id = *ctx.get_widget(held_entity).get::<u32>("node_id");
@@ -229,16 +235,13 @@ impl NodeWorkspaceState {
     }
 
     fn handle_dropped_entity(&mut self, ctx: &mut Context) {
-        if self.mouse_down
-            || ctx
-                .widget()
-                .get::<DragDropEntity>("dragged_entity")
-                .is_none()
-        {
-            return;
-        }
+        let dropped_on_entity = *ctx.widget().get::<DragDropEntity>("dropped_on_entity");
 
-        match *ctx.widget().get::<DragDropEntity>("dropped_on_entity") {
+        // I'm pretty sure I need to use this dragged entity somewhere to know what slot to connect
+        // to what slot.
+        let _dragged_entity = self.most_recently_dragged;
+
+        match dropped_on_entity {
             Some(WidgetType::Slot(dropped_on_entity)) => {
                 let dropped_on_widget = ctx.get_widget(dropped_on_entity);
 
@@ -247,8 +250,10 @@ impl NodeWorkspaceState {
                 let dropped_on_slot = *dropped_on_widget.get::<u32>("slot_id");
 
                 let goal_position = {
-                    let node_margin = *ctx.child(&*dropped_on_node_id.to_string()).get::<Thickness>("my_margin");
-                    let node_pos = Point{
+                    let node_margin = *ctx
+                        .child(&*dropped_on_node_id.to_string())
+                        .get::<Thickness>("my_margin");
+                    let node_pos = Point {
                         x: node_margin.left,
                         y: node_margin.top,
                     };
@@ -256,38 +261,34 @@ impl NodeWorkspaceState {
                 };
 
                 for edge_entity in self.get_dragged_edges(ctx) {
-                    dbg!("HEJ");
                     let mut edge_widget = ctx.get_widget(edge_entity);
 
                     match dropped_on_side {
                         WidgetSide::Input => {
-                            edge_widget.set::<u32>("input_node", *edge_widget.get::<u32>("input_node"));
-                            edge_widget.set::<u32>("input_slot", *edge_widget.get::<u32>("input_slot"));
+                            edge_widget
+                                .set::<u32>("input_node", *edge_widget.get::<u32>("input_node"));
+                            edge_widget
+                                .set::<u32>("input_slot", *edge_widget.get::<u32>("input_slot"));
                             edge_widget.set::<Point>("input_point", goal_position);
                         }
                         WidgetSide::Output => {
-                            edge_widget.set::<u32>("output_node", *edge_widget.get::<u32>("output_node"));
-                            edge_widget.set::<u32>("output_slot", *edge_widget.get::<u32>("output_slot"));
+                            edge_widget
+                                .set::<u32>("output_node", *edge_widget.get::<u32>("output_node"));
+                            edge_widget
+                                .set::<u32>("output_slot", *edge_widget.get::<u32>("output_slot"));
                             edge_widget.set::<Point>("output_point", goal_position);
                         }
                     };
 
                     ctx.push_event(ChangedEvent(edge_entity));
                 }
-
             }
+            Some(WidgetType::Node(_dropped_on_entity)) => self.update_dragged_node(ctx),
             _ => self.remove_dragged_edges(ctx),
         };
 
-        self.update_dragged_node(ctx);
         ctx.widget()
             .set::<DragDropEntity>("dropped_on_entity", None);
-        ctx.widget().set::<DragDropEntity>("dragged_entity", None);
-    }
-
-    /// Refreshes the given `EdgeView` `Entity` based on the actual data in the `NodeGraphSpatial`
-    fn update_edge_pull (&mut self, ctx: &mut Context, edge_entity: Entity) {
-
     }
 
     fn get_dragged_edges(&mut self, ctx: &mut Context) -> Vec<Entity> {

@@ -24,11 +24,15 @@ impl Template for NodeWorkspaceView {
                 false
             })
             .on_mouse_down(move |states, _| {
-                states.get_mut::<NodeWorkspaceState>(id).mouse_down();
+                states
+                    .get_mut::<NodeWorkspaceState>(id)
+                    .mouse_action(MouseAction::MousePressed);
                 false
             })
             .on_mouse_up(move |states, _| {
-                states.get_mut::<NodeWorkspaceState>(id).mouse_up();
+                states
+                    .get_mut::<NodeWorkspaceState>(id)
+                    .mouse_action(MouseAction::MouseReleased);
                 false
             })
     }

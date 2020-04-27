@@ -1,9 +1,21 @@
 use orbtk::prelude::*;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, PartialEq, Debug)]
 pub enum MouseAction {
     MousePressed,
     MouseReleased,
+}
+
+#[derive(Copy, Clone, PartialEq, Debug)]
+pub enum MouseState {
+    Down,
+    Up,
+}
+
+impl Default for MouseState {
+    fn default() -> Self {
+        Self::Up
+    }
 }
 
 #[derive(Debug, Copy, Clone, PartialEq)]
