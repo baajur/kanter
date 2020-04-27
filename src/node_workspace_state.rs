@@ -98,10 +98,12 @@ impl NodeWorkspaceState {
                 if !self.mouse_down {}
 
                 // Update the visual location of the edge.
-                let held_slot_side = *ctx.get_widget(held_entity).get::<WidgetSide>("side");
-                match held_slot_side {
+                let dragged_slot_side = *ctx.get_widget(held_entity).get::<WidgetSide>("side");
+                let dragged_slot_node_id = *ctx.get_widget(held_entity).get::<u32>("node_id");
+                let dragged_slot_id = *ctx.get_widget(held_entity).get::<u32>("slot_id");
+                match dragged_slot_side {
                     WidgetSide::Input => {
-                        let edge: Entity = *self
+                        let edge_option: Option<Entity> = self
                             .get_child_edges(ctx)
                             .iter()
                             .find(|entity| {
@@ -110,15 +112,50 @@ impl NodeWorkspaceState {
                                 let edge_input_node = *widget.get::<u32>("input_node");
                                 let edge_input_slot = *widget.get::<u32>("input_slot");
 
-                                let slot_input_node =
-                                    *ctx.get_widget(held_entity).get::<u32>("node_id");
-                                let slot_id = *ctx.get_widget(held_entity).get::<u32>("slot_id");
-
-                                edge_input_node == slot_input_node && edge_input_slot == slot_id
+                                edge_input_node == dragged_slot_node_id
+                                    && edge_input_slot == dragged_slot_id
                             })
-                            .expect("Tried grabbing an edge, but it didn't exist");
+                            .copied();
 
-                        ctx.get_widget(edge).set::<Point>(
+                        let edge_entity = match edge_option {
+                            Some(entity) => entity,
+                            None => {
+                                let mouse_position = Point {
+                                    x: self.mouse_position.0,
+                                    y: self.mouse_position.1,
+                                };
+
+                                let input_node_margin = *ctx
+                                    .child(&*dragged_slot_node_id.to_string())
+                                    .get::<Thickness>("my_margin");
+                                let input_node_pos = Point {
+                                    x: input_node_margin.left,
+                                    y: input_node_margin.top,
+                                };
+                                let input_position = Self::position_edge(
+                                    dragged_slot_side,
+                                    dragged_slot_id,
+                                    input_node_pos,
+                                );
+
+                                let bc = &mut ctx.build_context();
+                                let item = EdgeView::create()
+                                    .id("edge")
+                                    .output_point(input_position)
+                                    .input_point(mouse_position)
+                                    .output_node(0)
+                                    .input_node(dragged_slot_node_id)
+                                    .output_slot(0)
+                                    .input_slot(dragged_slot_id)
+                                    .build(bc);
+
+                                bc.append_child(self.node_workspace, item);
+
+                                *self.get_child_edges(ctx).iter().rev().next().unwrap()
+                            }
+                        };
+
+                        ctx.get_widget(edge_entity).set::<Point>(
                             "input_point",
                             Point {
                                 x: self.mouse_position.0,
@@ -153,7 +190,7 @@ impl NodeWorkspaceState {
                     }
                 };
             }
-            _ => return,
+            _ => {}
         };
     }
 
@@ -169,7 +206,7 @@ impl NodeWorkspaceState {
         // dbg!(*ctx.widget().get::<DragDropEntity>("dropped_on_entity"));
 
         match *ctx.widget().get::<DragDropEntity>("dropped_on_entity") {
-            Some(WidgetType::Slot(dropped_on_entity)) => {
+            Some(WidgetType::Slot(_dropped_on_entity)) => {
                 // let dropped_on_node_id = *dropped_on_entity.get::<u32>("node_id");
                 // let dropped_on_side = *dropped_on_entity.get::<WidgetSide>("side");
                 // let dropped_on_slot = *dropped_on_entity.get::<u32>("slot_id");
@@ -285,8 +322,9 @@ impl NodeWorkspaceState {
                 output_slot,
                 input_slot,
             );
-            dbg!(dragged_edge_entity);
+            // dbg!(dragged_edge_entity);
             ctx.remove_child(dragged_edge_entity);
+            // dbg!(ctx.remove_widget_list());
         }
     }
 

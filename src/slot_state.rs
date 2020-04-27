@@ -27,14 +27,13 @@ impl State for SlotState {
                         .set("dragged_entity", Some(WidgetType::Slot(entity)));
                 }
                 MouseAction::MouseReleased => {
-                    let mut bounds = ctx.widget().get::<Rectangle>("bounds").clone();
+                    let mut bounds = *ctx.widget().get::<Rectangle>("bounds");
                     bounds.x = ctx.widget().get::<Point>("position").x;
                     bounds.y = ctx.widget().get::<Point>("position").y;
 
                     let mouse_pos = (self.mouse_position.x, self.mouse_position.y);
 
                     if bounds.contains(mouse_pos) {
-                        dbg!("yes its on");
                         let entity = ctx.widget().entity();
                         ctx.parent_from_id("node_workspace")
                             .set("dropped_on_entity", Some(WidgetType::Slot(entity)));
