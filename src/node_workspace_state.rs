@@ -44,6 +44,7 @@ impl State for NodeWorkspaceState {
 
     fn update(&mut self, _: &mut Registry, ctx: &mut Context<'_>) {
         self.handle_dragged_entity(ctx);
+        self.handle_dropped_entity(ctx);
 
         if !ctx.widget().get::<String16>("path_load").is_empty() {
             self.load_graph(ctx);
@@ -54,10 +55,6 @@ impl State for NodeWorkspaceState {
             self.save_graph(ctx);
             ctx.widget().set::<String16>("path_save", String16::new());
         }
-    }
-
-    fn update_post_layout(&mut self, _: &mut Registry, ctx: &mut Context<'_>) {
-        self.handle_dropped_entity(ctx);
     }
 }
 
@@ -91,7 +88,7 @@ impl NodeWorkspaceState {
                     },
                 );
 
-                self.refresh_edges(ctx, held_entity);
+                self.refresh_edges_of_node(ctx, held_entity);
             }
             Some(WidgetType::Slot(held_entity)) => {
                 // Update the edge connection in the struct.
@@ -240,37 +237,44 @@ impl NodeWorkspaceState {
         {
             return;
         }
-        // dbg!(*ctx.widget().get::<DragDropEntity>("dropped_on_entity"));
 
         match *ctx.widget().get::<DragDropEntity>("dropped_on_entity") {
-            Some(WidgetType::Slot(_dropped_on_entity)) => {
-                // let dropped_on_node_id = *dropped_on_entity.get::<u32>("node_id");
-                // let dropped_on_side = *dropped_on_entity.get::<WidgetSide>("side");
-                // let dropped_on_slot = *dropped_on_entity.get::<u32>("slot_id");
+            Some(WidgetType::Slot(dropped_on_entity)) => {
+                let dropped_on_widget = ctx.get_widget(dropped_on_entity);
 
-                // let node_margin = ctx.get_widget(node_id.to_string()).get::<Thickness>("my_margin");
-                // let node_pos = Point{
-                //     x: node_margin.left,
-                //     y: node_margin.top,
-                // };
+                let dropped_on_node_id = *dropped_on_widget.get::<u32>("node_id");
+                let dropped_on_side = *dropped_on_widget.get::<WidgetSide>("side");
+                let dropped_on_slot = *dropped_on_widget.get::<u32>("slot_id");
 
-                // let goal_position Self::position_edge(side, slot, node_pos);
+                let goal_position = {
+                    let node_margin = *ctx.child(&*dropped_on_node_id.to_string()).get::<Thickness>("my_margin");
+                    let node_pos = Point{
+                        x: node_margin.left,
+                        y: node_margin.top,
+                    };
+                    Self::position_edge(dropped_on_side, dropped_on_slot, node_pos)
+                };
 
-                // for entity in self.get_child_edges(ctx) {
-                //     let widget = ctx.get_widget(entity);
+                for edge_entity in self.get_dragged_edges(ctx) {
+                    dbg!("HEJ");
+                    let mut edge_widget = ctx.get_widget(edge_entity);
 
-                //     let w_node_id = widget.get::<u32>("node_id");
-                //     let w_side = widget.get::<WidgetSide>("side");
-                //     let w_slot = widget.get::<u32>("slot");
+                    match dropped_on_side {
+                        WidgetSide::Input => {
+                            edge_widget.set::<u32>("input_node", *edge_widget.get::<u32>("input_node"));
+                            edge_widget.set::<u32>("input_slot", *edge_widget.get::<u32>("input_slot"));
+                            edge_widget.set::<Point>("input_point", goal_position);
+                        }
+                        WidgetSide::Output => {
+                            edge_widget.set::<u32>("output_node", *edge_widget.get::<u32>("output_node"));
+                            edge_widget.set::<u32>("output_slot", *edge_widget.get::<u32>("output_slot"));
+                            edge_widget.set::<Point>("output_point", goal_position);
+                        }
+                    };
 
-                //     if w_node_id != node_id
-                //         || w_side != side
-                //         || w_slot != slot {
-                //         continue
-                //     }
+                    ctx.push_event(ChangedEvent(edge_entity));
+                }
 
-                //     widget.set::
-                // }
             }
             _ => self.remove_dragged_edges(ctx),
         };
@@ -279,6 +283,11 @@ impl NodeWorkspaceState {
         ctx.widget()
             .set::<DragDropEntity>("dropped_on_entity", None);
         ctx.widget().set::<DragDropEntity>("dragged_entity", None);
+    }
+
+    /// Refreshes the given `EdgeView` `Entity` based on the actual data in the `NodeGraphSpatial`
+    fn update_edge_pull (&mut self, ctx: &mut Context, edge_entity: Entity) {
+
     }
 
     fn get_dragged_edges(&mut self, ctx: &mut Context) -> Vec<Entity> {
@@ -401,14 +410,16 @@ impl NodeWorkspaceState {
             .collect()
     }
 
-    fn refresh_edges(&mut self, ctx: &mut Context, entity: Entity) {
-        let widget = ctx.get_widget(entity);
-        let node_id = *widget.get::<u32>("node_id");
-        let edges: Vec<Entity> = self.get_edges_of_node(ctx, node_id);
+    /// Visually refreshes all `EdgeView` widgets connected to the given `Entity` based on what's
+    /// seen in the GUI, not from the actual data.
+    fn refresh_edges_of_node(&mut self, ctx: &mut Context, node_entity: Entity) {
+        let node_widget = ctx.get_widget(node_entity);
+        let node_id = *node_widget.get::<u32>("node_id");
+        let edge_entities: Vec<Entity> = self.get_edges_of_node(ctx, node_id);
 
-        for edge in edges {
+        for edge_entity in edge_entities {
             let (output_node, input_node, output_slot, input_slot) = {
-                let edge_widget = ctx.get_widget(edge);
+                let edge_widget = ctx.get_widget(edge_entity);
                 (
                     *edge_widget.get::<u32>("output_node"),
                     *edge_widget.get::<u32>("input_node"),
@@ -425,7 +436,7 @@ impl NodeWorkspaceState {
             };
 
             // let mut child = ctx.child_from_index(i);
-            let mut edge_widget = ctx.get_widget(edge);
+            let mut edge_widget = ctx.get_widget(edge_entity);
             if output_node == node_id {
                 edge_widget.set(
                     "output_point",
