@@ -33,6 +33,7 @@ impl State for NodeState {
                 MouseAction::MouseReleased => {}
             }
         }
+        self.mouse_action = None;
     }
 }
 

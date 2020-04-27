@@ -44,7 +44,6 @@ impl State for NodeWorkspaceState {
 
     fn update(&mut self, _: &mut Registry, ctx: &mut Context<'_>) {
         self.handle_dragged_entity(ctx);
-        self.handle_dropped_entity(ctx);
 
         if !ctx.widget().get::<String16>("path_load").is_empty() {
             self.load_graph(ctx);
@@ -55,6 +54,10 @@ impl State for NodeWorkspaceState {
             self.save_graph(ctx);
             ctx.widget().set::<String16>("path_save", String16::new());
         }
+    }
+
+    fn update_post_layout(&mut self, _: &mut Registry, ctx: &mut Context<'_>) {
+        self.handle_dropped_entity(ctx);
     }
 }
 
@@ -163,6 +166,7 @@ impl NodeWorkspaceState {
         {
             return;
         }
+        // dbg!(*ctx.widget().get::<DragDropEntity>("dropped_on_entity"));
 
         match *ctx.widget().get::<DragDropEntity>("dropped_on_entity") {
             Some(WidgetType::Slot(dropped_on_entity)) => {
@@ -198,23 +202,58 @@ impl NodeWorkspaceState {
         };
 
         self.update_dragged_node(ctx);
+        ctx.widget()
+            .set::<DragDropEntity>("dropped_on_entity", None);
         ctx.widget().set::<DragDropEntity>("dragged_entity", None);
     }
 
     fn get_dragged_edges(&mut self, ctx: &mut Context) -> Vec<Entity> {
-        let dragged_slot_entity = match *ctx.widget().get::<DragDropEntity>("dragged_entity") {
+        let slot_entity = match *ctx.widget().get::<DragDropEntity>("dragged_entity") {
             Some(WidgetType::Slot(entity)) => entity,
             _ => return Vec::new(),
+        };
+
+        self.get_edges_in_slot(ctx, slot_entity)
+    }
+
+    fn get_edges_in_slot(&mut self, ctx: &mut Context, slot_entity: Entity) -> Vec<Entity> {
+        let slot_widget = ctx.get_widget(slot_entity);
+
+        let (slot_node_id, slot_id, slot_side) = {
+            (
+                *slot_widget.get::<u32>("node_id"),
+                *slot_widget.get::<u32>("slot_id"),
+                *slot_widget.get::<WidgetSide>("side"),
+            )
         };
 
         self.get_child_edges(ctx)
             .iter()
             .filter(|entity| {
-                let widget = ctx.get_widget(**entity);
-                let edge_output_node = *widget.get::<u32>("output_node");
-                let slot_output_node = *ctx.get_widget(dragged_slot_entity).get::<u32>("node_id");
+                let edge_widget = ctx.get_widget(**entity);
 
-                edge_output_node == slot_output_node
+                let (
+                    edge_output_node_id,
+                    edge_input_node_id,
+                    edge_output_slot_id,
+                    edge_input_slot_id,
+                ) = {
+                    (
+                        *edge_widget.get::<u32>("output_node"),
+                        *edge_widget.get::<u32>("input_node"),
+                        *edge_widget.get::<u32>("output_slot"),
+                        *edge_widget.get::<u32>("input_slot"),
+                    )
+                };
+
+                match slot_side {
+                    WidgetSide::Input => {
+                        slot_node_id == edge_input_node_id && slot_id == edge_input_slot_id
+                    }
+                    WidgetSide::Output => {
+                        slot_node_id == edge_output_node_id && slot_id == edge_output_slot_id
+                    }
+                }
             })
             .copied()
             .collect()
@@ -246,7 +285,7 @@ impl NodeWorkspaceState {
                 output_slot,
                 input_slot,
             );
-
+            dbg!(dragged_edge_entity);
             ctx.remove_child(dragged_edge_entity);
         }
     }

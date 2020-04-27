@@ -4,11 +4,15 @@ use orbtk::prelude::*;
 #[derive(AsAny)]
 pub struct SlotState {
     pub mouse_action: Option<MouseAction>,
+    mouse_position: Point,
 }
 
 impl Default for SlotState {
     fn default() -> Self {
-        Self { mouse_action: None }
+        Self {
+            mouse_action: None,
+            mouse_position: Point { x: 0., y: 0. },
+        }
     }
 }
 
@@ -23,18 +27,28 @@ impl State for SlotState {
                         .set("dragged_entity", Some(WidgetType::Slot(entity)));
                 }
                 MouseAction::MouseReleased => {
-                    let entity = ctx.widget().entity();
+                    let mut bounds = ctx.widget().get::<Rectangle>("bounds").clone();
+                    bounds.x = ctx.widget().get::<Point>("position").x;
+                    bounds.y = ctx.widget().get::<Point>("position").y;
 
-                    ctx.parent_from_id("node_workspace")
-                        .set("dropped_on_entity", Some(WidgetType::Slot(entity)));
+                    let mouse_pos = (self.mouse_position.x, self.mouse_position.y);
+
+                    if bounds.contains(mouse_pos) {
+                        dbg!("yes its on");
+                        let entity = ctx.widget().entity();
+                        ctx.parent_from_id("node_workspace")
+                            .set("dropped_on_entity", Some(WidgetType::Slot(entity)));
+                    }
                 }
             }
         }
+        self.mouse_action = None;
     }
 }
 
 impl SlotState {
-    pub fn mouse_action(&mut self, mouse_action: MouseAction) {
+    pub fn mouse_action(&mut self, mouse_action: MouseAction, pos: Point) {
+        self.mouse_position = pos;
         self.mouse_action = Some(mouse_action);
     }
 }

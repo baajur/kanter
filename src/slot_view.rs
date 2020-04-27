@@ -35,17 +35,16 @@ impl Template for SlotView {
             .width(SLOT_SIZE)
             .height(SLOT_SIZE)
             .margin(margin)
-            .on_mouse_down(move |states, _| {
+            .on_mouse_down(move |states, p| {
                 states
                     .get_mut::<SlotState>(id)
-                    .mouse_action(MouseAction::MousePressed);
+                    .mouse_action(MouseAction::MousePressed, p);
                 false
             })
-            .on_mouse_up(move |states, _| {
+            .on_global_mouse_up(move |states, p| {
                 states
                     .get_mut::<SlotState>(id)
-                    .mouse_action(MouseAction::MouseReleased);
-                false
+                    .mouse_action(MouseAction::MouseReleased, p);
             })
             .child(MouseBehavior::create().enabled(id).target(id.0).build(ctx))
             .child(
