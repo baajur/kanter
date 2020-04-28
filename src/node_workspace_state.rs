@@ -110,120 +110,126 @@ impl NodeWorkspaceState {
                 let dragged_slot_node_id = *ctx.get_widget(held_entity).get::<u32>("node_id");
                 let dragged_slot_id = *ctx.get_widget(held_entity).get::<u32>("slot_id");
 
-                match dragged_slot_side {
-                    WidgetSide::Input => {
-                        let dragged_edges = self.get_dragged_edges(ctx);
-
-                        let edge_entity = if dragged_edges.is_empty() {
-                            let mouse_position = Point {
-                                x: self.mouse_position.0,
-                                y: self.mouse_position.1,
-                            };
-
-                            let input_node_margin = *ctx
-                                .child(&*dragged_slot_node_id.to_string())
-                                .get::<Thickness>("my_margin");
-                            let input_node_pos = Point {
-                                x: input_node_margin.left,
-                                y: input_node_margin.top,
-                            };
-                            let input_position = Self::position_edge(
-                                dragged_slot_side,
-                                dragged_slot_id,
-                                input_node_pos,
-                            );
-
-                            let bc = &mut ctx.build_context();
-                            let item = EdgeView::create()
-                                .id("edge")
-                                .output_point(mouse_position)
-                                .input_point(input_position)
-                                .output_node(0)
-                                .input_node(dragged_slot_node_id)
-                                .output_slot(0)
-                                .input_slot(dragged_slot_id)
-                                .build(bc);
-
-                            bc.append_child(self.node_workspace, item);
-
-                            *self.get_child_edges(ctx).iter().rev().next().unwrap()
-                        } else {
-                            dragged_edges[0]
-                        };
-
-                        ctx.get_widget(edge_entity).set::<Point>(
-                            "output_point",
-                            Point {
-                                x: self.mouse_position.0,
-                                y: self.mouse_position.1,
-                            },
-                        );
-                    }
-                    WidgetSide::Output => {
-                        let mut held_edges: Vec<Entity> = self
-                            .get_child_edges(ctx)
-                            .iter()
-                            .filter(|entity| {
-                                let widget = ctx.get_widget(**entity);
-                                let edge_output_node = *widget.get::<u32>("output_node");
-                                let slot_output_node =
-                                    *ctx.get_widget(held_entity).get::<u32>("node_id");
-
-                                edge_output_node == slot_output_node
-                            })
-                            .copied()
-                            .collect();
-
-                        if held_edges.is_empty() {
-                            let mouse_position = Point {
-                                x: self.mouse_position.0,
-                                y: self.mouse_position.1,
-                            };
-
-                            let output_node_margin = *ctx
-                                .child(&*dragged_slot_node_id.to_string())
-                                .get::<Thickness>("my_margin");
-                            let output_node_pos = Point {
-                                x: output_node_margin.left,
-                                y: output_node_margin.top,
-                            };
-                            let output_position = Self::position_edge(
-                                dragged_slot_side,
-                                dragged_slot_id,
-                                output_node_pos,
-                            );
-
-                            let bc = &mut ctx.build_context();
-                            let item = EdgeView::create()
-                                .id("edge")
-                                .output_point(output_position)
-                                .input_point(mouse_position)
-                                .output_node(dragged_slot_node_id)
-                                .input_node(0)
-                                .output_slot(dragged_slot_id)
-                                .input_slot(0)
-                                .build(bc);
-
-                            bc.append_child(self.node_workspace, item);
-
-                            let edge_entity =
-                                *self.get_child_edges(ctx).iter().rev().next().unwrap();
-                            held_edges.push(edge_entity);
-                        }
-
-                        for edge in &mut held_edges {
-                            ctx.get_widget(*edge).set::<Point>(
-                                "input_point",
-                                Point {
-                                    x: self.mouse_position.0,
-                                    y: self.mouse_position.1,
-                                },
-                            );
-                        }
-                    }
-                };
+                self.snap_edge_to_mouse(
+                    ctx,
+                    dragged_slot_node_id,
+                    dragged_slot_side,
+                    dragged_slot_id,
+                );
             }
             _ => {}
+        };
+    }
+
+    fn snap_edge_to_mouse(
+        &mut self,
+        ctx: &mut Context,
+        node_id: u32,
+        side: WidgetSide,
+        slot_id: u32,
+    ) {
+        match side {
+            WidgetSide::Input => {
+                let dragged_edges = self.get_dragged_edges(ctx);
+
+                let edge_entity = if dragged_edges.is_empty() {
+                    let mouse_position = Point {
+                        x: self.mouse_position.0,
+                        y: self.mouse_position.1,
+                    };
+
+                    let input_node_margin = *ctx
+                        .child(&*node_id.to_string())
+                        .get::<Thickness>("my_margin");
+                    let input_node_pos = Point {
+                        x: input_node_margin.left,
+                        y: input_node_margin.top,
+                    };
+                    let input_position = Self::position_edge(side, slot_id, input_node_pos);
+
+                    let bc = &mut ctx.build_context();
+                    let item = EdgeView::create()
+                        .id("edge")
+                        .output_point(mouse_position)
+                        .input_point(input_position)
+                        .output_node(0)
+                        .input_node(node_id)
+                        .output_slot(0)
+                        .input_slot(slot_id)
+                        .build(bc);
+
+                    bc.append_child(self.node_workspace, item);
+
+                    *self.get_child_edges(ctx).iter().rev().next().unwrap()
+                } else {
+                    dragged_edges[0]
+                };
+
+                let slot_occupied = self.node_graph_spatial.node_graph.slot_occupied(
+                    NodeId(slot_id),
+                    side.into(),
+                    SlotId(slot_id),
+                );
+                let edge_side_to_grab = if !slot_occupied {
+                    "input_point"
+                } else {
+                    "output_point"
+                };
+
+                ctx.get_widget(edge_entity).set::<Point>(
+                    edge_side_to_grab,
+                    Point {
+                        x: self.mouse_position.0,
+                        y: self.mouse_position.1,
+                    },
+                );
+            }
+            WidgetSide::Output => {
+                let dragged_edges = self.get_dragged_edges(ctx);
+
+                let edge_entities = if dragged_edges.is_empty() {
+                    let mouse_position = Point {
+                        x: self.mouse_position.0,
+                        y: self.mouse_position.1,
+                    };
+
+                    let output_node_margin = *ctx
+                        .child(&*node_id.to_string())
+                        .get::<Thickness>("my_margin");
+                    let output_node_pos = Point {
+                        x: output_node_margin.left,
+                        y: output_node_margin.top,
+                    };
+                    let output_position = Self::position_edge(side, slot_id, output_node_pos);
+
+                    let bc = &mut ctx.build_context();
+                    let item = EdgeView::create()
+                        .id("edge")
+                        .output_point(output_position)
+                        .input_point(mouse_position)
+                        .output_node(node_id)
+                        .input_node(0)
+                        .output_slot(slot_id)
+                        .input_slot(0)
+                        .build(bc);
+
+                    bc.append_child(self.node_workspace, item);
+
+                    vec![*self.get_child_edges(ctx).iter().rev().next().unwrap()]
+                } else {
+                    dragged_edges
+                };
+
+                for edge in edge_entities {
+                    ctx.get_widget(edge).set::<Point>(
+                        "input_point",
+                        Point {
+                            x: self.mouse_position.0,
+                            y: self.mouse_position.1,
+                        },
+                    );
+                }
+            }
         };
     }
 
