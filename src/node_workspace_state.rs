@@ -21,6 +21,7 @@ pub struct NodeWorkspaceState {
     mouse_action_previous: Option<MouseAction>,
     node_graph_spatial: NodeGraphSpatial,
     most_recently_dragged: OptionDragDropEntity,
+    dragged_edges: (Vec<Entity>, WidgetSide),
 }
 
 #[derive(Serialize, Deserialize)]
@@ -109,7 +110,16 @@ impl NodeWorkspaceState {
                 self.grab_slot_edge(ctx, dragged_entity.entity);
                 // TODO: Update slot in node_graph
             }
-            WidgetType::Edge => todo!(),
+            WidgetType::Edge => {
+                let dragged_edges = self.dragged_edges.0.to_owned();
+                let mouse_point = Point {
+                    x: self.mouse_position.0,
+                    y: self.mouse_position.1,
+                };
+                for edge_entity in dragged_edges {
+                    self.move_edge_side(ctx, edge_entity, self.dragged_edges.1, mouse_point);
+                }
+            }
         };
     }
 
@@ -187,38 +197,51 @@ impl NodeWorkspaceState {
         // TODO: This currently spams an edge every frame when grabbing an output, going to refactor
         // this so when you grab a slot, it swaps out the slot for the edge your holding, that
         // should solve this issue.
-        let edge_entities = match slot_side {
+        let dragged_edges = match slot_side {
             WidgetSide::Input => {
                 let dragged_edges = self.get_dragged_edges(ctx);
 
                 if dragged_edges.is_empty() {
-                    vec![self.create_new_edge(
-                        ctx,
-                        slot_node_id,
-                        slot_side,
-                        slot_id,
-                        None,
-                        None,
-                        Some(mouse_position),
-                    )]
+                    (
+                        vec![self.create_new_edge(
+                            ctx,
+                            slot_node_id,
+                            slot_side,
+                            slot_id,
+                            None,
+                            None,
+                            Some(mouse_position),
+                        )],
+                        WidgetSide::Input,
+                    )
                 } else {
-                    dragged_edges
+                    (dragged_edges, WidgetSide::Input)
                 }
             }
-            WidgetSide::Output => vec![self.create_new_edge(
-                ctx,
-                slot_node_id,
-                slot_side,
-                slot_id,
-                None,
-                None,
-                Some(mouse_position),
-            )],
+            WidgetSide::Output => (
+                vec![self.create_new_edge(
+                    ctx,
+                    slot_node_id,
+                    slot_side,
+                    slot_id,
+                    None,
+                    None,
+                    Some(mouse_position),
+                )],
+                WidgetSide::Output,
+            ),
         };
 
-        for edge_entity in edge_entities {
-            self.move_edge_side(ctx, edge_entity, slot_side, mouse_position);
+        ctx.widget().set::<OptionDragDropEntity>(
+            "dragged_entity",
+            Some(DragDropEntity::new(WidgetType::Edge, Entity(0))),
+        );
+
+        for edge_entity in &dragged_edges.0 {
+            self.move_edge_side(ctx, *edge_entity, slot_side, mouse_position);
         }
+
+        self.dragged_edges = dragged_edges;
     }
 
     fn handle_dropped_entity(&mut self, ctx: &mut Context) {
