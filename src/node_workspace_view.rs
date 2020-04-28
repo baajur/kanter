@@ -1,13 +1,11 @@
 use crate::{node_workspace_state::NodeWorkspaceState, shared::*};
 use orbtk::prelude::*;
 
-pub type DragDropEntity = Option<WidgetType>;
-
 widget!(
     NodeWorkspaceView<NodeWorkspaceState>: MouseHandler {
         count: usize,
-        dragged_entity: DragDropEntity,
-        dropped_on_entity: DragDropEntity,
+        dragged_entity: OptionDragDropEntity,
+        dropped_on_entity: OptionDragDropEntity,
         path_load: String16,
         path_save: String16
     }

@@ -24,7 +24,10 @@ impl State for SlotState {
                     let entity = ctx.widget().entity();
 
                     ctx.parent_from_id("node_workspace")
-                        .set("dragged_entity", Some(WidgetType::Slot(entity)));
+                        .set::<OptionDragDropEntity>(
+                            "dragged_entity",
+                            Some(DragDropEntity::new(WidgetType::Slot, entity)),
+                        );
                 }
                 MouseAction::MouseReleased => {
                     let mut bounds = *ctx.widget().get::<Rectangle>("bounds");
@@ -38,7 +41,7 @@ impl State for SlotState {
                         let mut node_workspace = ctx.parent_from_id("node_workspace");
                         // let node_workspace_entity = node_workspace.entity();
 
-                        node_workspace.set("dropped_on_entity", Some(WidgetType::Slot(entity)));
+                        node_workspace.set("dropped_on_entity", Some((WidgetType::Slot, entity)));
 
                         // ctx.push_event_strategy(ChangedEvent(node_workspace_entity), EventStrategy::Direct);
                     }

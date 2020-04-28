@@ -9,8 +9,8 @@ pub enum MouseAction {
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum WidgetType {
-    Node(Entity),
-    Slot(Entity),
+    Node,
+    Slot,
     Edge,
 }
 into_property_source!(WidgetType);
@@ -42,3 +42,21 @@ impl Into<Side> for WidgetSide {
         }
     }
 }
+
+#[derive(Copy, Clone, Debug, Default, AsAny)]
+pub struct DragDropEntity {
+    pub widget_type: WidgetType,
+    pub entity: Entity,
+}
+into_property_source!(DragDropEntity);
+
+impl DragDropEntity {
+    pub fn new(widget_type: WidgetType, entity: Entity) -> Self {
+        Self {
+            widget_type,
+            entity,
+        }
+    }
+}
+
+pub(crate) type OptionDragDropEntity = Option<DragDropEntity>;

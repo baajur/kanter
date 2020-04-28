@@ -28,7 +28,10 @@ impl State for NodeState {
                 MouseAction::MousePressed => {
                     let entity = ctx.widget().entity();
                     ctx.parent_from_id("node_workspace")
-                        .set("dragged_entity", Some(WidgetType::Node(entity)));
+                        .set::<OptionDragDropEntity>(
+                            "dragged_entity",
+                            Some(DragDropEntity::new(WidgetType::Node, entity)),
+                        );
                 }
                 MouseAction::MouseReleased => {}
             }
