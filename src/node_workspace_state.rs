@@ -105,132 +105,119 @@ impl NodeWorkspaceState {
                 self.refresh_edges_of_node(ctx, held_entity);
             }
             Some(WidgetType::Slot(held_entity)) => {
-                // Update the visual location of the edge.
-                let dragged_slot_side = *ctx.get_widget(held_entity).get::<WidgetSide>("side");
-                let dragged_slot_node_id = *ctx.get_widget(held_entity).get::<u32>("node_id");
-                let dragged_slot_id = *ctx.get_widget(held_entity).get::<u32>("slot_id");
-
-                self.snap_edge_to_mouse(
-                    ctx,
-                    dragged_slot_node_id,
-                    dragged_slot_side,
-                    dragged_slot_id,
-                );
+                self.grab_slot_edge(ctx, held_entity);
+                // TODO: Update slot in node_graph
             }
             _ => {}
         };
     }
 
-    fn snap_edge_to_mouse(
+    fn create_new_edge(
         &mut self,
         ctx: &mut Context,
         node_id: u32,
         side: WidgetSide,
         slot_id: u32,
+        other_node_id: Option<u32>,
+        other_slot_id: Option<u32>,
+        other_point: Option<Point>,
+    ) -> Entity {
+        let node_margin = *ctx
+            .child(&*node_id.to_string())
+            .get::<Thickness>("my_margin");
+        let node_pos = Point {
+            x: node_margin.left,
+            y: node_margin.top,
+        };
+        let slot_position = Self::position_edge(side, slot_id, node_pos);
+
+        let bc = &mut ctx.build_context();
+        let item = match side {
+            WidgetSide::Input => EdgeView::create()
+                .id("edge")
+                .output_point(other_point.unwrap_or_default())
+                .input_point(slot_position)
+                .output_node(other_node_id.unwrap_or_default())
+                .input_node(node_id)
+                .output_slot(other_slot_id.unwrap_or_default())
+                .input_slot(slot_id)
+                .build(bc),
+            WidgetSide::Output => EdgeView::create()
+                .id("edge")
+                .output_point(slot_position)
+                .input_point(other_point.unwrap_or_default())
+                .output_node(node_id)
+                .input_node(other_node_id.unwrap_or_default())
+                .output_slot(slot_id)
+                .input_slot(other_slot_id.unwrap_or_default())
+                .build(bc),
+        };
+        bc.append_child(self.node_workspace, item);
+
+        *self.get_child_edges(ctx).iter().rev().next().unwrap()
+    }
+
+    fn move_edge_side(
+        &mut self,
+        ctx: &mut Context,
+        edge_entity: Entity,
+        side: WidgetSide,
+        position: Point,
     ) {
-        match side {
+        let side_string = match side {
+            WidgetSide::Input => "input_point",
+            WidgetSide::Output => "output_point",
+        };
+
+        ctx.get_widget(edge_entity)
+            .set::<Point>(side_string, position);
+    }
+
+    fn grab_slot_edge(&mut self, ctx: &mut Context, slot_entity: Entity) {
+        let slot_side = *ctx.get_widget(slot_entity).get::<WidgetSide>("side");
+        let slot_node_id = *ctx.get_widget(slot_entity).get::<u32>("node_id");
+        let slot_id = *ctx.get_widget(slot_entity).get::<u32>("slot_id");
+
+        let mouse_position = Point {
+            x: self.mouse_position.0,
+            y: self.mouse_position.1,
+        };
+
+        // TODO: This currently spams an edge every frame when grabbing an output, going to refactor
+        // this so when you grab a slot, it swaps out the slot for the edge your holding, that
+        // should solve this issue.
+        let edge_entities = match slot_side {
             WidgetSide::Input => {
                 let dragged_edges = self.get_dragged_edges(ctx);
 
-                let edge_entity = if dragged_edges.is_empty() {
-                    let mouse_position = Point {
-                        x: self.mouse_position.0,
-                        y: self.mouse_position.1,
-                    };
-
-                    let input_node_margin = *ctx
-                        .child(&*node_id.to_string())
-                        .get::<Thickness>("my_margin");
-                    let input_node_pos = Point {
-                        x: input_node_margin.left,
-                        y: input_node_margin.top,
-                    };
-                    let input_position = Self::position_edge(side, slot_id, input_node_pos);
-
-                    let bc = &mut ctx.build_context();
-                    let item = EdgeView::create()
-                        .id("edge")
-                        .output_point(mouse_position)
-                        .input_point(input_position)
-                        .output_node(0)
-                        .input_node(node_id)
-                        .output_slot(0)
-                        .input_slot(slot_id)
-                        .build(bc);
-
-                    bc.append_child(self.node_workspace, item);
-
-                    *self.get_child_edges(ctx).iter().rev().next().unwrap()
-                } else {
-                    dragged_edges[0]
-                };
-
-                let slot_occupied = self.node_graph_spatial.node_graph.slot_occupied(
-                    NodeId(slot_id),
-                    side.into(),
-                    SlotId(slot_id),
-                );
-                let edge_side_to_grab = if !slot_occupied {
-                    "input_point"
-                } else {
-                    "output_point"
-                };
-
-                ctx.get_widget(edge_entity).set::<Point>(
-                    edge_side_to_grab,
-                    Point {
-                        x: self.mouse_position.0,
-                        y: self.mouse_position.1,
-                    },
-                );
-            }
-            WidgetSide::Output => {
-                let dragged_edges = self.get_dragged_edges(ctx);
-
-                let edge_entities = if dragged_edges.is_empty() {
-                    let mouse_position = Point {
-                        x: self.mouse_position.0,
-                        y: self.mouse_position.1,
-                    };
-
-                    let output_node_margin = *ctx
-                        .child(&*node_id.to_string())
-                        .get::<Thickness>("my_margin");
-                    let output_node_pos = Point {
-                        x: output_node_margin.left,
-                        y: output_node_margin.top,
-                    };
-                    let output_position = Self::position_edge(side, slot_id, output_node_pos);
-
-                    let bc = &mut ctx.build_context();
-                    let item = EdgeView::create()
-                        .id("edge")
-                        .output_point(output_position)
-                        .input_point(mouse_position)
-                        .output_node(node_id)
-                        .input_node(0)
-                        .output_slot(slot_id)
-                        .input_slot(0)
-                        .build(bc);
-
-                    bc.append_child(self.node_workspace, item);
-
-                    vec![*self.get_child_edges(ctx).iter().rev().next().unwrap()]
+                if dragged_edges.is_empty() {
+                    vec![self.create_new_edge(
+                        ctx,
+                        slot_node_id,
+                        slot_side,
+                        slot_id,
+                        None,
+                        None,
+                        Some(mouse_position),
+                    )]
                 } else {
                     dragged_edges
-                };
-
-                for edge in edge_entities {
-                    ctx.get_widget(edge).set::<Point>(
-                        "input_point",
-                        Point {
-                            x: self.mouse_position.0,
-                            y: self.mouse_position.1,
-                        },
-                    );
                 }
             }
+            WidgetSide::Output => vec![self.create_new_edge(
+                ctx,
+                slot_node_id,
+                slot_side,
+                slot_id,
+                None,
+                None,
+                Some(mouse_position),
+            )],
         };
+
+        for edge_entity in edge_entities {
+            self.move_edge_side(ctx, edge_entity, slot_side, mouse_position);
+        }
     }
 
     fn handle_dropped_entity(&mut self, ctx: &mut Context) {
