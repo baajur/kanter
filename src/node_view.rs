@@ -5,7 +5,6 @@ widget!(
     NodeView<NodeState>: MouseHandler {
         title: String16,
         my_margin: Thickness,
-        node_workspace: Entity,
         node_id: u32,
         slot_count_input: usize,
         slot_count_output: usize

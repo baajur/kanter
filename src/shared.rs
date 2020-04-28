@@ -6,18 +6,6 @@ pub enum MouseAction {
     MouseReleased,
 }
 
-#[derive(Copy, Clone, PartialEq, Debug)]
-pub enum MouseState {
-    Down,
-    Up,
-}
-
-impl Default for MouseState {
-    fn default() -> Self {
-        Self::Up
-    }
-}
-
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum WidgetType {
     Node(Entity),
