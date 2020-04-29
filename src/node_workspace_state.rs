@@ -108,17 +108,9 @@ impl NodeWorkspaceState {
             }
             WidgetType::Slot => {
                 self.grab_slot_edge(ctx, dragged_entity.entity);
-                // TODO: Update slot in node_graph
             }
             WidgetType::Edge => {
-                let dragged_edges = self.dragged_edges.0.to_owned();
-                let mouse_point = Point {
-                    x: self.mouse_position.0,
-                    y: self.mouse_position.1,
-                };
-                for edge_entity in dragged_edges {
-                    self.move_edge_side(ctx, edge_entity, self.dragged_edges.1, mouse_point);
-                }
+                self.render_dragged_edges(ctx);
             }
         };
     }
@@ -168,6 +160,16 @@ impl NodeWorkspaceState {
         *self.get_child_edges(ctx).iter().rev().next().unwrap()
     }
 
+    fn render_dragged_edges(&mut self, ctx: &mut Context) {
+        let mouse_point = Point {
+            x: self.mouse_position.0,
+            y: self.mouse_position.1,
+        };
+        for edge_entity in self.dragged_edges.0.clone() {
+            self.move_edge_side(ctx, edge_entity, self.dragged_edges.1, mouse_point);
+        }
+    }
+
     fn move_edge_side(
         &mut self,
         ctx: &mut Context,
@@ -212,7 +214,7 @@ impl NodeWorkspaceState {
                             None,
                             Some(mouse_position),
                         )],
-                        WidgetSide::Input,
+                        WidgetSide::Output,
                     )
                 } else {
                     (dragged_edges, WidgetSide::Input)
@@ -228,7 +230,7 @@ impl NodeWorkspaceState {
                     None,
                     Some(mouse_position),
                 )],
-                WidgetSide::Output,
+                WidgetSide::Input,
             ),
         };
 
@@ -237,11 +239,8 @@ impl NodeWorkspaceState {
             Some(DragDropEntity::new(WidgetType::Edge, Entity(0))),
         );
 
-        for edge_entity in &dragged_edges.0 {
-            self.move_edge_side(ctx, *edge_entity, slot_side, mouse_position);
-        }
-
         self.dragged_edges = dragged_edges;
+        self.render_dragged_edges(ctx);
     }
 
     fn handle_dropped_entity(&mut self, ctx: &mut Context) {
@@ -312,10 +311,10 @@ impl NodeWorkspaceState {
                     ctx.push_event(ChangedEvent(edge_entity));
                 }
             }
-            WidgetType::Node => self.update_dragged_node(ctx),
+            WidgetType::Node => self.update_dragged_node(ctx), // TODO: Update slot in node_graph
             WidgetType::Edge => {
                 panic!("Somehow dropped something on an edge, should not be possible")
-            } // Dragged edges get deleted too early here, how do I know when to actually delete them???
+            }
         };
 
         ctx.widget()
@@ -381,7 +380,6 @@ impl NodeWorkspaceState {
 
     fn remove_dragged_edges(&mut self, ctx: &mut Context) {
         let dragged_edge_entities: Vec<Entity> = self.get_dragged_edges(ctx);
-        dbg!(&dragged_edge_entities);
 
         for dragged_edge_entity in dragged_edge_entities {
             let dragged_edge_widget = ctx.get_widget(dragged_edge_entity);
@@ -406,9 +404,7 @@ impl NodeWorkspaceState {
                 output_slot,
                 input_slot,
             );
-            // dbg!(dragged_edge_entity);
             ctx.remove_child(dragged_edge_entity);
-            // dbg!(ctx.remove_widget_list());
         }
     }
 
