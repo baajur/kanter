@@ -260,7 +260,10 @@ impl NodeWorkspaceState {
 
         let dropped_on_entity = match dropped_on_entity {
             Some(drag_drop_entity) => drag_drop_entity,
-            None => return,
+            None => {
+                self.remove_dragged_edges(ctx);
+                return;
+            }
         };
 
         // I'm pretty sure I need to use this dragged entity somewhere to know what slot to connect
@@ -310,7 +313,9 @@ impl NodeWorkspaceState {
                 }
             }
             WidgetType::Node => self.update_dragged_node(ctx),
-            WidgetType::Edge => self.remove_dragged_edges(ctx), // Dragged edges get deleted too early here, how do I know when to actually delete them???
+            WidgetType::Edge => {
+                panic!("Somehow dropped something on an edge, should not be possible")
+            } // Dragged edges get deleted too early here, how do I know when to actually delete them???
         };
 
         ctx.widget()
@@ -324,10 +329,10 @@ impl NodeWorkspaceState {
             return Vec::new();
         };
 
-        if most_recently_dragged.widget_type == WidgetType::Slot {
-            self.get_edges_in_slot(ctx, most_recently_dragged.entity)
-        } else {
-            Vec::new()
+        match most_recently_dragged.widget_type {
+            WidgetType::Slot => self.get_edges_in_slot(ctx, most_recently_dragged.entity),
+            WidgetType::Edge => self.dragged_edges.0.clone(),
+            _ => Vec::new(),
         }
     }
 
@@ -376,6 +381,7 @@ impl NodeWorkspaceState {
 
     fn remove_dragged_edges(&mut self, ctx: &mut Context) {
         let dragged_edge_entities: Vec<Entity> = self.get_dragged_edges(ctx);
+        dbg!(&dragged_edge_entities);
 
         for dragged_edge_entity in dragged_edge_entities {
             let dragged_edge_widget = ctx.get_widget(dragged_edge_entity);
