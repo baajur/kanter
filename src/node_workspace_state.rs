@@ -132,6 +132,8 @@ impl NodeWorkspaceState {
             Some(drag_drop_entity) => drag_drop_entity,
             None => {
                 self.remove_dragged_edges(ctx);
+                self.update_dragged_node_in_graph(ctx);
+                self.dragged_edges.0 = Vec::new();
                 return;
             }
         };
@@ -182,26 +184,26 @@ impl NodeWorkspaceState {
                     };
 
                     ctx.push_event(ChangedEvent(edge_entity));
-                    self.node_graph_spatial
-                        .node_graph
-                        .connect_arbitrary(
-                            NodeId(dropped_on_node_id),
-                            dropped_on_side.into(),
-                            SlotId(dropped_on_slot),
-                            NodeId(other_node_id),
-                            other_side,
-                            SlotId(other_slot_id),
-                        )
-                        .unwrap();
+                    let _ = self.node_graph_spatial.node_graph.connect_arbitrary(
+                        NodeId(dropped_on_node_id),
+                        dropped_on_side.into(),
+                        SlotId(dropped_on_slot),
+                        NodeId(other_node_id),
+                        other_side,
+                        SlotId(other_slot_id),
+                    );
                 }
                 self.update_slot_edges_from_graph(ctx, dropped_on_entity.entity);
             }
-            WidgetType::Node => self.update_dragged_node_in_graph(ctx),
+            WidgetType::Node => {
+                panic!("Somehow dropped something on a node, should not be possible")
+            }
             WidgetType::Edge => {
                 panic!("Somehow dropped something on an edge, should not be possible")
             }
         };
 
+        self.dragged_edges.0 = Vec::new();
         ctx.widget()
             .set::<OptionDragDropEntity>("dropped_on_entity", None);
     }
@@ -447,8 +449,6 @@ impl NodeWorkspaceState {
             );
             ctx.remove_child(dragged_edge_entity);
         }
-
-        self.dragged_edges.0 = Vec::new();
     }
 
     fn get_child_edges(&mut self, ctx: &mut Context) -> Vec<Entity> {
@@ -541,14 +541,17 @@ impl NodeWorkspaceState {
     }
 
     fn update_dragged_node_in_graph(&mut self, ctx: &mut Context) {
-        let dragged_entity = *ctx.widget().get::<OptionDragDropEntity>("dragged_entity");
-
-        let dragged_entity = match dragged_entity {
-            Some(drag_drop_entity) => drag_drop_entity,
-            None => return,
+        let dragged_entity = if let Some(drag_drop_entity) = self.most_recently_dragged {
+            if drag_drop_entity.widget_type == WidgetType::Node {
+                drag_drop_entity.entity
+            } else {
+                return;
+            }
+        } else {
+            return;
         };
 
-        self.update_node(ctx, dragged_entity.entity);
+        self.update_node(ctx, dragged_entity);
     }
 
     fn update_node(&mut self, ctx: &mut Context<'_>, entity: Entity) {
@@ -579,6 +582,9 @@ impl NodeWorkspaceState {
         let path = ctx.widget().get::<String16>("path_load").to_string();
         let file = File::open(path).unwrap();
         self.node_graph_spatial = serde_json::from_reader(file).unwrap();
+
+        self.most_recently_dragged = None;
+        self.dragged_edges.0 = Vec::new();
 
         self.populate_workspace(ctx);
     }
