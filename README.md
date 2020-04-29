@@ -1,5 +1,5 @@
 # Kanter
-A node based image editor for texture creation. It uses [Kanter Core](https://github.com/lukors/kanter_core) and [OrbTK](https://github.com/redox-os/orbtk).
+A node based image editor for texture creation. It uses [Kanter Core](https://github.com/lukors/kanter_core) and [OrbTk](https://github.com/redox-os/orbtk).
 
 # Focus
 - Responsiveness - It should be fast to start, and snappy to use
