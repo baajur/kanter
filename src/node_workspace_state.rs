@@ -9,7 +9,7 @@ use serde::{Deserialize, Serialize};
 use std::fs::File;
 use texture_processor::{
     node::{NodeType, Side},
-    node_graph::{NodeGraph, NodeId, SlotId},
+    node_graph::{Edge, NodeGraph, NodeId, SlotId},
 };
 
 #[derive(Default, AsAny)]
@@ -116,12 +116,11 @@ impl NodeWorkspaceState {
     }
 
     fn handle_dropped_entity(&mut self, ctx: &mut Context) {
-        let dragged_entity = *ctx.widget().get::<OptionDragDropEntity>("dragged_entity");
-
-        if self.mouse_action.is_some()
-            || self.mouse_action_previous.is_none()
-            || dragged_entity.is_some()
-        {
+        if let Some(mouse_action_previous) = self.mouse_action_previous {
+            if mouse_action_previous == MouseAction::MousePressed {
+                return;
+            }
+        } else {
             return;
         }
 
@@ -136,10 +135,6 @@ impl NodeWorkspaceState {
                 return;
             }
         };
-
-        // I'm pretty sure I need to use this dragged entity somewhere to know what slot to connect
-        // to what slot.
-        let _dragged_entity = self.most_recently_dragged;
 
         match dropped_on_entity.widget_type {
             WidgetType::Slot => {
@@ -199,8 +194,9 @@ impl NodeWorkspaceState {
                         )
                         .unwrap();
                 }
+                self.update_slot_edges_from_graph(ctx, dropped_on_entity.entity);
             }
-            WidgetType::Node => self.update_dragged_node(ctx),
+            WidgetType::Node => self.update_dragged_node_in_graph(ctx),
             WidgetType::Edge => {
                 panic!("Somehow dropped something on an edge, should not be possible")
             }
@@ -208,6 +204,37 @@ impl NodeWorkspaceState {
 
         ctx.widget()
             .set::<OptionDragDropEntity>("dropped_on_entity", None);
+    }
+
+    /// Updates all edges connected to the given `slot_entity` using the data in the graph.
+    fn update_slot_edges_from_graph(&mut self, ctx: &mut Context, slot_entity: Entity) {
+        self.remove_edges_in_slot(ctx, slot_entity);
+        let slot_widget = ctx.get_widget(slot_entity);
+
+        let node_id = *slot_widget.get::<u32>("node_id");
+        let slot_id = *slot_widget.get::<u32>("slot_id");
+        let side: Side = (*slot_widget.get::<WidgetSide>("side")).into();
+
+        let edges_to_create: Vec<Edge> = self
+            .node_graph_spatial
+            .node_graph
+            .edges_in_slot(NodeId(node_id), side, SlotId(slot_id))
+            .iter()
+            .map(|(_, edge)| **edge)
+            .collect();
+
+        for edge in edges_to_create {
+            self.create_edge(&mut ctx.build_context(), &edge);
+        }
+    }
+
+    /// Removes all visual edges connected to a slot.
+    fn remove_edges_in_slot(&mut self, ctx: &mut Context, slot_entity: Entity) {
+        let edge_entities = self.get_edges_in_slot(ctx, slot_entity);
+
+        for edge in edge_entities {
+            ctx.remove_child(edge);
+        }
     }
 
     fn create_new_edge(
@@ -420,6 +447,8 @@ impl NodeWorkspaceState {
             );
             ctx.remove_child(dragged_edge_entity);
         }
+
+        self.dragged_edges.0 = Vec::new();
     }
 
     fn get_child_edges(&mut self, ctx: &mut Context) -> Vec<Entity> {
@@ -511,7 +540,7 @@ impl NodeWorkspaceState {
         }
     }
 
-    fn update_dragged_node(&mut self, ctx: &mut Context) {
+    fn update_dragged_node_in_graph(&mut self, ctx: &mut Context) {
         let dragged_entity = *ctx.widget().get::<OptionDragDropEntity>("dragged_entity");
 
         let dragged_entity = match dragged_entity {
@@ -625,49 +654,52 @@ impl NodeWorkspaceState {
     }
 
     fn populate_edges(&mut self, bc: &mut BuildContext) {
-        for edge in &self.node_graph_spatial.node_graph.edges {
-            let output_node_pos = self
-                .node_graph_spatial
-                .locations
-                .iter()
-                .find(|loc| loc.node_id == edge.output_id)
-                .expect("Could not find output node location")
-                .point;
-            let output_node_pos = Point {
-                x: output_node_pos.0,
-                y: output_node_pos.1,
-            };
-
-            let input_node_pos = self
-                .node_graph_spatial
-                .locations
-                .iter()
-                .find(|loc| loc.node_id == edge.input_id)
-                .expect("Could not find input node location")
-                .point;
-            let input_node_pos = Point {
-                x: input_node_pos.0,
-                y: input_node_pos.1,
-            };
-
-            let output_slot = edge.output_slot.0;
-            let input_slot = edge.input_slot.0;
-
-            let output_point =
-                Self::position_edge(WidgetSide::Output, output_slot, output_node_pos);
-            let input_point = Self::position_edge(WidgetSide::Input, input_slot, input_node_pos);
-
-            let item = EdgeView::create()
-                .id("edge")
-                .output_point(output_point)
-                .input_point(input_point)
-                .output_node(edge.output_id.0)
-                .input_node(edge.input_id.0)
-                .output_slot(output_slot)
-                .input_slot(input_slot)
-                .build(bc);
-
-            bc.append_child(self.node_workspace, item);
+        for edge in self.node_graph_spatial.node_graph.edges.clone() {
+            self.create_edge(bc, &edge);
         }
+    }
+
+    fn create_edge(&mut self, bc: &mut BuildContext, edge: &Edge) {
+        let output_node_pos = self
+            .node_graph_spatial
+            .locations
+            .iter()
+            .find(|loc| loc.node_id == edge.output_id)
+            .expect("Could not find output node location")
+            .point;
+        let output_node_pos = Point {
+            x: output_node_pos.0,
+            y: output_node_pos.1,
+        };
+
+        let input_node_pos = self
+            .node_graph_spatial
+            .locations
+            .iter()
+            .find(|loc| loc.node_id == edge.input_id)
+            .expect("Could not find input node location")
+            .point;
+        let input_node_pos = Point {
+            x: input_node_pos.0,
+            y: input_node_pos.1,
+        };
+
+        let output_slot = edge.output_slot.0;
+        let input_slot = edge.input_slot.0;
+
+        let output_point = Self::position_edge(WidgetSide::Output, output_slot, output_node_pos);
+        let input_point = Self::position_edge(WidgetSide::Input, input_slot, input_node_pos);
+
+        let item = EdgeView::create()
+            .id("edge")
+            .output_point(output_point)
+            .input_point(input_point)
+            .output_node(edge.output_id.0)
+            .input_node(edge.input_id.0)
+            .output_slot(output_slot)
+            .input_slot(input_slot)
+            .build(bc);
+
+        bc.append_child(self.node_workspace, item);
     }
 }
