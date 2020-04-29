@@ -115,6 +115,101 @@ impl NodeWorkspaceState {
         };
     }
 
+    fn handle_dropped_entity(&mut self, ctx: &mut Context) {
+        let dragged_entity = *ctx.widget().get::<OptionDragDropEntity>("dragged_entity");
+
+        if self.mouse_action.is_some()
+            || self.mouse_action_previous.is_none()
+            || dragged_entity.is_some()
+        {
+            return;
+        }
+
+        let dropped_on_entity = *ctx
+            .widget()
+            .get::<OptionDragDropEntity>("dropped_on_entity");
+
+        let dropped_on_entity = match dropped_on_entity {
+            Some(drag_drop_entity) => drag_drop_entity,
+            None => {
+                self.remove_dragged_edges(ctx);
+                return;
+            }
+        };
+
+        // I'm pretty sure I need to use this dragged entity somewhere to know what slot to connect
+        // to what slot.
+        let _dragged_entity = self.most_recently_dragged;
+
+        match dropped_on_entity.widget_type {
+            WidgetType::Slot => {
+                let dropped_on_widget = ctx.get_widget(dropped_on_entity.entity);
+
+                let dropped_on_node_id = *dropped_on_widget.get::<u32>("node_id");
+                let dropped_on_side = *dropped_on_widget.get::<WidgetSide>("side");
+                let dropped_on_slot = *dropped_on_widget.get::<u32>("slot_id");
+
+                let goal_position = {
+                    let node_margin = *ctx
+                        .child(&*dropped_on_node_id.to_string())
+                        .get::<Thickness>("my_margin");
+                    let node_pos = Point {
+                        x: node_margin.left,
+                        y: node_margin.top,
+                    };
+                    Self::position_edge(dropped_on_side, dropped_on_slot, node_pos)
+                };
+
+                for edge_entity in self.get_dragged_edges(ctx) {
+                    let mut edge_widget = ctx.get_widget(edge_entity);
+
+                    let (other_node_id, other_slot_id, other_side) = match dropped_on_side {
+                        WidgetSide::Input => {
+                            edge_widget.set::<u32>("input_node", dropped_on_node_id);
+                            edge_widget.set::<u32>("input_slot", dropped_on_slot);
+                            edge_widget.set::<Point>("input_point", goal_position);
+                            (
+                                *edge_widget.get::<u32>("output_node"),
+                                *edge_widget.get::<u32>("output_slot"),
+                                Side::Output,
+                            )
+                        }
+                        WidgetSide::Output => {
+                            edge_widget.set::<u32>("output_node", dropped_on_node_id);
+                            edge_widget.set::<u32>("output_slot", dropped_on_slot);
+                            edge_widget.set::<Point>("output_point", goal_position);
+                            (
+                                *edge_widget.get::<u32>("input_node"),
+                                *edge_widget.get::<u32>("input_slot"),
+                                Side::Input,
+                            )
+                        }
+                    };
+
+                    ctx.push_event(ChangedEvent(edge_entity));
+                    self.node_graph_spatial
+                        .node_graph
+                        .connect_arbitrary(
+                            NodeId(dropped_on_node_id),
+                            dropped_on_side.into(),
+                            SlotId(dropped_on_slot),
+                            NodeId(other_node_id),
+                            other_side,
+                            SlotId(other_slot_id),
+                        )
+                        .unwrap();
+                }
+            }
+            WidgetType::Node => self.update_dragged_node(ctx),
+            WidgetType::Edge => {
+                panic!("Somehow dropped something on an edge, should not be possible")
+            }
+        };
+
+        ctx.widget()
+            .set::<OptionDragDropEntity>("dropped_on_entity", None);
+    }
+
     fn create_new_edge(
         &mut self,
         ctx: &mut Context,
@@ -196,9 +291,6 @@ impl NodeWorkspaceState {
             y: self.mouse_position.1,
         };
 
-        // TODO: This currently spams an edge every frame when grabbing an output, going to refactor
-        // this so when you grab a slot, it swaps out the slot for the edge your holding, that
-        // should solve this issue.
         let dragged_edges = match slot_side {
             WidgetSide::Input => {
                 let dragged_edges = self.get_dragged_edges(ctx);
@@ -241,84 +333,6 @@ impl NodeWorkspaceState {
 
         self.dragged_edges = dragged_edges;
         self.render_dragged_edges(ctx);
-    }
-
-    fn handle_dropped_entity(&mut self, ctx: &mut Context) {
-        let dragged_entity = *ctx.widget().get::<OptionDragDropEntity>("dragged_entity");
-
-        if self.mouse_action.is_some()
-            || self.mouse_action_previous.is_none()
-            || dragged_entity.is_some()
-        {
-            return;
-        }
-
-        let dropped_on_entity = *ctx
-            .widget()
-            .get::<OptionDragDropEntity>("dropped_on_entity");
-
-        let dropped_on_entity = match dropped_on_entity {
-            Some(drag_drop_entity) => drag_drop_entity,
-            None => {
-                self.remove_dragged_edges(ctx);
-                return;
-            }
-        };
-
-        // I'm pretty sure I need to use this dragged entity somewhere to know what slot to connect
-        // to what slot.
-        let _dragged_entity = self.most_recently_dragged;
-
-        match dropped_on_entity.widget_type {
-            WidgetType::Slot => {
-                let dropped_on_widget = ctx.get_widget(dropped_on_entity.entity);
-
-                let dropped_on_node_id = *dropped_on_widget.get::<u32>("node_id");
-                let dropped_on_side = *dropped_on_widget.get::<WidgetSide>("side");
-                let dropped_on_slot = *dropped_on_widget.get::<u32>("slot_id");
-
-                let goal_position = {
-                    let node_margin = *ctx
-                        .child(&*dropped_on_node_id.to_string())
-                        .get::<Thickness>("my_margin");
-                    let node_pos = Point {
-                        x: node_margin.left,
-                        y: node_margin.top,
-                    };
-                    Self::position_edge(dropped_on_side, dropped_on_slot, node_pos)
-                };
-
-                for edge_entity in self.get_dragged_edges(ctx) {
-                    let mut edge_widget = ctx.get_widget(edge_entity);
-
-                    match dropped_on_side {
-                        WidgetSide::Input => {
-                            edge_widget
-                                .set::<u32>("input_node", *edge_widget.get::<u32>("input_node"));
-                            edge_widget
-                                .set::<u32>("input_slot", *edge_widget.get::<u32>("input_slot"));
-                            edge_widget.set::<Point>("input_point", goal_position);
-                        }
-                        WidgetSide::Output => {
-                            edge_widget
-                                .set::<u32>("output_node", *edge_widget.get::<u32>("output_node"));
-                            edge_widget
-                                .set::<u32>("output_slot", *edge_widget.get::<u32>("output_slot"));
-                            edge_widget.set::<Point>("output_point", goal_position);
-                        }
-                    };
-
-                    ctx.push_event(ChangedEvent(edge_entity));
-                }
-            }
-            WidgetType::Node => self.update_dragged_node(ctx), // TODO: Update slot in node_graph
-            WidgetType::Edge => {
-                panic!("Somehow dropped something on an edge, should not be possible")
-            }
-        };
-
-        ctx.widget()
-            .set::<OptionDragDropEntity>("dropped_on_entity", None);
     }
 
     fn get_dragged_edges(&mut self, ctx: &mut Context) -> Vec<Entity> {

@@ -41,7 +41,10 @@ impl State for SlotState {
                         let mut node_workspace = ctx.parent_from_id("node_workspace");
                         // let node_workspace_entity = node_workspace.entity();
 
-                        node_workspace.set("dropped_on_entity", Some((WidgetType::Slot, entity)));
+                        node_workspace.set::<OptionDragDropEntity>(
+                            "dropped_on_entity",
+                            Some(DragDropEntity::new(WidgetType::Slot, entity)),
+                        );
 
                         // ctx.push_event_strategy(ChangedEvent(node_workspace_entity), EventStrategy::Direct);
                     }
