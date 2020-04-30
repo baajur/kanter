@@ -1,6 +1,6 @@
 use crate::{
     edge_view::EdgeView,
-    node_view::{NodeView, NODE_SIZE},
+    node_view::{Node, NODE_SIZE},
     shared::*,
     slot_view::{SLOT_SIZE, SLOT_SIZE_HALF, SLOT_SPACING},
 };
@@ -646,13 +646,11 @@ impl NodeWorkspaceState {
                 _ => node.capacity(Side::Output),
             };
 
-            let item = NodeView::create()
+            let item = Node::create()
                 .id(node.node_id.0.to_string())
                 .title(node_title)
                 .node_id(node.node_id.0)
                 .my_margin(margin)
-                .slot_count_input(slot_count_input)
-                .slot_count_output(slot_count_output)
                 .build(bc);
 
             bc.append_child(self.node_workspace, item);

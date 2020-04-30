@@ -60,3 +60,39 @@ impl DragDropEntity {
 }
 
 pub(crate) type OptionDragDropEntity = Option<DragDropEntity>;
+
+#[derive(Debug, Copy, Clone)]
+pub enum Action {
+    Press(Point),
+    Release(Point),
+    Scroll(Point),
+    Move(Point),
+}
+
+pub type OptionAction = Option<Action>;
+
+pub fn get_child_entities(ctx: &mut Context) -> Vec<Entity> {
+    let mut output: Vec<Entity> = Vec::new();
+
+    for i in 0.. {
+        if let Some(child) = ctx.try_child_from_index(i) {
+            output.push(child.entity());
+        } else {
+            break
+        }
+    }
+
+    output
+}
+
+#[derive(Debug, Clone)]
+pub enum ActionFile {
+    LoadGraph(String),
+    SaveGraph(String),
+}
+pub type OptionActionFile = Option<ActionFile>;
+
+pub const NODE_SIZE: f64 = 100.;
+pub const SLOT_SIZE: f64 = 15.;
+pub const SLOT_SIZE_HALF: f64 = SLOT_SIZE * 0.5;
+pub const SLOT_SPACING: f64 = SLOT_SIZE_HALF;

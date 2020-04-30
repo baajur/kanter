@@ -1,8 +1,8 @@
-use crate::{edge_state::EdgeState, line_view::LineView, shared::*};
+use crate::{line_view::LineView, shared::*};
 use orbtk::prelude::*;
 
 widget!(
-    EdgeView<EdgeState> {
+    Edge<EdgeState> {
         widget_type: WidgetType,
         output_point: Point,
         input_point: Point,
@@ -13,9 +13,9 @@ widget!(
     }
 );
 
-impl Template for EdgeView {
+impl Template for Edge {
     fn template(self, id: Entity, ctx: &mut BuildContext) -> Self {
-        self.name("EdgeView")
+        self.name("Edge")
             .id("edge")
             .widget_type(WidgetType::Edge)
             .child(
@@ -26,3 +26,8 @@ impl Template for EdgeView {
             )
     }
 }
+
+#[derive(AsAny, Default)]
+pub struct EdgeState {}
+
+impl State for EdgeState {}

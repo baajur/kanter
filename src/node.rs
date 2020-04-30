@@ -1,4 +1,4 @@
-use crate::{node_state::NodeState, shared::*};
+use crate::shared::*;
 use orbtk::{behaviors::MouseBehavior, prelude::*};
 
 widget!(
@@ -13,7 +13,7 @@ widget!(
 );
 
 impl Template for Node {
-    fn template(mut self, id: Entity, ctx: &mut BuildContext) -> Self {
+    fn template(self, id: Entity, ctx: &mut BuildContext) -> Self {
         self.name("Node")
             .widget_type(WidgetType::Node)
             .width(NODE_SIZE)
@@ -39,4 +39,14 @@ impl Template for Node {
                     .build(ctx),
             )
     }
+}
+
+#[derive(Default, AsAny)]
+pub struct NodeState {
+    pub title: String16,
+    pub mouse_action: Option<MouseAction>,
+    pub builder: WidgetBuildContext,
+}
+
+impl State for NodeState {
 }
