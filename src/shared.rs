@@ -71,7 +71,7 @@ pub enum Action {
 
 pub type OptionAction = Option<Action>;
 
-pub fn get_child_entities(ctx: &mut Context) -> Vec<Entity> {
+pub fn child_entities(ctx: &mut Context) -> Vec<Entity> {
     let mut output: Vec<Entity> = Vec::new();
 
     for i in 0.. {

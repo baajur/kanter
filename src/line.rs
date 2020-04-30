@@ -1,15 +1,15 @@
 use orbtk::prelude::*;
 
 widget!(
-    LineView<LineState> {
+    Line<LineState> {
         start_point: Point,
         end_point: Point
     }
 );
 
-impl Template for LineView {
+impl Template for Line {
     fn template(self, _id: Entity, _ctx: &mut BuildContext) -> Self {
-        self.name("LineView")
+        self.name("Line")
             .start_point(Point { x: 0., y: 0. })
             .end_point(Point { x: 0., y: 0. })
     }

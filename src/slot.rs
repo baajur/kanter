@@ -13,26 +13,18 @@ widget!(
 
 impl Template for Slot {
     fn template(self, id: Entity, ctx: &mut BuildContext) -> Self {
-        let margin_left = match self.side.as_ref().unwrap() {
-            PropertySource::Value(WidgetSide::Input) => -SLOT_SIZE_HALF,
-            PropertySource::Value(WidgetSide::Output) => NODE_SIZE - SLOT_SIZE_HALF,
-            _ => {
-                panic!("WidgetSide is not properly set");
-            }
-        };
-
-        let margin = Thickness {
-            left: margin_left,
-            right: 0.,
-            top: 0.,
-            bottom: SLOT_SPACING,
-        };
+        // let margin_left = match self.side.as_ref().unwrap() {
+        //     PropertySource::Value(WidgetSide::Input) => -SLOT_SIZE_HALF,
+        //     PropertySource::Value(WidgetSide::Output) => NODE_SIZE - SLOT_SIZE_HALF,
+        //     _ => {
+        //         panic!("WidgetSide is not properly set");
+        //     }
+        // };
 
         self.name("Slot")
             .widget_type(WidgetType::Slot)
             .width(SLOT_SIZE)
             .height(SLOT_SIZE)
-            .margin(margin)
             .on_mouse_down(move |states, p| {
                 states
                     .get_mut::<SlotState>(id)

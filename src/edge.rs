@@ -1,4 +1,4 @@
-use crate::{line_view::LineView, shared::*};
+use crate::{line::Line, shared::*};
 use orbtk::prelude::*;
 
 widget!(
@@ -19,7 +19,7 @@ impl Template for Edge {
             .id("edge")
             .widget_type(WidgetType::Edge)
             .child(
-                LineView::create()
+                Line::create()
                     .start_point(("output_point", id))
                     .end_point(("input_point", id))
                     .build(ctx),

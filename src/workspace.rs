@@ -46,6 +46,7 @@ impl State for WorkspaceState {
     fn init(&mut self, _: &mut Registry, ctx: &mut Context<'_>) {
         ctx.parent().set::<u32>("node_container_entity", self.node_container.0);
     }
+
     fn update(&mut self, _: &mut Registry, ctx: &mut Context<'_>) {
         self.propagate_action(ctx);
     }
@@ -72,5 +73,4 @@ impl WorkspaceState {
         }
     }
 
-    
 }

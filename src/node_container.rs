@@ -3,6 +3,7 @@ use crate::{
     shared::*,
     node::Node,
     edge::Edge,
+    slot::Slot,
 };
 use texture_processor::{
     node::{NodeType, Side},
@@ -54,11 +55,73 @@ impl State for NodeContainerState {
 }
 
 impl NodeContainerState {
+    fn populate_slots(&mut self, ctx: &mut Context) {
+        for node_entity in Self::child_entities_type(ctx, WidgetType::Node) {
+
+            let self_entity = ctx.widget().entity();
+            let node_margin = *ctx.get_widget(node_entity).get::<Thickness>("my_margin");
+            let node_id = *ctx.get_widget(node_entity).get::<u32>("node_id");
+
+            for i in 0..*ctx.get_widget(node_entity).get::<usize>("slot_count_input") {
+                let build_context = &mut ctx.build_context();
+
+                let slot_margin = Self::position_slot(WidgetSide::Input, i as u32, node_margin);
+
+                let item = Slot::create()
+                    .node_id(node_id)
+                    .margin(slot_margin)
+                    .side(WidgetSide::Input)
+                    .slot_id(i as u32)
+                    .build(build_context);
+
+                build_context.append_child(self_entity, item);
+            }
+
+            for i in 0..*ctx.get_widget(node_entity).get::<usize>("slot_count_output") {
+                let build_context = &mut ctx.build_context();
+
+                let slot_margin = Self::position_slot(WidgetSide::Output, i as u32, node_margin);
+
+                let item = Slot::create()
+                    .node_id(node_id)
+                    .margin(slot_margin)
+                    .side(WidgetSide::Output)
+                    .slot_id(i as u32)
+                    .build(build_context);
+
+                build_context.append_child(self_entity, item);
+            }
+            
+        }
+    }
+
+    fn position_slot(side: WidgetSide, slot: u32, node_margin: Thickness) -> Thickness {
+        let left = node_margin.left - SLOT_SIZE_HALF;
+        let top = node_margin.top + ((SLOT_SIZE + SLOT_SPACING) * slot as f64);
+        match side {
+            WidgetSide::Input => Thickness { left, top, right: 0., bottom: 0. },
+            WidgetSide::Output => Thickness {
+                left: left + NODE_SIZE,
+                top: top,
+                right: 0.,
+                bottom: 0.,
+            },
+        }
+    }
+
+    fn child_entities_type(ctx: &mut Context, widget_type: WidgetType) -> Vec<Entity> {
+        child_entities(ctx)
+            .iter()
+            .filter(|entity| ctx.get_widget(**entity).try_get::<WidgetType>("widget_type") == Some(&widget_type))
+            .cloned()
+            .collect()
+    }
+
     fn get_clicked_child_entity(&mut self, ctx: &mut Context) {
         if let Some(action) = *ctx.widget().get::<OptionAction>("action") {
             match action {
                 Action::Press(p) => {
-                    for child_entity in get_child_entities(ctx) {
+                    for child_entity in child_entities(ctx) {
                         // dbg!(ctx.get_widget(child_entity).get::<Rectangle>("bounds"));
                         // dbg!(p);
                         if ctx.get_widget(child_entity).get::<Rectangle>("bounds").contains((p.x, p.y))
@@ -105,6 +168,7 @@ impl NodeContainerState {
         ctx.clear_children();
 
         self.populate_nodes(ctx);
+        self.populate_slots(ctx);
         self.populate_edges(ctx);
     }
 

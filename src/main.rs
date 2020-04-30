@@ -2,16 +2,12 @@ use orbtk::prelude::*;
 use crate::{shared::*, workspace::Workspace};
 
 mod shared;
-
 mod workspace;
 mod node_container;
-mod slot;
 mod node;
+mod slot;
 mod edge;
-
-mod line_render_object;
-mod line_state;
-mod line_view;
+mod line;
 
 fn main() {
     Application::new()
