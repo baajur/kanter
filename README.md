@@ -17,5 +17,6 @@ I'm currently building a basic user interface, here is the progress on that.
 - [ ] Thumbnail previews on nodes
 - [ ] Automatically recalculate changed nodes and their children
 - [ ] Make it prettier
+- [ ] Post screenshots here
 
 The plan for the 3D viewport is to create an addon for Blender so I can use their Eevee renderer as the 3D viewport instead of making my own.
