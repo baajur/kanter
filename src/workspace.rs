@@ -1,8 +1,5 @@
+use crate::{node_container::NodeContainer, shared::*};
 use orbtk::prelude::*;
-use crate::{
-    shared::*,
-    node_container::NodeContainer,
-};
 use std::cell::Cell;
 
 widget!(Workspace<WorkspaceState>: MouseHandler {
@@ -15,21 +12,15 @@ impl Template for Workspace {
 
         self.name("Workspace")
             .on_mouse_move(move |states, p| {
-                states
-                    .get::<WorkspaceState>(id)
-                    .action(Action::Move(p));
+                states.get::<WorkspaceState>(id).action(Action::Move(p));
                 false
             })
             .on_mouse_down(move |states, p| {
-                states
-                    .get::<WorkspaceState>(id)
-                    .action(Action::Press(p));
+                states.get::<WorkspaceState>(id).action(Action::Press(p));
                 false
             })
             .on_mouse_up(move |states, p| {
-                states
-                    .get::<WorkspaceState>(id)
-                    .action(Action::Release(p));
+                states.get::<WorkspaceState>(id).action(Action::Release(p));
                 false
             })
             .child(node_container)
@@ -44,7 +35,8 @@ struct WorkspaceState {
 
 impl State for WorkspaceState {
     fn init(&mut self, _: &mut Registry, ctx: &mut Context<'_>) {
-        ctx.parent().set::<u32>("node_container_entity", self.node_container.0);
+        ctx.parent()
+            .set::<u32>("node_container_entity", self.node_container.0);
     }
 
     fn update(&mut self, _: &mut Registry, ctx: &mut Context<'_>) {
@@ -58,19 +50,8 @@ impl WorkspaceState {
     }
 
     fn propagate_action(&mut self, ctx: &mut Context) {
-        let option_action = self.action.get();
-
-        if let Some(action) = option_action {
-            match action {
-                Action::Press(p) => {
-                    if check_mouse_condition(p, &ctx.widget()) {
-                        ctx.get_widget(self.node_container).set::<OptionAction>("action", option_action);
-                    }
-                }
-                _ => {}
-            }
-            self.action.set(None);
-        }
+        ctx.get_widget(self.node_container)
+            .set::<OptionAction>("action", self.action.get());
+        self.action.set(None);
     }
-
 }

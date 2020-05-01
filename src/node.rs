@@ -48,5 +48,4 @@ pub struct NodeState {
     pub builder: WidgetBuildContext,
 }
 
-impl State for NodeState {
-}
+impl State for NodeState {}

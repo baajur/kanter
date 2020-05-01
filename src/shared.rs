@@ -78,7 +78,7 @@ pub fn child_entities(ctx: &mut Context) -> Vec<Entity> {
         if let Some(child) = ctx.try_child_from_index(i) {
             output.push(child.entity());
         } else {
-            break
+            break;
         }
     }
 

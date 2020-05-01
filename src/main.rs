@@ -1,13 +1,13 @@
-use orbtk::prelude::*;
 use crate::{shared::*, workspace::Workspace};
+use orbtk::prelude::*;
 
-mod shared;
-mod workspace;
-mod node_container;
-mod node;
-mod slot;
 mod edge;
 mod line;
+mod node;
+mod node_container;
+mod shared;
+mod slot;
+mod workspace;
 
 fn main() {
     Application::new()
@@ -40,28 +40,23 @@ impl MainState {
 
 impl State for MainState {
     fn update(&mut self, _: &mut Registry, ctx: &mut Context) {
-
         if let Some(action_file) = &self.option_action_file {
             let path = ctx.child("graph_path").clone::<String16>("text");
 
             let action_to_send = match action_file {
-                ActionFile::LoadGraph(_) => {
-                    Some(ActionFile::LoadGraph(path.to_string()))
-                }
-                ActionFile::SaveGraph(_) => {
-                    Some(ActionFile::SaveGraph(path.to_string()))
-                }
+                ActionFile::LoadGraph(_) => Some(ActionFile::LoadGraph(path.to_string())),
+                ActionFile::SaveGraph(_) => Some(ActionFile::SaveGraph(path.to_string())),
             };
 
             let node_container_entity = Entity(*ctx.widget().get::<u32>("node_container_entity"));
 
-            ctx.get_widget(node_container_entity).set::<OptionActionFile>("action_file", action_to_send);
+            ctx.get_widget(node_container_entity)
+                .set::<OptionActionFile>("action_file", action_to_send);
 
             self.option_action_file = None;
         }
     }
 }
-
 
 impl Template for MainView {
     fn template(self, id: Entity, ctx: &mut BuildContext) -> Self {
@@ -74,7 +69,8 @@ impl Template for MainView {
                         Button::create()
                             .element("button")
                             .on_click(move |states, _| {
-                                states.get_mut::<MainState>(id)
+                                states
+                                    .get_mut::<MainState>(id)
                                     .action_file(ActionFile::LoadGraph("".to_string()));
                                 true
                             })
@@ -86,7 +82,8 @@ impl Template for MainView {
                         Button::create()
                             .element("button")
                             .on_click(move |states, _| {
-                                states.get_mut::<MainState>(id)
+                                states
+                                    .get_mut::<MainState>(id)
                                     .action_file(ActionFile::SaveGraph("".to_string()));
                                 true
                             })
