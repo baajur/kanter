@@ -60,29 +60,45 @@ impl NodeContainerState {
 
         match dragged_entity.widget_type {
             WidgetType::Node => {
-                // Update the visual position of the node.
-                let mut held_widget = ctx.get_widget(dragged_entity.entity);
-                let current_margin = *held_widget.get::<Thickness>("my_margin");
-
-                held_widget.set::<Thickness>(
-                    "my_margin",
-                    Thickness {
-                        left: self.mouse_position.x - NODE_SIZE * 0.5,
-                        right: current_margin.right,
-                        top: self.mouse_position.y - NODE_SIZE * 0.5,
-                        bottom: current_margin.bottom,
-                    },
-                );
-
-                // self.refresh_edges_of_node(ctx, dragged_entity.entity);
+                self.refresh_node(ctx, dragged_entity.entity);
             }
             WidgetType::Slot => {
                 self.grab_slot_edge(ctx, dragged_entity.entity);
             }
             WidgetType::Edge => {
-                self.render_dragged_edges(ctx);
+                self.refresh_dragged_edges(ctx);
             }
         };
+    }
+
+    fn entity_type(ctx: &mut Context, entity: Entity, widget_type_input: WidgetType) -> bool {
+        if let Some(widget_type) = ctx.get_widget(entity).try_get::<WidgetType>("widget_type") {
+            *widget_type == widget_type_input
+        } else {
+            false
+        }
+    }
+
+    /// Updates the visual position of the given `Entity` with `WidgetType::Node`.
+    fn refresh_node(&mut self, ctx: &mut Context, node_entity: Entity) {
+        if !Self::entity_type(ctx, node_entity, WidgetType::Node) {
+            return;
+        }
+        let mut dragged_widget = ctx.get_widget(node_entity);
+        let current_margin = *dragged_widget.get::<Thickness>("my_margin");
+
+        dragged_widget.set::<Thickness>(
+            "my_margin",
+            Thickness {
+                left: self.mouse_position.x - NODE_SIZE * 0.5,
+                right: current_margin.right,
+                top: self.mouse_position.y - NODE_SIZE * 0.5,
+                bottom: current_margin.bottom,
+            },
+        );
+
+        self.refresh_node_edges(ctx, node_entity);
+        self.refresh_node_slots(ctx, node_entity);
     }
 
     fn grab_slot_edge(&mut self, ctx: &mut Context, slot_entity: Entity) {
@@ -133,10 +149,10 @@ impl NodeContainerState {
         self.dragged_entity = Some(DragDropEntity::new(WidgetType::Edge, Entity(0)));
 
         self.dragged_edges = dragged_edges;
-        self.render_dragged_edges(ctx);
+        self.refresh_dragged_edges(ctx);
     }
 
-    fn render_dragged_edges(&mut self, ctx: &mut Context) {
+    fn refresh_dragged_edges(&mut self, ctx: &mut Context) {
         let mouse_point = Point {
             x: self.mouse_position.x,
             y: self.mouse_position.y,
@@ -187,7 +203,7 @@ impl NodeContainerState {
             )
         };
 
-        self.get_child_edges(ctx)
+        self.children_type(ctx, WidgetType::Edge)
             .iter()
             .filter(|entity| {
                 let edge_widget = ctx.get_widget(**entity);
@@ -262,15 +278,20 @@ impl NodeContainerState {
         };
         bc.append_child(self_entity, item);
 
-        *self.get_child_edges(ctx).iter().rev().next().unwrap()
+        *self
+            .children_type(ctx, WidgetType::Edge)
+            .iter()
+            .rev()
+            .next()
+            .unwrap()
     }
 
-    /// Visually refreshes all `EdgeView` widgets connected to the given `Entity` based on what's
+    /// Visually refreshes all `Edge` widgets connected to the given `Entity` based on what's
     /// seen in the GUI, not from the actual data.
-    fn refresh_edges_of_node(&mut self, ctx: &mut Context, node_entity: Entity) {
+    fn refresh_node_edges(&mut self, ctx: &mut Context, node_entity: Entity) {
         let node_widget = ctx.get_widget(node_entity);
         let node_id = *node_widget.get::<u32>("node_id");
-        let edge_entities: Vec<Entity> = self.get_edges_of_node(ctx, node_id);
+        let edge_entities: Vec<Entity> = self.node_edges(ctx, NodeId(node_id));
 
         for edge_entity in edge_entities {
             let (output_node, input_node, output_slot, input_slot) = {
@@ -283,60 +304,100 @@ impl NodeContainerState {
                 )
             };
 
-            let node_widget = ctx.child(&*node_id.to_string());
-            let node_margin = node_widget.get::<Thickness>("my_margin");
-            let node_pos = Point {
-                x: node_margin.left,
-                y: node_margin.top,
-            };
+            let node_point = Self::node_point(ctx, node_entity);
 
-            // let mut child = ctx.child_from_index(i);
             let mut edge_widget = ctx.get_widget(edge_entity);
             if output_node == node_id {
                 edge_widget.set(
                     "output_point",
-                    Self::position_edge(WidgetSide::Output, output_slot, node_pos),
+                    Self::position_edge(WidgetSide::Output, output_slot, node_point),
                 );
             } else if input_node == node_id {
                 edge_widget.set(
                     "input_point",
-                    Self::position_edge(WidgetSide::Input, input_slot, node_pos),
+                    Self::position_edge(WidgetSide::Input, input_slot, node_point),
                 );
             }
         }
     }
 
-    fn get_edges_of_node(&mut self, ctx: &mut Context, node_id: u32) -> Vec<Entity> {
-        self.get_child_edges(ctx)
+    fn node_point(ctx: &mut Context, node_entity: Entity) -> Point {
+        let node_widget = ctx.get_widget(node_entity);
+        let node_margin = node_widget.get::<Thickness>("my_margin");
+
+        Point {
+            x: node_margin.left,
+            y: node_margin.top,
+        }
+    }
+
+    fn refresh_node_slots(&mut self, ctx: &mut Context, node_entity: Entity) {
+        if !Self::entity_type(ctx, node_entity, WidgetType::Node) {
+            return;
+        }
+        let node_widget = ctx.get_widget(node_entity);
+        let node_margin = *node_widget.get::<Thickness>("margin");
+
+        let node_id = *node_widget.get::<u32>("node_id");
+        let slot_entities: Vec<Entity> = self.node_slots(ctx, NodeId(node_id));
+
+        for slot_entity in slot_entities {
+            let (slot_id, side) = {
+                let slot_widget = ctx.get_widget(slot_entity);
+                (
+                    *slot_widget.get::<u32>("slot_id"),
+                    *slot_widget.get::<WidgetSide>("side"),
+                )
+            };
+
+            let mut slot_widget = ctx.get_widget(slot_entity);
+
+            slot_widget.set("margin", Self::position_slot(side, slot_id, node_margin));
+        }
+    }
+
+    fn node_edges(&mut self, ctx: &mut Context, node_id: NodeId) -> Vec<Entity> {
+        self.children_type(ctx, WidgetType::Edge)
             .iter()
             .filter(|entity| {
                 let widget = ctx.get_widget(**entity);
                 let output_node = *widget.get::<u32>("output_node");
                 let input_node = *widget.get::<u32>("input_node");
 
-                output_node == node_id || input_node == node_id
+                output_node == node_id.0 || input_node == node_id.0
             })
             .copied()
             .collect()
     }
 
-    fn get_child_edges(&mut self, ctx: &mut Context) -> Vec<Entity> {
+    fn node_slots(&mut self, ctx: &mut Context, node_id: NodeId) -> Vec<Entity> {
+        self.children_type(ctx, WidgetType::Slot)
+            .iter()
+            .filter(|entity| {
+                let widget = ctx.get_widget(**entity);
+                let slot_node_id = *widget.get::<u32>("node_id");
+
+                slot_node_id == node_id.0
+            })
+            .copied()
+            .collect()
+    }
+
+    fn children_type(&mut self, ctx: &mut Context, widget_type: WidgetType) -> Vec<Entity> {
         let mut output: Vec<Entity> = Vec::new();
 
         for i in 0.. {
-            let maybe_edge = ctx.try_child_from_index(i);
-            if maybe_edge.is_none() {
-                break;
-            }
+            if let Some(widget) = ctx.try_child_from_index(i) {
+                let entity = widget.entity();
 
-            let maybe_edge = maybe_edge.unwrap();
-
-            if let Some(widget_type) = maybe_edge.try_get::<WidgetType>("widget_type") {
-                if *widget_type == WidgetType::Edge {
-                    let edge_entity = maybe_edge.entity();
-                    output.push(edge_entity);
+                if Self::entity_type(ctx, entity, widget_type) {
+                    output.push(entity)
+                } else {
+                    continue;
                 }
-            }
+            } else {
+                break;
+            };
         }
 
         output
