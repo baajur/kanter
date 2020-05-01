@@ -8,7 +8,7 @@ widget!(Workspace<WorkspaceState>: MouseHandler {
 impl Template for Workspace {
     fn template(mut self, id: Entity, ctx: &mut BuildContext) -> Self {
         let node_container = NodeContainer::create().build(ctx);
-        self.state_mut().node_container = node_container.into();
+        self.state_mut().node_container = node_container;
 
         self.name("Workspace")
             .on_mouse_move(move |states, p| {

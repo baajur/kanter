@@ -61,7 +61,7 @@ impl DragDropEntity {
 
 pub(crate) type OptionDragDropEntity = Option<DragDropEntity>;
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub enum Action {
     Press(Point),
     Release(Point),
