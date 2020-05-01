@@ -1,5 +1,5 @@
 use orbtk::prelude::*;
-use texture_processor::node::Side;
+use kanter_core::node::Side;
 
 #[derive(Copy, Clone, PartialEq, Debug)]
 pub enum MouseAction {

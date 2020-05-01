@@ -2,7 +2,7 @@ use crate::{edge::Edge, node::Node, shared::*, slot::Slot};
 use orbtk::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::fs::File;
-use texture_processor::{
+use kanter_core::{
     node::{NodeType, Side},
     node_graph::{Edge as CoreEdge, NodeGraph, NodeId, SlotId},
 };
