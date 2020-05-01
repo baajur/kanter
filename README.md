@@ -12,12 +12,16 @@ I'm currently building a basic user interface, here is the progress on that.
 - [x] Saving & Loading graphs
 - [x] Manipulating edges
 - [ ] Adding & Deleting nodes
-- [ ] Input & output nodes
+- [ ] Math node
+- [ ] Image node
+- [ ] Output node
+- [ ] **MILESTONE: usable, but very limited**
 - [ ] Graph node
-- [ ] Exporting outputs
-- [ ] Thumbnail previews on nodes
-- [ ] Automatically recalculate changed nodes and their children
-- [ ] Make it prettier
-- [ ] Post screenshots here
-
-The plan for the 3D viewport is to create an addon for Blender so I can use their Eevee renderer as the 3D viewport instead of making my own.
+- [ ] Moving the view
+- [ ] Node thumbnails
+- [ ] Resize node
+- [ ] Set up theme
+- [ ] Post screenshots on GitHub
+- [ ] **MILESTONE: Alpha version?**
+- [ ] Automatically process on change
+- [ ] Blender Eevee as 3D viewport
