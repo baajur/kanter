@@ -1,5 +1,5 @@
+use kanter_core::node::{NodeType, Side};
 use orbtk::prelude::*;
-use kanter_core::node::Side;
 
 #[derive(Copy, Clone, PartialEq, Debug)]
 pub enum MouseAction {
@@ -68,7 +68,6 @@ pub enum Action {
     Scroll(Point),
     Move(Point),
 }
-
 pub type OptionAction = Option<Action>;
 
 pub fn child_entities(ctx: &mut Context) -> Vec<Entity> {
@@ -86,11 +85,14 @@ pub fn child_entities(ctx: &mut Context) -> Vec<Entity> {
 }
 
 #[derive(Debug, Clone)]
-pub enum ActionFile {
+pub enum ActionMain {
     LoadGraph(String),
     SaveGraph(String),
+    MenuNode(Point),
 }
-pub type OptionActionFile = Option<ActionFile>;
+pub type OptionActionMain = Option<ActionMain>;
+
+pub type OptionNodeType = Option<NodeType>;
 
 pub const NODE_SIZE: f64 = 100.;
 pub const SLOT_SIZE: f64 = 15.;

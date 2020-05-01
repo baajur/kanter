@@ -1,11 +1,11 @@
 use crate::{edge::Edge, node::Node, shared::*, slot::Slot};
+use kanter_core::{
+    node::{Node as CoreNode, NodeType, Side},
+    node_graph::{Edge as CoreEdge, NodeGraph, NodeId, SlotId},
+};
 use orbtk::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::fs::File;
-use kanter_core::{
-    node::{NodeType, Side},
-    node_graph::{Edge as CoreEdge, NodeGraph, NodeId, SlotId},
-};
 
 #[derive(Default, Serialize, Deserialize)]
 struct NodeGraphSpatial {
@@ -13,7 +13,7 @@ struct NodeGraphSpatial {
     node_graph: NodeGraph,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize)]
 struct Location {
     node_id: NodeId,
     point: (f64, f64),
@@ -21,7 +21,8 @@ struct Location {
 
 widget!(NodeContainer<NodeContainerState> {
     action: OptionAction,
-    action_file: OptionActionFile
+    action_main: OptionActionMain,
+    add_node: OptionNodeType
 });
 
 impl Template for NodeContainer {
@@ -44,14 +45,28 @@ impl State for NodeContainerState {
         self.handle_mouse_action(ctx);
         self.handle_dragged_entity(ctx);
         self.handle_dropped_entity(ctx);
+        self.handle_add_node(ctx);
 
         self.reset_mouse_action(ctx);
 
-        self.handle_action_file(ctx);
+        self.handle_action_main(ctx);
     }
 }
 
 impl NodeContainerState {
+    fn handle_add_node(&mut self, ctx: &mut Context) {
+        if let Some(node_type) = ctx.widget().get::<OptionNodeType>("add_node").clone() {
+            let node_id = self
+                .node_graph_spatial
+                .node_graph
+                .add_node(CoreNode::new(node_type))
+                .unwrap();
+            self.populate_node(ctx, node_id);
+        }
+
+        ctx.widget().set::<OptionNodeType>("add_node", None)
+    }
+
     fn reset_mouse_action(&mut self, ctx: &mut Context) {
         if let Some(action) = ctx.widget().get::<OptionAction>("action") {
             if let Action::Release(_) = action {
@@ -467,7 +482,11 @@ impl NodeContainerState {
         };
         bc.append_child(self_entity, item);
 
-        *Self::children_type(ctx, WidgetType::Edge)
+        Self::get_most_recent_entity_type(ctx, WidgetType::Edge)
+    }
+
+    fn get_most_recent_entity_type(ctx: &mut Context, widget_type: WidgetType) -> Entity {
+        *Self::children_type(ctx, widget_type)
             .iter()
             .rev()
             .next()
@@ -591,47 +610,6 @@ impl NodeContainerState {
         output
     }
 
-    fn populate_slots(&mut self, ctx: &mut Context) {
-        for node_entity in Self::child_entities_type(ctx, WidgetType::Node) {
-            let self_entity = ctx.widget().entity();
-            let node_margin = *ctx.get_widget(node_entity).get::<Thickness>("my_margin");
-            let node_id = *ctx.get_widget(node_entity).get::<u32>("node_id");
-
-            for i in 0..*ctx.get_widget(node_entity).get::<usize>("slot_count_input") {
-                let build_context = &mut ctx.build_context();
-
-                let slot_margin = Self::position_slot(WidgetSide::Input, i as u32, node_margin);
-
-                let item = Slot::create()
-                    .node_id(node_id)
-                    .margin(slot_margin)
-                    .side(WidgetSide::Input)
-                    .slot_id(i as u32)
-                    .build(build_context);
-
-                build_context.append_child(self_entity, item);
-            }
-
-            for i in 0..*ctx
-                .get_widget(node_entity)
-                .get::<usize>("slot_count_output")
-            {
-                let build_context = &mut ctx.build_context();
-
-                let slot_margin = Self::position_slot(WidgetSide::Output, i as u32, node_margin);
-
-                let item = Slot::create()
-                    .node_id(node_id)
-                    .margin(slot_margin)
-                    .side(WidgetSide::Output)
-                    .slot_id(i as u32)
-                    .build(build_context);
-
-                build_context.append_child(self_entity, item);
-            }
-        }
-    }
-
     fn position_slot(side: WidgetSide, slot: u32, node_margin: Thickness) -> Thickness {
         let left = node_margin.left - SLOT_SIZE_HALF;
         let top = node_margin.top + ((SLOT_SIZE + SLOT_SPACING) * slot as f64);
@@ -721,18 +699,19 @@ impl NodeContainerState {
         }
     }
 
-    fn handle_action_file(&mut self, ctx: &mut Context<'_>) {
-        if let Some(action_file) = ctx.widget().get::<OptionActionFile>("action_file").clone() {
-            match action_file {
-                ActionFile::LoadGraph(path) => {
+    fn handle_action_main(&mut self, ctx: &mut Context<'_>) {
+        if let Some(action_main) = ctx.widget().get::<OptionActionMain>("action_main").clone() {
+            match action_main {
+                ActionMain::LoadGraph(path) => {
                     self.load_graph(ctx, path);
                 }
-                ActionFile::SaveGraph(path) => {
+                ActionMain::SaveGraph(path) => {
                     self.save_graph(path);
                 }
+                _ => {}
             };
 
-            ctx.widget().set::<OptionActionFile>("action_file", None);
+            ctx.widget().set::<OptionActionMain>("action_main", None);
         }
     }
 
@@ -744,46 +723,123 @@ impl NodeContainerState {
         self.populate_edges(ctx);
     }
 
-    fn populate_nodes(&mut self, ctx: &mut Context) {
+    fn try_get_location(&self, _ctx: &mut Context, node_id: NodeId) -> Option<(f64, f64)> {
+        match self
+            .node_graph_spatial
+            .locations
+            .iter()
+            .find(|loc| loc.node_id == node_id)
+        {
+            Some(location) => Some(location.point),
+            None => None,
+        }
+    }
+
+    fn populate_node(&mut self, ctx: &mut Context, node_id: NodeId) {
+        let node = self
+            .node_graph_spatial
+            .node_graph
+            .node_with_id(node_id)
+            .unwrap();
+        let node_type = &node.node_type;
+        let input_capacity = node.capacity(Side::Input);
+        let outputput_capacity = node.capacity(Side::Output);
+
+        let location_point = match self.try_get_location(ctx, node_id) {
+            Some(location_point) => location_point,
+            None => (0., 0.),
+        };
+
+        let location = Location {
+            node_id,
+            point: location_point,
+        };
+        self.node_graph_spatial.locations.push(location);
+
+        let node_title = format!("{:?}", node_type);
+
+        let margin = Thickness {
+            left: location_point.0,
+            top: location_point.1,
+            right: 0.,
+            bottom: 0.,
+        };
+
+        let slot_count_input = match node_type {
+            NodeType::InputGray | NodeType::InputRgba => 0,
+            _ => input_capacity,
+        };
+        let slot_count_output = match node_type {
+            NodeType::OutputGray | NodeType::OutputRgba => 0,
+            _ => outputput_capacity,
+        };
+
         let self_entity = ctx.widget().entity();
         let bc = &mut ctx.build_context();
 
-        for node in self.node_graph_spatial.node_graph.nodes() {
-            let node_title = format!("{:?}", node.node_type);
+        let item = Node::create()
+            .id(node_id.0.to_string())
+            .title(node_title)
+            .node_id(node_id.0)
+            .my_margin(margin)
+            .slot_count_input(slot_count_input)
+            .slot_count_output(slot_count_output)
+            .build(bc);
 
-            let location = self
-                .node_graph_spatial
-                .locations
-                .iter()
-                .find(|loc| loc.node_id == node.node_id)
-                .unwrap();
+        bc.append_child(self_entity, item);
 
-            let margin = Thickness {
-                left: location.point.0,
-                top: location.point.1,
-                right: 0.,
-                bottom: 0.,
-            };
+        let created_node_entity = Self::get_most_recent_entity_type(ctx, WidgetType::Node);
+        self.populate_node_slots(ctx, created_node_entity);
+    }
 
-            let slot_count_input = match node.node_type {
-                NodeType::InputGray | NodeType::InputRgba => 0,
-                _ => node.capacity(Side::Input),
-            };
-            let slot_count_output = match node.node_type {
-                NodeType::OutputGray | NodeType::OutputRgba => 0,
-                _ => node.capacity(Side::Output),
-            };
+    fn populate_nodes(&mut self, ctx: &mut Context) {
+        for node_id in self.node_graph_spatial.node_graph.node_ids() {
+            self.populate_node(ctx, node_id);
+        }
+    }
 
-            let item = Node::create()
-                .id(node.node_id.0.to_string())
-                .title(node_title)
-                .node_id(node.node_id.0)
-                .my_margin(margin)
-                .slot_count_input(slot_count_input)
-                .slot_count_output(slot_count_output)
-                .build(bc);
+    fn populate_node_slots(&mut self, ctx: &mut Context, node_entity: Entity) {
+        let self_entity = ctx.widget().entity();
+        let node_margin = *ctx.get_widget(node_entity).get::<Thickness>("my_margin");
+        let node_id = *ctx.get_widget(node_entity).get::<u32>("node_id");
 
-            bc.append_child(self_entity, item);
+        for i in 0..*ctx.get_widget(node_entity).get::<usize>("slot_count_input") {
+            let build_context = &mut ctx.build_context();
+
+            let slot_margin = Self::position_slot(WidgetSide::Input, i as u32, node_margin);
+
+            let item = Slot::create()
+                .node_id(node_id)
+                .margin(slot_margin)
+                .side(WidgetSide::Input)
+                .slot_id(i as u32)
+                .build(build_context);
+
+            build_context.append_child(self_entity, item);
+        }
+
+        for i in 0..*ctx
+            .get_widget(node_entity)
+            .get::<usize>("slot_count_output")
+        {
+            let build_context = &mut ctx.build_context();
+
+            let slot_margin = Self::position_slot(WidgetSide::Output, i as u32, node_margin);
+
+            let item = Slot::create()
+                .node_id(node_id)
+                .margin(slot_margin)
+                .side(WidgetSide::Output)
+                .slot_id(i as u32)
+                .build(build_context);
+
+            build_context.append_child(self_entity, item);
+        }
+    }
+
+    fn populate_slots(&mut self, ctx: &mut Context) {
+        for node_entity in Self::child_entities_type(ctx, WidgetType::Node) {
+            self.populate_node_slots(ctx, node_entity);
         }
     }
 

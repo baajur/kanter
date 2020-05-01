@@ -1,14 +1,157 @@
 use crate::{node_container::NodeContainer, shared::*};
+use kanter_core::node::NodeType;
 use orbtk::prelude::*;
 use std::cell::Cell;
 
 widget!(Workspace<WorkspaceState>: MouseHandler {
+    action_main: OptionActionMain
 });
 
 impl Template for Workspace {
     fn template(mut self, id: Entity, ctx: &mut BuildContext) -> Self {
         let node_container = NodeContainer::create().build(ctx);
         self.state_mut().node_container = node_container;
+
+        let menu_node = Popup::create()
+            .width(200.)
+            .target(id)
+            .child(
+                Stack::create()
+                    .orientation("vertical")
+                    .child(
+                        Button::create()
+                            .element("button")
+                            .on_click(move |states, _| {
+                                states.get_mut::<WorkspaceState>(id).add_node(NodeType::Add);
+                                true
+                            })
+                            .text("Add")
+                            .build(ctx),
+                    )
+                    .child(
+                        Button::create()
+                            .element("button")
+                            .on_click(move |states, _| {
+                                states
+                                    .get_mut::<WorkspaceState>(id)
+                                    .add_node(NodeType::Subtract);
+                                true
+                            })
+                            .text("Subtract")
+                            .build(ctx),
+                    )
+                    .child(
+                        Button::create()
+                            .element("button")
+                            .on_click(move |states, _| {
+                                states
+                                    .get_mut::<WorkspaceState>(id)
+                                    .add_node(NodeType::Multiply);
+                                true
+                            })
+                            .text("Multiply")
+                            .build(ctx),
+                    )
+                    .child(
+                        Button::create()
+                            .element("button")
+                            .on_click(move |states, _| {
+                                states
+                                    .get_mut::<WorkspaceState>(id)
+                                    .add_node(NodeType::Divide);
+                                true
+                            })
+                            .text("Divide")
+                            .build(ctx),
+                    )
+                    .child(
+                        Button::create()
+                            .element("button")
+                            .on_click(move |states, _| {
+                                states
+                                    .get_mut::<WorkspaceState>(id)
+                                    .add_node(NodeType::Value(0.));
+                                true
+                            })
+                            .text("Value")
+                            .build(ctx),
+                    )
+                    .child(
+                        Button::create()
+                            .element("button")
+                            .on_click(move |states, _| {
+                                states
+                                    .get_mut::<WorkspaceState>(id)
+                                    .add_node(NodeType::Resize(None, None));
+                                true
+                            })
+                            .text("Resize")
+                            .build(ctx),
+                    )
+                    .child(
+                        Button::create()
+                            .element("button")
+                            .on_click(move |states, _| {
+                                states
+                                    .get_mut::<WorkspaceState>(id)
+                                    .add_node(NodeType::HeightToNormal);
+                                true
+                            })
+                            .text("HeightToNormal")
+                            .build(ctx),
+                    )
+                    .child(
+                        Button::create()
+                            .element("button")
+                            .on_click(move |states, _| {
+                                states
+                                    .get_mut::<WorkspaceState>(id)
+                                    .add_node(NodeType::InputGray);
+                                true
+                            })
+                            .text("InputGray")
+                            .build(ctx),
+                    )
+                    .child(
+                        Button::create()
+                            .element("button")
+                            .on_click(move |states, _| {
+                                states
+                                    .get_mut::<WorkspaceState>(id)
+                                    .add_node(NodeType::InputRgba);
+                                true
+                            })
+                            .text("InputRgba")
+                            .build(ctx),
+                    )
+                    .child(
+                        Button::create()
+                            .element("button")
+                            .on_click(move |states, _| {
+                                states
+                                    .get_mut::<WorkspaceState>(id)
+                                    .add_node(NodeType::OutputGray);
+                                true
+                            })
+                            .text("OutputGray")
+                            .build(ctx),
+                    )
+                    .child(
+                        Button::create()
+                            .element("button")
+                            .on_click(move |states, _| {
+                                states
+                                    .get_mut::<WorkspaceState>(id)
+                                    .add_node(NodeType::OutputRgba);
+                                true
+                            })
+                            .text("OutputRgba")
+                            .build(ctx),
+                    )
+                    .build(ctx),
+            )
+            .build(ctx);
+        self.state_mut().menu_node = menu_node;
 
         self.name("Workspace")
             .on_mouse_move(move |states, p| {
@@ -24,6 +167,7 @@ impl Template for Workspace {
                 false
             })
             .child(node_container)
+            .child(menu_node)
     }
 }
 
@@ -31,6 +175,8 @@ impl Template for Workspace {
 struct WorkspaceState {
     action: Cell<OptionAction>,
     node_container: Entity,
+    menu_node: Entity,
+    add_node: OptionNodeType,
 }
 
 impl State for WorkspaceState {
@@ -40,18 +186,53 @@ impl State for WorkspaceState {
     }
 
     fn update(&mut self, _: &mut Registry, ctx: &mut Context<'_>) {
+        self.handle_action_main(ctx);
         self.propagate_action(ctx);
     }
 }
 
 impl WorkspaceState {
+    fn add_node(&mut self, node_type: NodeType) {
+        self.add_node = Some(node_type);
+    }
+
     fn action(&self, action: Action) {
         self.action.set(Some(action));
     }
 
+    fn handle_action_main(&mut self, ctx: &mut Context) {
+        if let Some(action_main) = ctx.widget().get::<OptionActionMain>("action_main") {
+            match action_main {
+                ActionMain::MenuNode(_) => {
+                    let mut menu_node_widget = ctx.get_widget(self.menu_node);
+                    menu_node_widget.set::<bool>("open", true);
+                    menu_node_widget.set::<Thickness>(
+                        "margin",
+                        Thickness {
+                            left: 0.,
+                            top: 20.,
+                            right: 0.,
+                            bottom: 0.,
+                        },
+                    );
+                }
+                _ => {}
+            };
+        }
+
+        ctx.widget().set::<OptionActionMain>("action_main", None);
+    }
+
     fn propagate_action(&mut self, ctx: &mut Context) {
-        ctx.get_widget(self.node_container)
-            .set::<OptionAction>("action", self.action.get());
-        self.action.set(None);
+        if self.add_node.is_some() {
+            ctx.get_widget(self.node_container)
+                .set::<OptionNodeType>("add_node", self.add_node.clone());
+            self.add_node = None;
+            ctx.get_widget(self.menu_node).set::<bool>("open", false);
+        } else {
+            ctx.get_widget(self.node_container)
+                .set::<OptionAction>("action", self.action.get());
+            self.action.set(None);
+        }
     }
 }
