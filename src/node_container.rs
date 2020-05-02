@@ -38,6 +38,7 @@ struct NodeContainerState {
     mouse_position: Point,
     dragged_entity: OptionDragDropEntity,
     dropped_on_entity: OptionDragDropEntity,
+    selected_entity: OptionDragDropEntity,
 }
 
 impl State for NodeContainerState {
@@ -54,6 +55,26 @@ impl State for NodeContainerState {
 }
 
 impl NodeContainerState {
+    fn select_entity(&mut self, ctx: &mut Context, option_drag_drop_entity: OptionDragDropEntity) {
+        if let Some(drag_drop_entity) = self.selected_entity {
+            ctx.get_widget(drag_drop_entity.entity)
+                .set::<bool>("selected", false);
+        }
+
+        self.selected_entity = if let Some(drag_drop_entity) = option_drag_drop_entity {
+            match drag_drop_entity.widget_type {
+                WidgetType::Node => {
+                    ctx.get_widget(drag_drop_entity.entity)
+                        .set::<bool>("selected", true);
+                    option_drag_drop_entity
+                }
+                _ => None,
+            }
+        } else {
+            None
+        }
+    }
+
     fn handle_add_node(&mut self, ctx: &mut Context) {
         if let Some(node_type) = ctx.widget().get::<OptionNodeType>("add_node").clone() {
             let node_id = self
@@ -76,6 +97,7 @@ impl NodeContainerState {
     fn reset_mouse_action(&mut self, ctx: &mut Context) {
         if let Some(action) = ctx.widget().get::<OptionAction>("action") {
             if let Action::Release(_) = action {
+                self.select_entity(ctx, self.dragged_entity);
                 self.dragged_entity = None
             }
         }
@@ -110,6 +132,25 @@ impl NodeContainerState {
                 location.point.1 = margin.top;
             }
         }
+    }
+
+    fn handle_dragged_entity(&mut self, ctx: &mut Context) {
+        let dragged_entity = match self.dragged_entity {
+            Some(drag_drop_entity) => drag_drop_entity,
+            None => return,
+        };
+
+        match dragged_entity.widget_type {
+            WidgetType::Node => {
+                self.refresh_node(ctx, dragged_entity.entity);
+            }
+            WidgetType::Slot => {
+                self.grab_slot_edge(ctx, dragged_entity.entity);
+            }
+            WidgetType::Edge => {
+                self.refresh_dragged_edges(ctx);
+            }
+        };
     }
 
     fn handle_dropped_entity(&mut self, ctx: &mut Context) {
@@ -260,25 +301,6 @@ impl NodeContainerState {
         }
 
         self.dragged_edges.0 = Vec::new();
-    }
-
-    fn handle_dragged_entity(&mut self, ctx: &mut Context) {
-        let dragged_entity = match self.dragged_entity {
-            Some(drag_drop_entity) => drag_drop_entity,
-            None => return,
-        };
-
-        match dragged_entity.widget_type {
-            WidgetType::Node => {
-                self.refresh_node(ctx, dragged_entity.entity);
-            }
-            WidgetType::Slot => {
-                self.grab_slot_edge(ctx, dragged_entity.entity);
-            }
-            WidgetType::Edge => {
-                self.refresh_dragged_edges(ctx);
-            }
-        };
     }
 
     fn entity_type(ctx: &mut Context, entity: Entity, widget_type_input: WidgetType) -> bool {
