@@ -43,9 +43,9 @@ struct NodeContainerState {
 impl State for NodeContainerState {
     fn update(&mut self, _: &mut Registry, ctx: &mut Context<'_>) {
         self.handle_mouse_action(ctx);
+        self.handle_add_node(ctx);
         self.handle_dragged_entity(ctx);
         self.handle_dropped_entity(ctx);
-        self.handle_add_node(ctx);
 
         self.reset_mouse_action(ctx);
 
@@ -61,7 +61,13 @@ impl NodeContainerState {
                 .node_graph
                 .add_node(CoreNode::new(node_type))
                 .unwrap();
+
             self.populate_node(ctx, node_id);
+
+            self.dragged_entity = Some(DragDropEntity {
+                entity: Self::get_most_recent_entity_type(ctx, WidgetType::Node),
+                widget_type: WidgetType::Node,
+            });
         }
 
         ctx.widget().set::<OptionNodeType>("add_node", None)
