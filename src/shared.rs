@@ -1,12 +1,6 @@
 use kanter_core::node::{NodeType, Side};
 use orbtk::prelude::*;
 
-#[derive(Copy, Clone, PartialEq, Debug)]
-pub enum MouseAction {
-    MousePressed,
-    MouseReleased,
-}
-
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum WidgetType {
     Node,
@@ -61,12 +55,13 @@ impl DragDropEntity {
 
 pub(crate) type OptionDragDropEntity = Option<DragDropEntity>;
 
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Debug, Copy, Clone)]
 pub enum Action {
-    Press(Point),
-    Release(Point),
+    Press(Mouse),
+    Release(Mouse),
     Scroll(Point),
     Move(Point),
+    Delete,
 }
 pub type OptionAction = Option<Action>;
 

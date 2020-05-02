@@ -1,10 +1,14 @@
 use crate::{node_container::NodeContainer, shared::*};
 use kanter_core::node::NodeType;
-use orbtk::prelude::*;
+use orbtk::{
+    prelude::*,
+    shell::{ButtonState, Key},
+};
 use std::cell::Cell;
 
-widget!(Workspace<WorkspaceState>: MouseHandler {
-    action_main: OptionActionMain
+widget!(Workspace<WorkspaceState>: MouseHandler, KeyDownHandler {
+    action_main: OptionActionMain,
+    focused: bool
 });
 
 impl Template for Workspace {
@@ -158,12 +162,18 @@ impl Template for Workspace {
                 states.get::<WorkspaceState>(id).action(Action::Move(p));
                 false
             })
-            .on_mouse_down(move |states, p| {
-                states.get::<WorkspaceState>(id).action(Action::Press(p));
+            .on_mouse_down(move |states, m| {
+                states.get::<WorkspaceState>(id).action(Action::Press(m));
                 false
             })
-            .on_mouse_up(move |states, p| {
-                states.get::<WorkspaceState>(id).action(Action::Release(p));
+            .on_mouse_up(move |states, m| {
+                states.get::<WorkspaceState>(id).action(Action::Release(m));
+                false
+            })
+            .on_key_down(move |states, event| -> bool {
+                if event.key == Key::Delete && event.state == ButtonState::Down {
+                    states.get_mut::<WorkspaceState>(id).action(Action::Delete);
+                }
                 false
             })
             .child(node_container)
@@ -183,6 +193,7 @@ impl State for WorkspaceState {
     fn init(&mut self, _: &mut Registry, ctx: &mut Context<'_>) {
         ctx.parent()
             .set::<u32>("node_container_entity", self.node_container.0);
+        ctx.push_event_by_window(FocusEvent::RequestFocus(ctx.entity));
     }
 
     fn update(&mut self, _: &mut Registry, ctx: &mut Context<'_>) {

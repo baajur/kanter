@@ -3,7 +3,7 @@ use kanter_core::{
     node::{Node as CoreNode, NodeType, Side},
     node_graph::{Edge as CoreEdge, NodeGraph, NodeId, SlotId},
 };
-use orbtk::prelude::*;
+use orbtk::{prelude::*, shell::MouseButton};
 use serde::{Deserialize, Serialize};
 use std::fs::File;
 
@@ -43,7 +43,7 @@ struct NodeContainerState {
 
 impl State for NodeContainerState {
     fn update(&mut self, _: &mut Registry, ctx: &mut Context<'_>) {
-        self.handle_mouse_action(ctx);
+        self.handle_action(ctx);
         self.handle_add_node(ctx);
         self.handle_dragged_entity(ctx);
         self.handle_dropped_entity(ctx);
@@ -242,7 +242,7 @@ impl NodeContainerState {
 
     /// Updates all edges connected to the given `slot_entity` using the data in the graph.
     fn update_slot_edges_from_graph(&mut self, ctx: &mut Context, slot_entity: Entity) {
-        self.remove_edges_in_slot(ctx, slot_entity);
+        Self::delete_edges_in_slot(ctx, slot_entity);
         let slot_widget = ctx.get_widget(slot_entity);
 
         let node_id = *slot_widget.get::<u32>("node_id");
@@ -263,8 +263,12 @@ impl NodeContainerState {
     }
 
     /// Removes all visual edges connected to a slot.
-    fn remove_edges_in_slot(&mut self, ctx: &mut Context, slot_entity: Entity) {
-        let edge_entities = self.get_edges_in_slot(ctx, slot_entity);
+    fn delete_edges_in_slot(ctx: &mut Context, slot_entity: Entity) {
+        if !Self::entity_type(ctx, slot_entity, WidgetType::Slot) {
+            return;
+        }
+
+        let edge_entities = Self::get_edges_in_slot(ctx, slot_entity);
 
         for edge in edge_entities {
             ctx.remove_child(edge);
@@ -418,13 +422,13 @@ impl NodeContainerState {
         };
 
         match dragged_entity.widget_type {
-            WidgetType::Slot => self.get_edges_in_slot(ctx, dragged_entity.entity),
+            WidgetType::Slot => Self::get_edges_in_slot(ctx, dragged_entity.entity),
             WidgetType::Edge => self.dragged_edges.0.clone(),
             _ => Vec::new(),
         }
     }
 
-    fn get_edges_in_slot(&mut self, ctx: &mut Context, slot_entity: Entity) -> Vec<Entity> {
+    fn get_edges_in_slot(ctx: &mut Context, slot_entity: Entity) -> Vec<Entity> {
         let slot_widget = ctx.get_widget(slot_entity);
 
         let (slot_node_id, slot_id, slot_side) = {
@@ -669,36 +673,95 @@ impl NodeContainerState {
             .collect()
     }
 
-    fn handle_mouse_action(&mut self, ctx: &mut Context) {
+    fn delete_node(&mut self, ctx: &mut Context, entity: Entity) {
+        if !Self::entity_type(ctx, entity, WidgetType::Node) {
+            return;
+        }
+
+        let node_id = *ctx.get_widget(entity).get::<u32>("node_id");
+
+        // Delete node in graph
+        self.node_graph_spatial
+            .node_graph
+            .remove_node(NodeId(node_id));
+
+        // Delete connected edges in GUI
+        Self::disconnect_node(ctx, entity);
+
+        // Delete node in GUI
+        ctx.remove_child(entity);
+    }
+
+    fn disconnect_node(ctx: &mut Context, entity: Entity) {
+        if !Self::entity_type(ctx, entity, WidgetType::Node) {
+            return;
+        }
+
+        for slot_entity in Self::get_slots_in_node(ctx, entity) {
+            Self::delete_slot(ctx, slot_entity);
+        }
+    }
+
+    fn get_slots_in_node(ctx: &mut Context, entity: Entity) -> Vec<Entity> {
+        if !Self::entity_type(ctx, entity, WidgetType::Node) {
+            return Vec::new();
+        }
+
+        let node_id = *ctx.get_widget(entity).get::<u32>("node_id");
+
+        Self::children_type(ctx, WidgetType::Slot)
+            .iter()
+            .filter(|entity| *ctx.get_widget(**entity).get::<u32>("node_id") == node_id)
+            .copied()
+            .collect()
+    }
+
+    fn delete_slot(ctx: &mut Context, entity: Entity) {
+        if !Self::entity_type(ctx, entity, WidgetType::Slot) {
+            return;
+        }
+
+        Self::delete_edges_in_slot(ctx, entity);
+        ctx.remove_child(entity);
+    }
+
+    fn handle_action(&mut self, ctx: &mut Context) {
         if let Some(action) = *ctx.widget().get::<OptionAction>("action") {
             match action {
-                Action::Press(p) => {
-                    for child_entity in child_entities(ctx) {
-                        if ctx
-                            .get_widget(child_entity)
-                            .get::<Rectangle>("bounds")
-                            .contains((p.x, p.y))
-                            && self.is_clickable(ctx, child_entity)
-                        {
-                            self.dragged_entity = Some(DragDropEntity {
-                                widget_type: *ctx
+                Action::Press(mouse) => {
+                    match mouse.button {
+                        MouseButton::Left => {
+                            for child_entity in child_entities(ctx) {
+                                if ctx
                                     .get_widget(child_entity)
-                                    .get::<WidgetType>("widget_type"),
-                                entity: child_entity,
-                            });
+                                    .get::<Rectangle>("bounds")
+                                    .contains((mouse.x, mouse.y))
+                                    && self.is_clickable(ctx, child_entity)
+                                {
+                                    self.dragged_entity = Some(DragDropEntity {
+                                        widget_type: *ctx
+                                            .get_widget(child_entity)
+                                            .get::<WidgetType>("widget_type"),
+                                        entity: child_entity,
+                                    });
+                                }
+                            }
                         }
-                    }
-
-                    self.mouse_position = p;
+                        _ => {}
+                    };
+                    self.mouse_position = Point {
+                        x: mouse.x,
+                        y: mouse.y,
+                    };
                 }
-                Action::Release(p) => {
+                Action::Release(mouse) => {
                     let widget_type = WidgetType::Slot;
 
                     for slot_entity in Self::children_type(ctx, widget_type) {
                         if ctx
                             .get_widget(slot_entity)
                             .get::<Rectangle>("bounds")
-                            .contains((p.x, p.y))
+                            .contains((mouse.x, mouse.y))
                         {
                             self.dropped_on_entity = Some(DragDropEntity {
                                 widget_type,
@@ -707,10 +770,19 @@ impl NodeContainerState {
                         }
                     }
 
-                    self.mouse_position = p;
+                    self.mouse_position = Point {
+                        x: mouse.x,
+                        y: mouse.y,
+                    };
                 }
                 Action::Move(p) => self.mouse_position = p,
                 Action::Scroll(p) => self.mouse_position = p,
+                Action::Delete => {
+                    if let Some(selected_entity) = self.selected_entity {
+                        self.delete_node(ctx, selected_entity.entity);
+                        self.selected_entity = None;
+                    }
+                }
             }
         }
     }

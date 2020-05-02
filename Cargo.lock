@@ -224,7 +224,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5bb1c84e87c717666564ec056105052331431803d606bd45529b28547b611eef"
 dependencies = [
  "phf_codegen",
- "proc-macro2 1.0.10",
+ "proc-macro2 1.0.12",
  "procedural-masquerade",
  "quote 1.0.4",
  "syn 1.0.18",
@@ -262,7 +262,7 @@ version = "0.99.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e2323f3f47db9a0e77ce7a300605d8d2098597fc451ed1a97bb1f6411bb550a7"
 dependencies = [
- "proc-macro2 1.0.10",
+ "proc-macro2 1.0.12",
  "quote 1.0.4",
  "syn 1.0.18",
 ]
@@ -426,7 +426,7 @@ dependencies = [
 [[package]]
 name = "kanter_core"
 version = "0.1.0"
-source = "git+https://github.com/lukors/kanter_core.git#250be6d0e25a09d1d837a1d4b0c793a1825c2944"
+source = "git+https://github.com/lukors/kanter_core.git#0b38affafd20e1be8c94a69af7799157da0ed9a9"
 dependencies = [
  "image 0.20.1",
  "nalgebra",
@@ -673,7 +673,7 @@ dependencies = [
 [[package]]
 name = "orbtk"
 version = "0.3.1-alpha3"
-source = "git+https://github.com/redox-os/orbtk.git?branch=develop#9bd46a8e007e7be58107d93d2c09ff8a0d5f87a8"
+source = "git+https://github.com/redox-os/orbtk.git?branch=develop#928a4c1f39de7ed158d7a0feb1ef5b16bdc40ce5"
 dependencies = [
  "dces",
  "orbtk-api",
@@ -690,7 +690,7 @@ dependencies = [
 [[package]]
 name = "orbtk-api"
 version = "0.3.1-alpha3"
-source = "git+https://github.com/redox-os/orbtk.git?branch=develop#9bd46a8e007e7be58107d93d2c09ff8a0d5f87a8"
+source = "git+https://github.com/redox-os/orbtk.git?branch=develop#928a4c1f39de7ed158d7a0feb1ef5b16bdc40ce5"
 dependencies = [
  "dces",
  "derive_more",
@@ -712,7 +712,7 @@ dependencies = [
 [[package]]
 name = "orbtk-css-engine"
 version = "0.3.1-alpha3"
-source = "git+https://github.com/redox-os/orbtk.git?branch=develop#9bd46a8e007e7be58107d93d2c09ff8a0d5f87a8"
+source = "git+https://github.com/redox-os/orbtk.git?branch=develop#928a4c1f39de7ed158d7a0feb1ef5b16bdc40ce5"
 dependencies = [
  "cssparser",
  "orbtk-utils",
@@ -721,7 +721,7 @@ dependencies = [
 [[package]]
 name = "orbtk-proc-macros"
 version = "0.3.1-alpha3"
-source = "git+https://github.com/redox-os/orbtk.git?branch=develop#9bd46a8e007e7be58107d93d2c09ff8a0d5f87a8"
+source = "git+https://github.com/redox-os/orbtk.git?branch=develop#928a4c1f39de7ed158d7a0feb1ef5b16bdc40ce5"
 dependencies = [
  "quote 1.0.4",
  "syn 1.0.18",
@@ -730,7 +730,7 @@ dependencies = [
 [[package]]
 name = "orbtk-render"
 version = "0.3.1-alpha3"
-source = "git+https://github.com/redox-os/orbtk.git?branch=develop#9bd46a8e007e7be58107d93d2c09ff8a0d5f87a8"
+source = "git+https://github.com/redox-os/orbtk.git?branch=develop#928a4c1f39de7ed158d7a0feb1ef5b16bdc40ce5"
 dependencies = [
  "image 0.23.4",
  "orbtk-utils",
@@ -742,7 +742,7 @@ dependencies = [
 [[package]]
 name = "orbtk-shell"
 version = "0.3.1-alpha3"
-source = "git+https://github.com/redox-os/orbtk.git?branch=develop#9bd46a8e007e7be58107d93d2c09ff8a0d5f87a8"
+source = "git+https://github.com/redox-os/orbtk.git?branch=develop#928a4c1f39de7ed158d7a0feb1ef5b16bdc40ce5"
 dependencies = [
  "console_error_panic_hook",
  "image 0.23.4",
@@ -758,7 +758,7 @@ dependencies = [
 [[package]]
 name = "orbtk-theme"
 version = "0.3.1-alpha3"
-source = "git+https://github.com/redox-os/orbtk.git?branch=develop#9bd46a8e007e7be58107d93d2c09ff8a0d5f87a8"
+source = "git+https://github.com/redox-os/orbtk.git?branch=develop#928a4c1f39de7ed158d7a0feb1ef5b16bdc40ce5"
 dependencies = [
  "lazy_static",
  "orbtk-css-engine",
@@ -767,7 +767,7 @@ dependencies = [
 [[package]]
 name = "orbtk-tree"
 version = "0.3.1-alpha3"
-source = "git+https://github.com/redox-os/orbtk.git?branch=develop#9bd46a8e007e7be58107d93d2c09ff8a0d5f87a8"
+source = "git+https://github.com/redox-os/orbtk.git?branch=develop#928a4c1f39de7ed158d7a0feb1ef5b16bdc40ce5"
 dependencies = [
  "dces",
 ]
@@ -775,12 +775,12 @@ dependencies = [
 [[package]]
 name = "orbtk-utils"
 version = "0.3.1-alpha3"
-source = "git+https://github.com/redox-os/orbtk.git?branch=develop#9bd46a8e007e7be58107d93d2c09ff8a0d5f87a8"
+source = "git+https://github.com/redox-os/orbtk.git?branch=develop#928a4c1f39de7ed158d7a0feb1ef5b16bdc40ce5"
 
 [[package]]
 name = "orbtk-widgets"
 version = "0.3.1-alpha3"
-source = "git+https://github.com/redox-os/orbtk.git?branch=develop#9bd46a8e007e7be58107d93d2c09ff8a0d5f87a8"
+source = "git+https://github.com/redox-os/orbtk.git?branch=develop#928a4c1f39de7ed158d7a0feb1ef5b16bdc40ce5"
 dependencies = [
  "dces",
  "orbtk-api",
@@ -897,9 +897,9 @@ dependencies = [
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.10"
+version = "1.0.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "df246d292ff63439fea9bc8c0a270bed0e390d5ebd4db4ba15aba81111b5abe3"
+checksum = "8872cf6f48eee44265156c111456a700ab3483686b3f96df4cf5481c89157319"
 dependencies = [
  "unicode-xid 0.2.0",
 ]
@@ -931,7 +931,7 @@ version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4c1f4b0efa5fc5e8ceb705136bfee52cfdb6a4e3509f770b478cd6ed434232a7"
 dependencies = [
- "proc-macro2 1.0.10",
+ "proc-macro2 1.0.12",
 ]
 
 [[package]]
@@ -1319,7 +1319,7 @@ version = "1.0.106"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9e549e3abf4fb8621bd1609f11dfc9f5e50320802273b12f3811a67e6716ea6c"
 dependencies = [
- "proc-macro2 1.0.10",
+ "proc-macro2 1.0.12",
  "quote 1.0.4",
  "syn 1.0.18",
 ]
@@ -1394,7 +1394,7 @@ version = "0.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c87a60a40fccc84bef0652345bbbbbe20a605bf5d0ce81719fc476f5c03b50ef"
 dependencies = [
- "proc-macro2 1.0.10",
+ "proc-macro2 1.0.12",
  "quote 1.0.4",
  "serde",
  "serde_derive",
@@ -1408,7 +1408,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "58fa5ff6ad0d98d1ffa8cb115892b6e69d67799f6763e162a1c9db421dc22e11"
 dependencies = [
  "base-x",
- "proc-macro2 1.0.10",
+ "proc-macro2 1.0.12",
  "quote 1.0.4",
  "serde",
  "serde_derive",
@@ -1457,7 +1457,7 @@ version = "1.0.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "410a7488c0a728c7ceb4ad59b9567eb4053d02e8cc7f5c0e0eeeb39518369213"
 dependencies = [
- "proc-macro2 1.0.10",
+ "proc-macro2 1.0.12",
  "quote 1.0.4",
  "unicode-xid 0.2.0",
 ]
@@ -1572,7 +1572,7 @@ dependencies = [
  "bumpalo",
  "lazy_static",
  "log",
- "proc-macro2 1.0.10",
+ "proc-macro2 1.0.12",
  "quote 1.0.4",
  "syn 1.0.18",
  "wasm-bindgen-shared",
@@ -1594,7 +1594,7 @@ version = "0.2.62"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8eb197bd3a47553334907ffd2f16507b4f4f01bbec3ac921a7719e0decdfe72a"
 dependencies = [
- "proc-macro2 1.0.10",
+ "proc-macro2 1.0.12",
  "quote 1.0.4",
  "syn 1.0.18",
  "wasm-bindgen-backend",
@@ -1652,7 +1652,7 @@ version = "0.25.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f45ddc08a8078f3efa96b5f413268cc9c53b30712891de081fbc1d5846fbc736"
 dependencies = [
- "proc-macro2 1.0.10",
+ "proc-macro2 1.0.12",
  "quote 1.0.4",
  "xml-rs",
 ]

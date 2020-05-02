@@ -49,7 +49,6 @@ impl Template for Node {
 #[derive(Default, AsAny)]
 pub struct NodeState {
     pub title: String16,
-    pub mouse_action: Option<MouseAction>,
     pub builder: WidgetBuildContext,
     child_container: Entity,
 }
