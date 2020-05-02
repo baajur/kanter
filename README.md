@@ -11,7 +11,7 @@ I'm currently building a basic user interface, here is the progress on that.
 
 - [x] Saving & Loading graphs
 - [x] Manipulating edges
-- [ ] Adding & Deleting nodes
+- [x] Adding & Deleting nodes
 - [ ] Math node
 - [ ] Image node
 - [ ] Output node
