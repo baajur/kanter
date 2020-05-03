@@ -1,5 +1,5 @@
 use crate::{node_container::NodeContainer, shared::*};
-use kanter_core::node::NodeType;
+use kanter_core::node::{MixType, NodeType};
 use orbtk::{
     prelude::*,
     shell::{ButtonState, Key},
@@ -26,46 +26,12 @@ impl Template for Workspace {
                         Button::create()
                             .element("button")
                             .on_click(move |states, _| {
-                                states.get_mut::<WorkspaceState>(id).add_node(NodeType::Add);
-                                true
-                            })
-                            .text("Add")
-                            .build(ctx),
-                    )
-                    .child(
-                        Button::create()
-                            .element("button")
-                            .on_click(move |states, _| {
                                 states
                                     .get_mut::<WorkspaceState>(id)
-                                    .add_node(NodeType::Subtract);
+                                    .add_node(NodeType::Mix(MixType::default()));
                                 true
                             })
-                            .text("Subtract")
-                            .build(ctx),
-                    )
-                    .child(
-                        Button::create()
-                            .element("button")
-                            .on_click(move |states, _| {
-                                states
-                                    .get_mut::<WorkspaceState>(id)
-                                    .add_node(NodeType::Multiply);
-                                true
-                            })
-                            .text("Multiply")
-                            .build(ctx),
-                    )
-                    .child(
-                        Button::create()
-                            .element("button")
-                            .on_click(move |states, _| {
-                                states
-                                    .get_mut::<WorkspaceState>(id)
-                                    .add_node(NodeType::Divide);
-                                true
-                            })
-                            .text("Divide")
+                            .text("Mix")
                             .build(ctx),
                     )
                     .child(
