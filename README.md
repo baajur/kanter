@@ -12,7 +12,7 @@ I'm currently building a basic user interface, here is the progress on that.
 - [x] Saving & Loading graphs
 - [x] Manipulating edges
 - [x] Adding & Deleting nodes
-- [ ] Math node
+- [ ] Mix node
 - [ ] Image node
 - [ ] Output node
 - [ ] **MILESTONE: usable, but very limited**
