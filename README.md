@@ -25,3 +25,4 @@ I'm currently building a basic user interface, here is the progress on that.
 - [ ] **MILESTONE: Alpha version?**
 - [ ] Automatically process on change
 - [ ] Blender Eevee as 3D viewport
+- [ ] Refine selection behavior
