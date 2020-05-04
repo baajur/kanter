@@ -2,7 +2,7 @@ use crate::shared::*;
 use orbtk::prelude::*;
 
 widget!(
-    Slot<SlotState>: MouseHandler {
+    Slot<SlotState> {
         widget_type: WidgetType,
         side: WidgetSide,
         node_workspace: Entity,

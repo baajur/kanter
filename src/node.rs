@@ -5,7 +5,7 @@ const SELECTED_BRUSH: Brush = Brush::SolidColor(Color::rgb(255, 255, 255));
 const DESELECTED_BRUSH: Brush = Brush::SolidColor(Color::rgb(0, 0, 0));
 
 widget!(
-    Node<NodeState>: MouseHandler {
+    Node<NodeState> {
         widget_type: WidgetType,
         title: String16,
         my_margin: Thickness,
@@ -66,9 +66,7 @@ impl State for NodeState {
     fn init(&mut self, _: &mut Registry, ctx: &mut Context<'_>) {
         let bc = &mut ctx.build_context();
 
-        let property = TextBlock::create()
-            .text("hejhej")
-            .foreground("#000000")
+        let property = ComboBox::create()
             .margin(Thickness {
                 left: 20.,
                 top: 0.,
@@ -84,9 +82,13 @@ impl State for NodeState {
         if *ctx.widget().get::<bool>("selected") {
             ctx.get_widget(self.frame)
                 .set::<Brush>("border_brush", SELECTED_BRUSH);
+            ctx.get_widget(self.property_stack)
+                .set::<bool>("enabled", false);
         } else {
             ctx.get_widget(self.frame)
                 .set::<Brush>("border_brush", DESELECTED_BRUSH);
+            ctx.get_widget(self.property_stack)
+                .set::<bool>("enabled", true);
         }
     }
 }

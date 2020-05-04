@@ -7,6 +7,8 @@ use orbtk::{prelude::*, shell::MouseButton};
 use serde::{Deserialize, Serialize};
 use std::fs::File;
 
+const DRAG_THRESHOLD: f64 = 5.;
+
 #[derive(Default, Serialize, Deserialize)]
 struct NodeGraphSpatial {
     locations: Vec<Location>,
@@ -36,6 +38,8 @@ struct NodeContainerState {
     node_graph_spatial: NodeGraphSpatial,
     dragged_edges: (Vec<Entity>, WidgetSide),
     mouse_position: Point,
+    drag_offset: Point,
+    dragging: bool,
     dragged_entity: OptionDragDropEntity,
     dropped_on_entity: OptionDragDropEntity,
     selected_entity: OptionDragDropEntity,
@@ -55,6 +59,211 @@ impl State for NodeContainerState {
 }
 
 impl NodeContainerState {
+    fn handle_action(&mut self, ctx: &mut Context) {
+        if let Some(action) = *ctx.widget().get::<OptionAction>("action") {
+            match action {
+                Action::Press(mouse) => {
+                    match mouse.button {
+                        MouseButton::Left => {
+                            for child_entity in child_entities(ctx) {
+                                if ctx
+                                    .get_widget(child_entity)
+                                    .get::<Rectangle>("bounds")
+                                    .contains((mouse.x, mouse.y))
+                                    && self.is_clickable(ctx, child_entity)
+                                {
+                                    self.dragged_entity = Some(DragDropEntity {
+                                        widget_type: *ctx
+                                            .get_widget(child_entity)
+                                            .get::<WidgetType>("widget_type"),
+                                        entity: child_entity,
+                                    });
+
+                                    let dragged_entity_pos = {
+                                        let widget = ctx.get_widget(child_entity);
+                                        let margin = widget.get::<Thickness>("margin");
+
+                                        Point {
+                                            x: margin.left,
+                                            y: margin.top,
+                                        }
+                                    };
+
+                                    self.drag_offset =
+                                        Point::new(mouse.x, mouse.y) - dragged_entity_pos;
+                                }
+                            }
+                        }
+                        _ => {}
+                    };
+                    self.mouse_position = Point {
+                        x: mouse.x,
+                        y: mouse.y,
+                    };
+                }
+                Action::Release(mouse) => {
+                    let widget_type = WidgetType::Slot;
+
+                    for slot_entity in Self::children_type(ctx, widget_type) {
+                        if ctx
+                            .get_widget(slot_entity)
+                            .get::<Rectangle>("bounds")
+                            .contains((mouse.x, mouse.y))
+                        {
+                            self.dropped_on_entity = Some(DragDropEntity {
+                                widget_type,
+                                entity: slot_entity,
+                            });
+                        }
+                    }
+
+                    self.mouse_position = Point {
+                        x: mouse.x,
+                        y: mouse.y,
+                    };
+                }
+                Action::Move(p) => self.mouse_position = p,
+                Action::Scroll(p) => self.mouse_position = p,
+                Action::Delete => {
+                    if let Some(selected_entity) = self.selected_entity {
+                        self.delete_node(ctx, selected_entity.entity);
+                        self.selected_entity = None;
+                    }
+                }
+            }
+        }
+    }
+
+    fn handle_dragged_entity(&mut self, ctx: &mut Context) {
+        let dragged_entity = match self.dragged_entity {
+            Some(drag_drop_entity) => drag_drop_entity,
+            None => return,
+        };
+
+        let drag_offset_world = {
+            let dragged_widget = ctx.get_widget(dragged_entity.entity);
+            let widget_pos = Self::thickness_to_point(*dragged_widget.get::<Thickness>("margin"));
+
+            widget_pos + self.drag_offset
+        };
+
+        if self.mouse_position.distance(drag_offset_world) > DRAG_THRESHOLD {
+            self.dragging = true;
+        }
+
+        if !self.dragging {
+            return;
+        }
+
+        match dragged_entity.widget_type {
+            WidgetType::Node => {
+                self.refresh_node(ctx, dragged_entity.entity);
+            }
+            WidgetType::Slot => {
+                self.grab_slot_edge(ctx, dragged_entity.entity);
+            }
+            WidgetType::Edge => {
+                self.refresh_dragged_edges(ctx);
+            }
+        };
+    }
+
+    fn handle_dropped_entity(&mut self, ctx: &mut Context) {
+        if let Some(action) = ctx.widget().get::<OptionAction>("action") {
+            match *action {
+                Action::Release(_) => {}
+                _ => return,
+            };
+        } else {
+            return;
+        }
+        self.dragging = false;
+
+        let dropped_on_entity = match self.dropped_on_entity {
+            Some(drag_drop_entity) => drag_drop_entity,
+            None => {
+                self.remove_dragged_edges(ctx);
+                self.update_dragged_node_to_graph(ctx);
+                return;
+            }
+        };
+
+        match dropped_on_entity.widget_type {
+            WidgetType::Slot => {
+                let dropped_on_widget = ctx.get_widget(dropped_on_entity.entity);
+
+                let dropped_on_node_id = *dropped_on_widget.get::<u32>("node_id");
+                let dropped_on_side = *dropped_on_widget.get::<WidgetSide>("side");
+                let dropped_on_slot = *dropped_on_widget.get::<u32>("slot_id");
+
+                let goal_position = {
+                    let node_margin = *ctx
+                        .child(&*dropped_on_node_id.to_string())
+                        .get::<Thickness>("my_margin");
+                    let node_pos = Point {
+                        x: node_margin.left,
+                        y: node_margin.top,
+                    };
+                    Self::position_edge(dropped_on_side, dropped_on_slot, node_pos)
+                };
+
+                for edge_entity in self.get_dragged_edges(ctx) {
+                    let mut edge_widget = ctx.get_widget(edge_entity);
+
+                    let (other_node_id, other_slot_id, other_side) = match dropped_on_side {
+                        WidgetSide::Input => {
+                            edge_widget.set::<u32>("input_node", dropped_on_node_id);
+                            edge_widget.set::<u32>("input_slot", dropped_on_slot);
+                            edge_widget.set::<Point>("input_point", goal_position);
+                            (
+                                *edge_widget.get::<u32>("output_node"),
+                                *edge_widget.get::<u32>("output_slot"),
+                                Side::Output,
+                            )
+                        }
+                        WidgetSide::Output => {
+                            edge_widget.set::<u32>("output_node", dropped_on_node_id);
+                            edge_widget.set::<u32>("output_slot", dropped_on_slot);
+                            edge_widget.set::<Point>("output_point", goal_position);
+                            (
+                                *edge_widget.get::<u32>("input_node"),
+                                *edge_widget.get::<u32>("input_slot"),
+                                Side::Input,
+                            )
+                        }
+                    };
+
+                    ctx.push_event(ChangedEvent(edge_entity));
+                    let _ = self.node_graph_spatial.node_graph.connect_arbitrary(
+                        NodeId(dropped_on_node_id),
+                        dropped_on_side.into(),
+                        SlotId(dropped_on_slot),
+                        NodeId(other_node_id),
+                        other_side,
+                        SlotId(other_slot_id),
+                    );
+                }
+                self.update_slot_edges_from_graph(ctx, dropped_on_entity.entity);
+            }
+            WidgetType::Node => {
+                panic!("Somehow dropped something on a node, should not be possible")
+            }
+            WidgetType::Edge => {
+                panic!("Somehow dropped something on an edge, should not be possible")
+            }
+        };
+
+        self.dropped_on_entity = None;
+    }
+
+    fn thickness_to_point(thickness: Thickness) -> Point {
+        Point::new(thickness.left, thickness.top)
+    }
+
+    fn point_to_thickness(point: Point) -> Thickness {
+        Thickness::new(point.x, point.y, 0., 0.)
+    }
+
     fn select_entity(&mut self, ctx: &mut Context, option_drag_drop_entity: OptionDragDropEntity) {
         if let Some(drag_drop_entity) = self.selected_entity {
             ctx.get_widget(drag_drop_entity.entity)
@@ -132,112 +341,6 @@ impl NodeContainerState {
                 location.point.1 = margin.top;
             }
         }
-    }
-
-    fn handle_dragged_entity(&mut self, ctx: &mut Context) {
-        let dragged_entity = match self.dragged_entity {
-            Some(drag_drop_entity) => drag_drop_entity,
-            None => return,
-        };
-
-        match dragged_entity.widget_type {
-            WidgetType::Node => {
-                self.refresh_node(ctx, dragged_entity.entity);
-            }
-            WidgetType::Slot => {
-                self.grab_slot_edge(ctx, dragged_entity.entity);
-            }
-            WidgetType::Edge => {
-                self.refresh_dragged_edges(ctx);
-            }
-        };
-    }
-
-    fn handle_dropped_entity(&mut self, ctx: &mut Context) {
-        if let Some(action) = ctx.widget().get::<OptionAction>("action") {
-            match *action {
-                Action::Release(_) => {}
-                _ => return,
-            };
-        } else {
-            return;
-        }
-
-        let dropped_on_entity = match self.dropped_on_entity {
-            Some(drag_drop_entity) => drag_drop_entity,
-            None => {
-                self.remove_dragged_edges(ctx);
-                self.update_dragged_node_to_graph(ctx);
-                return;
-            }
-        };
-
-        match dropped_on_entity.widget_type {
-            WidgetType::Slot => {
-                let dropped_on_widget = ctx.get_widget(dropped_on_entity.entity);
-
-                let dropped_on_node_id = *dropped_on_widget.get::<u32>("node_id");
-                let dropped_on_side = *dropped_on_widget.get::<WidgetSide>("side");
-                let dropped_on_slot = *dropped_on_widget.get::<u32>("slot_id");
-
-                let goal_position = {
-                    let node_margin = *ctx
-                        .child(&*dropped_on_node_id.to_string())
-                        .get::<Thickness>("my_margin");
-                    let node_pos = Point {
-                        x: node_margin.left,
-                        y: node_margin.top,
-                    };
-                    Self::position_edge(dropped_on_side, dropped_on_slot, node_pos)
-                };
-
-                for edge_entity in self.get_dragged_edges(ctx) {
-                    let mut edge_widget = ctx.get_widget(edge_entity);
-
-                    let (other_node_id, other_slot_id, other_side) = match dropped_on_side {
-                        WidgetSide::Input => {
-                            edge_widget.set::<u32>("input_node", dropped_on_node_id);
-                            edge_widget.set::<u32>("input_slot", dropped_on_slot);
-                            edge_widget.set::<Point>("input_point", goal_position);
-                            (
-                                *edge_widget.get::<u32>("output_node"),
-                                *edge_widget.get::<u32>("output_slot"),
-                                Side::Output,
-                            )
-                        }
-                        WidgetSide::Output => {
-                            edge_widget.set::<u32>("output_node", dropped_on_node_id);
-                            edge_widget.set::<u32>("output_slot", dropped_on_slot);
-                            edge_widget.set::<Point>("output_point", goal_position);
-                            (
-                                *edge_widget.get::<u32>("input_node"),
-                                *edge_widget.get::<u32>("input_slot"),
-                                Side::Input,
-                            )
-                        }
-                    };
-
-                    ctx.push_event(ChangedEvent(edge_entity));
-                    let _ = self.node_graph_spatial.node_graph.connect_arbitrary(
-                        NodeId(dropped_on_node_id),
-                        dropped_on_side.into(),
-                        SlotId(dropped_on_slot),
-                        NodeId(other_node_id),
-                        other_side,
-                        SlotId(other_slot_id),
-                    );
-                }
-                self.update_slot_edges_from_graph(ctx, dropped_on_entity.entity);
-            }
-            WidgetType::Node => {
-                panic!("Somehow dropped something on a node, should not be possible")
-            }
-            WidgetType::Edge => {
-                panic!("Somehow dropped something on an edge, should not be possible")
-            }
-        };
-
-        self.dropped_on_entity = None;
     }
 
     /// Updates all edges connected to the given `slot_entity` using the data in the graph.
@@ -326,9 +429,9 @@ impl NodeContainerState {
         dragged_widget.set::<Thickness>(
             "my_margin",
             Thickness {
-                left: self.mouse_position.x - NODE_SIZE * 0.5,
+                left: self.mouse_position.x - self.drag_offset.x,
                 right: current_margin.right,
-                top: self.mouse_position.y - NODE_SIZE * 0.5,
+                top: self.mouse_position.y - self.drag_offset.y,
                 bottom: current_margin.bottom,
             },
         );
@@ -723,68 +826,6 @@ impl NodeContainerState {
 
         Self::delete_edges_in_slot(ctx, entity);
         ctx.remove_child(entity);
-    }
-
-    fn handle_action(&mut self, ctx: &mut Context) {
-        if let Some(action) = *ctx.widget().get::<OptionAction>("action") {
-            match action {
-                Action::Press(mouse) => {
-                    match mouse.button {
-                        MouseButton::Left => {
-                            for child_entity in child_entities(ctx) {
-                                if ctx
-                                    .get_widget(child_entity)
-                                    .get::<Rectangle>("bounds")
-                                    .contains((mouse.x, mouse.y))
-                                    && self.is_clickable(ctx, child_entity)
-                                {
-                                    self.dragged_entity = Some(DragDropEntity {
-                                        widget_type: *ctx
-                                            .get_widget(child_entity)
-                                            .get::<WidgetType>("widget_type"),
-                                        entity: child_entity,
-                                    });
-                                }
-                            }
-                        }
-                        _ => {}
-                    };
-                    self.mouse_position = Point {
-                        x: mouse.x,
-                        y: mouse.y,
-                    };
-                }
-                Action::Release(mouse) => {
-                    let widget_type = WidgetType::Slot;
-
-                    for slot_entity in Self::children_type(ctx, widget_type) {
-                        if ctx
-                            .get_widget(slot_entity)
-                            .get::<Rectangle>("bounds")
-                            .contains((mouse.x, mouse.y))
-                        {
-                            self.dropped_on_entity = Some(DragDropEntity {
-                                widget_type,
-                                entity: slot_entity,
-                            });
-                        }
-                    }
-
-                    self.mouse_position = Point {
-                        x: mouse.x,
-                        y: mouse.y,
-                    };
-                }
-                Action::Move(p) => self.mouse_position = p,
-                Action::Scroll(p) => self.mouse_position = p,
-                Action::Delete => {
-                    if let Some(selected_entity) = self.selected_entity {
-                        self.delete_node(ctx, selected_entity.entity);
-                        self.selected_entity = None;
-                    }
-                }
-            }
-        }
     }
 
     fn is_clickable(&mut self, ctx: &mut Context, entity: Entity) -> bool {
