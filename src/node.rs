@@ -3,6 +3,12 @@ use orbtk::{behaviors::MouseBehavior, prelude::*};
 
 const SELECTED_BRUSH: Brush = Brush::SolidColor(Color::rgb(255, 255, 255));
 const DESELECTED_BRUSH: Brush = Brush::SolidColor(Color::rgb(0, 0, 0));
+const MARGIN: Thickness = Thickness {
+    left: 15.,
+    top: 0.,
+    right: 15.,
+    bottom: 0.,
+};
 
 widget!(
     Node<NodeState> {
@@ -32,8 +38,8 @@ impl Template for Node {
                             .id("title")
                             .text(("title", id))
                             .element("text-block")
-                            .horizontal_alignment("center")
-                            .foreground(Color::rgb(255, 0, 0))
+                            .foreground("#000000")
+                            .margin(MARGIN)
                             .width(0.)
                             .height(14.)
                             .build(ctx),
@@ -46,8 +52,8 @@ impl Template for Node {
 
         self.name("Node")
             .widget_type(WidgetType::Node)
-            .width(NODE_SIZE)
-            .height(NODE_SIZE)
+            .width(NODE_WIDTH)
+            .height(NODE_HEIGHT)
             .margin(("my_margin", id))
             .child(MouseBehavior::create().enabled(id).target(id.0).build(ctx))
             .child(frame)
@@ -63,32 +69,13 @@ pub struct NodeState {
 }
 
 impl State for NodeState {
-    fn init(&mut self, _: &mut Registry, ctx: &mut Context<'_>) {
-        let bc = &mut ctx.build_context();
-
-        let property = ComboBox::create()
-            .margin(Thickness {
-                left: 20.,
-                top: 0.,
-                right: 0.,
-                bottom: 0.,
-            })
-            .build(bc);
-
-        bc.append_child(self.property_stack, property);
-    }
-
     fn update_post_layout(&mut self, _: &mut Registry, ctx: &mut Context<'_>) {
         if *ctx.widget().get::<bool>("selected") {
             ctx.get_widget(self.frame)
                 .set::<Brush>("border_brush", SELECTED_BRUSH);
-            ctx.get_widget(self.property_stack)
-                .set::<bool>("enabled", false);
         } else {
             ctx.get_widget(self.frame)
                 .set::<Brush>("border_brush", DESELECTED_BRUSH);
-            ctx.get_widget(self.property_stack)
-                .set::<bool>("enabled", true);
         }
     }
 }

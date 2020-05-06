@@ -426,7 +426,7 @@ dependencies = [
 [[package]]
 name = "kanter_core"
 version = "0.1.0"
-source = "git+https://github.com/lukors/kanter_core.git#5cc36bb79fd7674fde58bcca0469589c05ca1c99"
+source = "git+https://github.com/lukors/kanter_core.git#7073fc3abb23633cde8568911ee5b65515aa9a4e"
 dependencies = [
  "image 0.20.1",
  "nalgebra",
@@ -673,7 +673,7 @@ dependencies = [
 [[package]]
 name = "orbtk"
 version = "0.3.1-alpha3"
-source = "git+https://github.com/lukors/orbtk.git?branch=develop#26c5d50a85f092306a3b038ed9fdbb5d7ecedb03"
+source = "git+https://github.com/lukors/orbtk.git?branch=develop#3b9a080b76bca6a91d0e6616b332c83e68ccec34"
 dependencies = [
  "dces",
  "orbtk-api",
@@ -690,7 +690,7 @@ dependencies = [
 [[package]]
 name = "orbtk-api"
 version = "0.3.1-alpha3"
-source = "git+https://github.com/lukors/orbtk.git?branch=develop#26c5d50a85f092306a3b038ed9fdbb5d7ecedb03"
+source = "git+https://github.com/lukors/orbtk.git?branch=develop#3b9a080b76bca6a91d0e6616b332c83e68ccec34"
 dependencies = [
  "dces",
  "derive_more",
@@ -712,7 +712,7 @@ dependencies = [
 [[package]]
 name = "orbtk-css-engine"
 version = "0.3.1-alpha3"
-source = "git+https://github.com/lukors/orbtk.git?branch=develop#26c5d50a85f092306a3b038ed9fdbb5d7ecedb03"
+source = "git+https://github.com/lukors/orbtk.git?branch=develop#3b9a080b76bca6a91d0e6616b332c83e68ccec34"
 dependencies = [
  "cssparser",
  "orbtk-utils",
@@ -721,7 +721,7 @@ dependencies = [
 [[package]]
 name = "orbtk-proc-macros"
 version = "0.3.1-alpha3"
-source = "git+https://github.com/lukors/orbtk.git?branch=develop#26c5d50a85f092306a3b038ed9fdbb5d7ecedb03"
+source = "git+https://github.com/lukors/orbtk.git?branch=develop#3b9a080b76bca6a91d0e6616b332c83e68ccec34"
 dependencies = [
  "quote 1.0.4",
  "syn 1.0.18",
@@ -730,7 +730,7 @@ dependencies = [
 [[package]]
 name = "orbtk-render"
 version = "0.3.1-alpha3"
-source = "git+https://github.com/lukors/orbtk.git?branch=develop#26c5d50a85f092306a3b038ed9fdbb5d7ecedb03"
+source = "git+https://github.com/lukors/orbtk.git?branch=develop#3b9a080b76bca6a91d0e6616b332c83e68ccec34"
 dependencies = [
  "image 0.23.4",
  "orbtk-utils",
@@ -742,7 +742,7 @@ dependencies = [
 [[package]]
 name = "orbtk-shell"
 version = "0.3.1-alpha3"
-source = "git+https://github.com/lukors/orbtk.git?branch=develop#26c5d50a85f092306a3b038ed9fdbb5d7ecedb03"
+source = "git+https://github.com/lukors/orbtk.git?branch=develop#3b9a080b76bca6a91d0e6616b332c83e68ccec34"
 dependencies = [
  "console_error_panic_hook",
  "image 0.23.4",
@@ -758,7 +758,7 @@ dependencies = [
 [[package]]
 name = "orbtk-theme"
 version = "0.3.1-alpha3"
-source = "git+https://github.com/lukors/orbtk.git?branch=develop#26c5d50a85f092306a3b038ed9fdbb5d7ecedb03"
+source = "git+https://github.com/lukors/orbtk.git?branch=develop#3b9a080b76bca6a91d0e6616b332c83e68ccec34"
 dependencies = [
  "lazy_static",
  "orbtk-css-engine",
@@ -767,7 +767,7 @@ dependencies = [
 [[package]]
 name = "orbtk-tree"
 version = "0.3.1-alpha3"
-source = "git+https://github.com/lukors/orbtk.git?branch=develop#26c5d50a85f092306a3b038ed9fdbb5d7ecedb03"
+source = "git+https://github.com/lukors/orbtk.git?branch=develop#3b9a080b76bca6a91d0e6616b332c83e68ccec34"
 dependencies = [
  "dces",
 ]
@@ -775,12 +775,12 @@ dependencies = [
 [[package]]
 name = "orbtk-utils"
 version = "0.3.1-alpha3"
-source = "git+https://github.com/lukors/orbtk.git?branch=develop#26c5d50a85f092306a3b038ed9fdbb5d7ecedb03"
+source = "git+https://github.com/lukors/orbtk.git?branch=develop#3b9a080b76bca6a91d0e6616b332c83e68ccec34"
 
 [[package]]
 name = "orbtk-widgets"
 version = "0.3.1-alpha3"
-source = "git+https://github.com/lukors/orbtk.git?branch=develop#26c5d50a85f092306a3b038ed9fdbb5d7ecedb03"
+source = "git+https://github.com/lukors/orbtk.git?branch=develop#3b9a080b76bca6a91d0e6616b332c83e68ccec34"
 dependencies = [
  "dces",
  "orbtk-api",

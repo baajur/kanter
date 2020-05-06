@@ -17,6 +17,12 @@ impl Template for Workspace {
         self.state_mut().node_container = node_container;
 
         let menu_node = Popup::create()
+            .margin(Thickness {
+                left: 0.,
+                top: 30.,
+                right: 0.,
+                bottom: 0.,
+            })
             .width(200.)
             .target(id)
             .child(
@@ -181,17 +187,10 @@ impl WorkspaceState {
         if let Some(action_main) = ctx.widget().get::<OptionActionMain>("action_main") {
             match action_main {
                 ActionMain::MenuNode(_) => {
+                    let current_open = *ctx.get_widget(self.menu_node).get::<bool>("open");
+
                     let mut menu_node_widget = ctx.get_widget(self.menu_node);
-                    menu_node_widget.set::<bool>("open", true);
-                    menu_node_widget.set::<Thickness>(
-                        "margin",
-                        Thickness {
-                            left: 0.,
-                            top: 20.,
-                            right: 0.,
-                            bottom: 0.,
-                        },
-                    );
+                    menu_node_widget.set::<bool>("open", !current_open);
                 }
                 _ => {}
             };

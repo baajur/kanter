@@ -1,4 +1,4 @@
-use kanter_core::node::{NodeType, Side};
+use kanter_core::node::{MixType, NodeType, Side};
 use orbtk::prelude::*;
 
 #[derive(Debug, Copy, Clone, PartialEq)]
@@ -59,7 +59,6 @@ pub(crate) type OptionDragDropEntity = Option<DragDropEntity>;
 pub enum Action {
     Press(Mouse),
     Release(Mouse),
-    Scroll(Point),
     Move(Point),
     Delete,
 }
@@ -86,10 +85,25 @@ pub enum ActionMain {
     MenuNode(Point),
 }
 pub type OptionActionMain = Option<ActionMain>;
-
 pub type OptionNodeType = Option<NodeType>;
 
-pub const NODE_SIZE: f64 = 100.;
+pub trait Indexable {
+    fn index(&self) -> usize;
+}
+
+impl Indexable for MixType {
+    fn index(&self) -> usize {
+        match self {
+            MixType::Add => 0,
+            MixType::Subtract => 1,
+            MixType::Multiply => 2,
+            MixType::Divide => 3,
+        }
+    }
+}
+
+pub const NODE_WIDTH: f64 = 90.;
+pub const NODE_HEIGHT: f64 = 90.;
 pub const SLOT_SIZE: f64 = 15.;
 pub const SLOT_SIZE_HALF: f64 = SLOT_SIZE * 0.5;
 pub const SLOT_SPACING: f64 = SLOT_SIZE_HALF;

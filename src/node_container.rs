@@ -1,4 +1,4 @@
-use crate::{edge::Edge, node::Node, shared::*, slot::Slot};
+use crate::{edge::Edge, menu_property::MenuProperty, node::Node, shared::*, slot::Slot};
 use kanter_core::{
     node::{Node as CoreNode, NodeType, Side},
     node_graph::{Edge as CoreEdge, NodeGraph, NodeId, SlotId},
@@ -21,10 +21,12 @@ struct Location {
     point: (f64, f64),
 }
 
+type List = Vec<String>;
 widget!(NodeContainer<NodeContainerState> {
     action: OptionAction,
     action_main: OptionActionMain,
-    add_node: OptionNodeType
+    add_node: OptionNodeType,
+    menu_property_list: List
 });
 
 impl Template for NodeContainer {
@@ -32,6 +34,11 @@ impl Template for NodeContainer {
         self.name("NodeContainer")
     }
 }
+
+const DRAG_OFFSET_DEFAULT: Point = Point {
+    x: NODE_WIDTH / 2.,
+    y: NODE_WIDTH / 2.,
+};
 
 #[derive(Default, AsAny)]
 struct NodeContainerState {
@@ -43,9 +50,16 @@ struct NodeContainerState {
     dragged_entity: OptionDragDropEntity,
     dropped_on_entity: OptionDragDropEntity,
     selected_entity: OptionDragDropEntity,
+    menu_property: Entity,
+    menu_property_node: Option<Entity>,
 }
 
 impl State for NodeContainerState {
+    fn init(&mut self, _: &mut Registry, ctx: &mut Context<'_>) {
+        self.drag_offset = DRAG_OFFSET_DEFAULT;
+        self.init_menu_property(ctx);
+    }
+
     fn update(&mut self, _: &mut Registry, ctx: &mut Context<'_>) {
         self.handle_action(ctx);
         self.handle_add_node(ctx);
@@ -59,39 +73,69 @@ impl State for NodeContainerState {
 }
 
 impl NodeContainerState {
+    fn init_menu_property(&mut self, ctx: &mut Context) {
+        let self_entity = ctx.widget().entity();
+        let bc = &mut ctx.build_context();
+
+        let menu_property = MenuProperty::create().build(bc);
+        self.menu_property = menu_property;
+
+        bc.append_child(self_entity, menu_property);
+    }
+
+    fn get_clicked_child(&self, ctx: &mut Context, mouse: Mouse) -> Option<Entity> {
+        for child_entity in child_entities(ctx).iter().rev() {
+            if ctx
+                .get_widget(*child_entity)
+                .get::<Rectangle>("bounds")
+                .contains((mouse.x, mouse.y))
+                && Self::is_clickable(ctx, *child_entity)
+            {
+                return Some(*child_entity);
+            }
+        }
+        None
+    }
+
     fn handle_action(&mut self, ctx: &mut Context) {
         if let Some(action) = *ctx.widget().get::<OptionAction>("action") {
             match action {
                 Action::Press(mouse) => {
+                    let option_clicked_entity = self.get_clicked_child(ctx, mouse);
+
                     match mouse.button {
                         MouseButton::Left => {
-                            for child_entity in child_entities(ctx) {
-                                if ctx
-                                    .get_widget(child_entity)
-                                    .get::<Rectangle>("bounds")
-                                    .contains((mouse.x, mouse.y))
-                                    && self.is_clickable(ctx, child_entity)
-                                {
-                                    self.dragged_entity = Some(DragDropEntity {
-                                        widget_type: *ctx
-                                            .get_widget(child_entity)
-                                            .get::<WidgetType>("widget_type"),
-                                        entity: child_entity,
-                                    });
+                            if let Some(clicked_entity) = option_clicked_entity {
+                                self.dragged_entity = Some(DragDropEntity {
+                                    widget_type: *ctx
+                                        .get_widget(clicked_entity)
+                                        .get::<WidgetType>("widget_type"),
+                                    entity: clicked_entity,
+                                });
 
-                                    let dragged_entity_pos = {
-                                        let widget = ctx.get_widget(child_entity);
-                                        let margin = widget.get::<Thickness>("margin");
+                                let dragged_entity_pos = {
+                                    let widget = ctx.get_widget(clicked_entity);
+                                    let margin = widget.get::<Thickness>("margin");
 
-                                        Point {
-                                            x: margin.left,
-                                            y: margin.top,
-                                        }
-                                    };
+                                    Point {
+                                        x: margin.left,
+                                        y: margin.top,
+                                    }
+                                };
 
-                                    self.drag_offset =
-                                        Point::new(mouse.x, mouse.y) - dragged_entity_pos;
+                                self.drag_offset =
+                                    Point::new(mouse.x, mouse.y) - dragged_entity_pos;
+                            }
+                        }
+                        MouseButton::Right => {
+                            if let Some(clicked_entity) = option_clicked_entity {
+                                if Self::entity_type(ctx, clicked_entity, WidgetType::Node) {
+                                    self.handle_menu_property(ctx, clicked_entity);
+                                } else {
+                                    // self.close_menu_property(ctx);
                                 }
+                            } else {
+                                // self.close_menu_property(ctx);
                             }
                         }
                         _ => {}
@@ -123,7 +167,6 @@ impl NodeContainerState {
                     };
                 }
                 Action::Move(p) => self.mouse_position = p,
-                Action::Scroll(p) => self.mouse_position = p,
                 Action::Delete => {
                     if let Some(selected_entity) = self.selected_entity {
                         self.delete_node(ctx, selected_entity.entity);
@@ -132,6 +175,38 @@ impl NodeContainerState {
                 }
             }
         }
+    }
+
+    fn close_menu_property(&mut self, ctx: &mut Context) {
+        self.menu_property_node = None;
+        ctx.clear_children_of(self.menu_property);
+
+        ctx.get_widget(self.menu_property).set::<bool>("open", false);
+    }
+
+    fn handle_menu_property(&mut self, ctx: &mut Context, node_entity: Entity) {
+        if let Some(open) = ctx.get_widget(self.menu_property).try_get::<bool>("open") {
+            if *open {
+                self.close_menu_property(ctx);
+                return
+            }
+        }
+
+        let node_type = {
+            let node_id = NodeId(*ctx.get_widget(node_entity).get::<u32>("node_id"));
+            &self.node_graph_spatial.node_graph.node_with_id(node_id).unwrap().node_type
+        };
+
+        match *node_type {
+            NodeType::Mix(mix_type) => {
+                let mix_types = vec!["Add".to_string(), "Subtract".to_string(), "Multiply".to_string(), "Divide".to_string()];
+                MenuProperty::combo_box(ctx, self.menu_property, mix_types, mix_type.index() as i32);
+            }
+            _ => todo!()
+        };
+
+        self.menu_property_node = Some(node_entity);
+        ctx.get_widget(self.menu_property).set::<bool>("open", true);
     }
 
     fn handle_dragged_entity(&mut self, ctx: &mut Context) {
@@ -149,6 +224,8 @@ impl NodeContainerState {
 
         if self.mouse_position.distance(drag_offset_world) > DRAG_THRESHOLD {
             self.dragging = true;
+            ctx.get_widget(dragged_entity.entity)
+                .set::<bool>("enabled", false);
         }
 
         if !self.dragging {
@@ -177,7 +254,7 @@ impl NodeContainerState {
         } else {
             return;
         }
-        self.dragging = false;
+        self.reset_dragging(ctx);
 
         let dropped_on_entity = match self.dropped_on_entity {
             Some(drag_drop_entity) => drag_drop_entity,
@@ -256,12 +333,17 @@ impl NodeContainerState {
         self.dropped_on_entity = None;
     }
 
-    fn thickness_to_point(thickness: Thickness) -> Point {
-        Point::new(thickness.left, thickness.top)
+    fn reset_dragging(&mut self, ctx: &mut Context) {
+        self.dragging = false;
+        if let Some(dragged_entity) = self.dragged_entity {
+            ctx.get_widget(dragged_entity.entity)
+                .set::<bool>("enabled", true);
+        }
+        self.drag_offset = DRAG_OFFSET_DEFAULT;
     }
 
-    fn point_to_thickness(point: Point) -> Thickness {
-        Thickness::new(point.x, point.y, 0., 0.)
+    fn thickness_to_point(thickness: Thickness) -> Point {
+        Point::new(thickness.left, thickness.top)
     }
 
     fn select_entity(&mut self, ctx: &mut Context, option_drag_drop_entity: OptionDragDropEntity) {
@@ -756,7 +838,7 @@ impl NodeContainerState {
                 bottom: 0.,
             },
             WidgetSide::Output => Thickness {
-                left: left + NODE_SIZE,
+                left: left + NODE_WIDTH,
                 top,
                 right: 0.,
                 bottom: 0.,
@@ -828,7 +910,7 @@ impl NodeContainerState {
         ctx.remove_child(entity);
     }
 
-    fn is_clickable(&mut self, ctx: &mut Context, entity: Entity) -> bool {
+    fn is_clickable(ctx: &mut Context, entity: Entity) -> bool {
         if let Some(widget_type) = ctx.get_widget(entity).try_get("widget_type") {
             match widget_type {
                 WidgetType::Node => true,
@@ -858,6 +940,7 @@ impl NodeContainerState {
 
     fn populate_workspace(&mut self, ctx: &mut Context<'_>) {
         ctx.clear_children();
+        self.init_menu_property(ctx);
 
         self.populate_nodes(ctx);
         self.populate_slots(ctx);
@@ -1043,7 +1126,7 @@ impl NodeContainerState {
         match side {
             WidgetSide::Input => Point { x, y },
             WidgetSide::Output => Point {
-                x: x + NODE_SIZE,
+                x: x + NODE_WIDTH,
                 y,
             },
         }

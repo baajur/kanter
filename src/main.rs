@@ -1,13 +1,14 @@
 use crate::{shared::*, workspace::Workspace};
 use orbtk::prelude::*;
 
+mod shared;
+mod workspace;
+mod node_container;
+mod menu_property;
+mod node;
+mod slot;
 mod edge;
 mod line;
-mod node;
-mod node_container;
-mod shared;
-mod slot;
-mod workspace;
 
 fn main() {
     Application::new()
