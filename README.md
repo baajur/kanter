@@ -20,6 +20,7 @@ I'm currently building a basic user interface, here is the progress on that.
 - [ ] Moving the view
 - [ ] Node thumbnails
 - [ ] Resize node
+- [ ] Fix Clippy lints
 - [ ] Set up theme
 - [ ] Post screenshots on GitHub
 - [ ] **MILESTONE: Alpha version?**
