@@ -12,11 +12,11 @@ I'm currently building a basic user interface, here is the progress on that.
 - [x] Saving & Loading graphs
 - [x] Manipulating edges
 - [x] Adding & Deleting nodes
-- [ ] Mix node
+- [x] Mix node
 - [ ] Image node
 - [ ] Output node
 - [ ] **MILESTONE: usable, but very limited**
-- [ ] Graph node
+- [ ] Graph node (and input node)
 - [ ] Moving the view
 - [ ] Node thumbnails
 - [ ] Resize node
