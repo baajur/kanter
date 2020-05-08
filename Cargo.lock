@@ -227,7 +227,7 @@ dependencies = [
  "proc-macro2 1.0.12",
  "procedural-masquerade",
  "quote 1.0.4",
- "syn 1.0.18",
+ "syn 1.0.19",
 ]
 
 [[package]]
@@ -264,7 +264,7 @@ checksum = "e2323f3f47db9a0e77ce7a300605d8d2098597fc451ed1a97bb1f6411bb550a7"
 dependencies = [
  "proc-macro2 1.0.12",
  "quote 1.0.4",
- "syn 1.0.18",
+ "syn 1.0.19",
 ]
 
 [[package]]
@@ -673,7 +673,7 @@ dependencies = [
 [[package]]
 name = "orbtk"
 version = "0.3.1-alpha3"
-source = "git+https://github.com/lukors/orbtk.git?branch=develop#3b9a080b76bca6a91d0e6616b332c83e68ccec34"
+source = "git+https://github.com/lukors/orbtk.git?branch=develop#1a622d09531fa482668ef515ccaf17a1feffabd0"
 dependencies = [
  "dces",
  "orbtk-api",
@@ -690,7 +690,7 @@ dependencies = [
 [[package]]
 name = "orbtk-api"
 version = "0.3.1-alpha3"
-source = "git+https://github.com/lukors/orbtk.git?branch=develop#3b9a080b76bca6a91d0e6616b332c83e68ccec34"
+source = "git+https://github.com/lukors/orbtk.git?branch=develop#1a622d09531fa482668ef515ccaf17a1feffabd0"
 dependencies = [
  "dces",
  "derive_more",
@@ -712,7 +712,7 @@ dependencies = [
 [[package]]
 name = "orbtk-css-engine"
 version = "0.3.1-alpha3"
-source = "git+https://github.com/lukors/orbtk.git?branch=develop#3b9a080b76bca6a91d0e6616b332c83e68ccec34"
+source = "git+https://github.com/lukors/orbtk.git?branch=develop#1a622d09531fa482668ef515ccaf17a1feffabd0"
 dependencies = [
  "cssparser",
  "orbtk-utils",
@@ -721,16 +721,16 @@ dependencies = [
 [[package]]
 name = "orbtk-proc-macros"
 version = "0.3.1-alpha3"
-source = "git+https://github.com/lukors/orbtk.git?branch=develop#3b9a080b76bca6a91d0e6616b332c83e68ccec34"
+source = "git+https://github.com/lukors/orbtk.git?branch=develop#1a622d09531fa482668ef515ccaf17a1feffabd0"
 dependencies = [
  "quote 1.0.4",
- "syn 1.0.18",
+ "syn 1.0.19",
 ]
 
 [[package]]
 name = "orbtk-render"
 version = "0.3.1-alpha3"
-source = "git+https://github.com/lukors/orbtk.git?branch=develop#3b9a080b76bca6a91d0e6616b332c83e68ccec34"
+source = "git+https://github.com/lukors/orbtk.git?branch=develop#1a622d09531fa482668ef515ccaf17a1feffabd0"
 dependencies = [
  "image 0.23.4",
  "orbtk-utils",
@@ -742,7 +742,7 @@ dependencies = [
 [[package]]
 name = "orbtk-shell"
 version = "0.3.1-alpha3"
-source = "git+https://github.com/lukors/orbtk.git?branch=develop#3b9a080b76bca6a91d0e6616b332c83e68ccec34"
+source = "git+https://github.com/lukors/orbtk.git?branch=develop#1a622d09531fa482668ef515ccaf17a1feffabd0"
 dependencies = [
  "console_error_panic_hook",
  "image 0.23.4",
@@ -758,7 +758,7 @@ dependencies = [
 [[package]]
 name = "orbtk-theme"
 version = "0.3.1-alpha3"
-source = "git+https://github.com/lukors/orbtk.git?branch=develop#3b9a080b76bca6a91d0e6616b332c83e68ccec34"
+source = "git+https://github.com/lukors/orbtk.git?branch=develop#1a622d09531fa482668ef515ccaf17a1feffabd0"
 dependencies = [
  "lazy_static",
  "orbtk-css-engine",
@@ -767,7 +767,7 @@ dependencies = [
 [[package]]
 name = "orbtk-tree"
 version = "0.3.1-alpha3"
-source = "git+https://github.com/lukors/orbtk.git?branch=develop#3b9a080b76bca6a91d0e6616b332c83e68ccec34"
+source = "git+https://github.com/lukors/orbtk.git?branch=develop#1a622d09531fa482668ef515ccaf17a1feffabd0"
 dependencies = [
  "dces",
 ]
@@ -775,12 +775,12 @@ dependencies = [
 [[package]]
 name = "orbtk-utils"
 version = "0.3.1-alpha3"
-source = "git+https://github.com/lukors/orbtk.git?branch=develop#3b9a080b76bca6a91d0e6616b332c83e68ccec34"
+source = "git+https://github.com/lukors/orbtk.git?branch=develop#1a622d09531fa482668ef515ccaf17a1feffabd0"
 
 [[package]]
 name = "orbtk-widgets"
 version = "0.3.1-alpha3"
-source = "git+https://github.com/lukors/orbtk.git?branch=develop#3b9a080b76bca6a91d0e6616b332c83e68ccec34"
+source = "git+https://github.com/lukors/orbtk.git?branch=develop#1a622d09531fa482668ef515ccaf17a1feffabd0"
 dependencies = [
  "dces",
  "orbtk-api",
@@ -1321,7 +1321,7 @@ checksum = "9e549e3abf4fb8621bd1609f11dfc9f5e50320802273b12f3811a67e6716ea6c"
 dependencies = [
  "proc-macro2 1.0.12",
  "quote 1.0.4",
- "syn 1.0.18",
+ "syn 1.0.19",
 ]
 
 [[package]]
@@ -1398,7 +1398,7 @@ dependencies = [
  "quote 1.0.4",
  "serde",
  "serde_derive",
- "syn 1.0.18",
+ "syn 1.0.19",
 ]
 
 [[package]]
@@ -1414,7 +1414,7 @@ dependencies = [
  "serde_derive",
  "serde_json",
  "sha1",
- "syn 1.0.18",
+ "syn 1.0.19",
 ]
 
 [[package]]
@@ -1453,9 +1453,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "1.0.18"
+version = "1.0.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "410a7488c0a728c7ceb4ad59b9567eb4053d02e8cc7f5c0e0eeeb39518369213"
+checksum = "e8e5aa70697bb26ee62214ae3288465ecec0000f05182f039b477001f08f5ae7"
 dependencies = [
  "proc-macro2 1.0.12",
  "quote 1.0.4",
@@ -1574,7 +1574,7 @@ dependencies = [
  "log",
  "proc-macro2 1.0.12",
  "quote 1.0.4",
- "syn 1.0.18",
+ "syn 1.0.19",
  "wasm-bindgen-shared",
 ]
 
@@ -1596,7 +1596,7 @@ checksum = "8eb197bd3a47553334907ffd2f16507b4f4f01bbec3ac921a7719e0decdfe72a"
 dependencies = [
  "proc-macro2 1.0.12",
  "quote 1.0.4",
- "syn 1.0.18",
+ "syn 1.0.19",
  "wasm-bindgen-backend",
  "wasm-bindgen-shared",
 ]

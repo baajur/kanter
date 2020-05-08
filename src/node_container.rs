@@ -132,10 +132,10 @@ impl NodeContainerState {
                                 if Self::entity_type(ctx, clicked_entity, WidgetType::Node) {
                                     self.handle_menu_property(ctx, clicked_entity);
                                 } else {
-                                    // self.close_menu_property(ctx);
+                                    self.close_menu_property(ctx);
                                 }
                             } else {
-                                // self.close_menu_property(ctx);
+                                self.close_menu_property(ctx);
                             }
                         }
                         _ => {}
@@ -180,33 +180,31 @@ impl NodeContainerState {
     fn close_menu_property(&mut self, ctx: &mut Context) {
         self.menu_property_node = None;
         ctx.clear_children_of(self.menu_property);
-
-        ctx.get_widget(self.menu_property).set::<bool>("open", false);
     }
 
     fn handle_menu_property(&mut self, ctx: &mut Context, node_entity: Entity) {
-        if let Some(open) = ctx.get_widget(self.menu_property).try_get::<bool>("open") {
-            if *open {
-                self.close_menu_property(ctx);
-                return
-            }
-        }
-
         let node_type = {
             let node_id = NodeId(*ctx.get_widget(node_entity).get::<u32>("node_id"));
             &self.node_graph_spatial.node_graph.node_with_id(node_id).unwrap().node_type
         };
 
+        let bc = &mut ctx.build_context();
+
+        let property_stack = Stack::create().build(bc);
         match *node_type {
             NodeType::Mix(mix_type) => {
                 let mix_types = vec!["Add".to_string(), "Subtract".to_string(), "Multiply".to_string(), "Divide".to_string()];
-                MenuProperty::combo_box(ctx, self.menu_property, mix_types, mix_type.index() as i32);
+
+                let mix_type_cb = MenuProperty::combo_box(mix_types, mix_type.index() as i32).build(bc);
+
+                bc.append_child(property_stack, mix_type_cb);
             }
             _ => todo!()
         };
 
         self.menu_property_node = Some(node_entity);
-        ctx.get_widget(self.menu_property).set::<bool>("open", true);
+
+        bc.append_child(self.menu_property, property_stack);
     }
 
     fn handle_dragged_entity(&mut self, ctx: &mut Context) {
