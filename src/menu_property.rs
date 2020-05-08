@@ -28,6 +28,12 @@ impl MenuProperty {
             .count(items_len)
             .selected_index(selected_index)
     }
+
+    pub fn text_box(text: String) -> TextBox {
+        TextBox::create()
+            .margin((5., 5., 5., 5.))
+            .text(text)
+    }
 }
 
 #[derive(Default, AsAny)]

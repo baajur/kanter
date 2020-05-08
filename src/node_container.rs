@@ -111,7 +111,7 @@ impl NodeContainerState {
             return
         }
 
-        let node_type = self.node_type_of_entity(ctx, menu_property_node);
+        let node_type = self.node_type_of_entity(ctx, menu_property_node).clone();
         let node_id = NodeId(*ctx.get_widget(menu_property_node).get::<u32>("node_id"));
 
         match node_type {
@@ -119,8 +119,17 @@ impl NodeContainerState {
                 let mix_type_index = *ctx.get_widget(self.menu_property_list[0]).get::<i32>("selected_index");
                 let mix_type_menu = MixType::from_index(mix_type_index as usize).unwrap();
 
-                if *mix_type != mix_type_menu {
-                    self.node_graph_spatial.node_graph.set_mix_type(node_id, mix_type_menu);
+                if mix_type != mix_type_menu {
+                    self.node_graph_spatial.node_graph.set_mix_type(node_id, mix_type_menu)
+                    .expect("Crash when setting node type");
+                }
+            }
+            NodeType::Image(path) => {
+                let property_widget = ctx.get_widget(self.menu_property_list[0]);
+                let path_menu = property_widget.get::<String16>("text");
+
+                if path_menu.to_string() != *path {
+                    self.node_graph_spatial.node_graph.set_image_node_path(node_id, path_menu.to_string()).unwrap();
                 }
             }
             _ => todo!()
@@ -226,19 +235,34 @@ impl NodeContainerState {
         let node_type = self.node_type_of_entity(ctx, node_entity);
 
         let bc = &mut ctx.build_context();
-
-        let property_stack = Stack::create().build(bc);
-        match *node_type {
+        let properties: Vec<Entity> = match *node_type {
             NodeType::Mix(mix_type) => {
                 let mix_types = vec!["Add".to_string(), "Subtract".to_string(), "Multiply".to_string(), "Divide".to_string()];
 
                 let mix_type_cb = MenuProperty::combo_box(mix_types, mix_type.index() as i32).build(bc);
-                self.menu_property_list.push(mix_type_cb);
 
-                bc.append_child(property_stack, mix_type_cb);
+                vec![mix_type_cb]
+            }
+            NodeType::Image(ref path) => {
+                let path = if path.is_empty() {
+                    "data/image_2.png".to_string()
+                } else {
+                    path.to_owned()
+                };
+
+                let path_box = MenuProperty::text_box(path).build(bc);
+
+                vec![path_box]
             }
             _ => todo!()
         };
+
+        let property_stack = Stack::create().build(bc);
+        for property in &properties {
+            bc.append_child(property_stack, *property);
+        }
+
+        self.menu_property_list = properties;
 
         self.menu_property_node = Some(node_entity);
 

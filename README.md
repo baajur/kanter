@@ -13,7 +13,7 @@ I'm currently building a basic user interface, here is the progress on that.
 - [x] Manipulating edges
 - [x] Adding & Deleting nodes
 - [x] Mix node
-- [ ] Image node
+- [x] Image node
 - [ ] Output node
 - [ ] **MILESTONE: usable, but very limited**
 - [ ] Graph node (and input node)

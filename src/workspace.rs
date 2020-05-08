@@ -82,48 +82,60 @@ impl Template for Workspace {
                             .on_click(move |states, _| {
                                 states
                                     .get_mut::<WorkspaceState>(id)
-                                    .add_node(NodeType::InputGray);
+                                    .add_node(NodeType::Image(String::new()));
                                 true
                             })
-                            .text("InputGray")
+                            .text("Image")
                             .build(ctx),
                     )
-                    .child(
-                        Button::create()
-                            .element("button")
-                            .on_click(move |states, _| {
-                                states
-                                    .get_mut::<WorkspaceState>(id)
-                                    .add_node(NodeType::InputRgba);
-                                true
-                            })
-                            .text("InputRgba")
-                            .build(ctx),
-                    )
-                    .child(
-                        Button::create()
-                            .element("button")
-                            .on_click(move |states, _| {
-                                states
-                                    .get_mut::<WorkspaceState>(id)
-                                    .add_node(NodeType::OutputGray);
-                                true
-                            })
-                            .text("OutputGray")
-                            .build(ctx),
-                    )
-                    .child(
-                        Button::create()
-                            .element("button")
-                            .on_click(move |states, _| {
-                                states
-                                    .get_mut::<WorkspaceState>(id)
-                                    .add_node(NodeType::OutputRgba);
-                                true
-                            })
-                            .text("OutputRgba")
-                            .build(ctx),
-                    )
+                    // .child(
+                    //     Button::create()
+                    //         .element("button")
+                    //         .on_click(move |states, _| {
+                    //             states
+                    //                 .get_mut::<WorkspaceState>(id)
+                    //                 .add_node(NodeType::InputGray);
+                    //             true
+                    //         })
+                    //         .text("InputGray")
+                    //         .build(ctx),
+                    // )
+                    // .child(
+                    //     Button::create()
+                    //         .element("button")
+                    //         .on_click(move |states, _| {
+                    //             states
+                    //                 .get_mut::<WorkspaceState>(id)
+                    //                 .add_node(NodeType::InputRgba);
+                    //             true
+                    //         })
+                    //         .text("InputRgba")
+                    //         .build(ctx),
+                    // )
+                    // .child(
+                    //     Button::create()
+                    //         .element("button")
+                    //         .on_click(move |states, _| {
+                    //             states
+                    //                 .get_mut::<WorkspaceState>(id)
+                    //                 .add_node(NodeType::OutputGray);
+                    //             true
+                    //         })
+                    //         .text("OutputGray")
+                    //         .build(ctx),
+                    // )
+                    // .child(
+                    //     Button::create()
+                    //         .element("button")
+                    //         .on_click(move |states, _| {
+                    //             states
+                    //                 .get_mut::<WorkspaceState>(id)
+                    //                 .add_node(NodeType::OutputRgba);
+                    //             true
+                    //         })
+                    //         .text("OutputRgba")
+                    //         .build(ctx),
+                    // )
                     .build(ctx),
             )
             .build(ctx);
