@@ -89,6 +89,7 @@ pub type OptionNodeType = Option<NodeType>;
 
 pub trait Indexable {
     fn index(&self) -> usize;
+    fn from_index(index: usize) -> Option<Self> where Self: std::marker::Sized ;
 }
 
 impl Indexable for MixType {
@@ -98,6 +99,16 @@ impl Indexable for MixType {
             MixType::Subtract => 1,
             MixType::Multiply => 2,
             MixType::Divide => 3,
+        }
+    }
+
+    fn from_index(index: usize) -> Option<Self> {
+        match index {
+            0 => Some(MixType::Add),
+            1 => Some(MixType::Subtract),
+            2 => Some(MixType::Multiply),
+            3 => Some(MixType::Divide),
+            _ => None
         }
     }
 }

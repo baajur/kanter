@@ -1,6 +1,6 @@
 use crate::{edge::Edge, menu_property::MenuProperty, node::Node, shared::*, slot::Slot};
 use kanter_core::{
-    node::{Node as CoreNode, NodeType, Side},
+    node::{Node as CoreNode, MixType, NodeType, Side},
     node_graph::{Edge as CoreEdge, NodeGraph, NodeId, SlotId},
 };
 use orbtk::{prelude::*, shell::MouseButton};
@@ -52,6 +52,7 @@ struct NodeContainerState {
     selected_entity: OptionDragDropEntity,
     menu_property: Entity,
     menu_property_node: Option<Entity>,
+    menu_property_list: Vec<Entity>,
 }
 
 impl State for NodeContainerState {
@@ -61,6 +62,8 @@ impl State for NodeContainerState {
     }
 
     fn update(&mut self, _: &mut Registry, ctx: &mut Context<'_>) {
+        self.sync_properties(ctx);
+
         self.handle_action(ctx);
         self.handle_add_node(ctx);
         self.handle_dragged_entity(ctx);
@@ -97,6 +100,33 @@ impl NodeContainerState {
         None
     }
 
+    fn sync_properties(&mut self, ctx: &mut Context) {
+        let menu_property_node = if let Some(menu_property_node) = self.menu_property_node {
+            menu_property_node
+        } else {
+            return
+        };
+
+        if !Self::entity_type(ctx, menu_property_node, WidgetType::Node) {
+            return
+        }
+
+        let node_type = self.node_type_of_entity(ctx, menu_property_node);
+        let node_id = NodeId(*ctx.get_widget(menu_property_node).get::<u32>("node_id"));
+
+        match node_type {
+            NodeType::Mix(mix_type) => {
+                let mix_type_index = *ctx.get_widget(self.menu_property_list[0]).get::<i32>("selected_index");
+                let mix_type_menu = MixType::from_index(mix_type_index as usize).unwrap();
+
+                if *mix_type != mix_type_menu {
+                    self.node_graph_spatial.node_graph.set_mix_type(node_id, mix_type_menu);
+                }
+            }
+            _ => todo!()
+        }
+    }
+
     fn handle_action(&mut self, ctx: &mut Context) {
         if let Some(action) = *ctx.widget().get::<OptionAction>("action") {
             match action {
@@ -130,7 +160,7 @@ impl NodeContainerState {
                         MouseButton::Right => {
                             if let Some(clicked_entity) = option_clicked_entity {
                                 if Self::entity_type(ctx, clicked_entity, WidgetType::Node) {
-                                    self.handle_menu_property(ctx, clicked_entity);
+                                    self.open_menu_property(ctx, clicked_entity);
                                 } else {
                                     self.close_menu_property(ctx);
                                 }
@@ -179,14 +209,21 @@ impl NodeContainerState {
 
     fn close_menu_property(&mut self, ctx: &mut Context) {
         self.menu_property_node = None;
+        self.menu_property_list.clear();
         ctx.clear_children_of(self.menu_property);
     }
 
-    fn handle_menu_property(&mut self, ctx: &mut Context, node_entity: Entity) {
-        let node_type = {
-            let node_id = NodeId(*ctx.get_widget(node_entity).get::<u32>("node_id"));
-            &self.node_graph_spatial.node_graph.node_with_id(node_id).unwrap().node_type
-        };
+    fn node_type_of_entity(&self, ctx: &mut Context, node_entity: Entity) -> &NodeType {
+        let node_id = NodeId(*ctx.get_widget(node_entity).get::<u32>("node_id"));
+        &self.node_graph_spatial.node_graph.node_with_id(node_id).unwrap().node_type
+    }
+
+    fn open_menu_property(&mut self, ctx: &mut Context, node_entity: Entity) {
+        ctx.clear_children_of(self.menu_property);
+        self.menu_property_list.clear();
+        ctx.get_widget(self.menu_property).get_mut::<Rectangle>("bounds").set_height(100.);
+
+        let node_type = self.node_type_of_entity(ctx, node_entity);
 
         let bc = &mut ctx.build_context();
 
@@ -196,6 +233,7 @@ impl NodeContainerState {
                 let mix_types = vec!["Add".to_string(), "Subtract".to_string(), "Multiply".to_string(), "Divide".to_string()];
 
                 let mix_type_cb = MenuProperty::combo_box(mix_types, mix_type.index() as i32).build(bc);
+                self.menu_property_list.push(mix_type_cb);
 
                 bc.append_child(property_stack, mix_type_cb);
             }
@@ -204,7 +242,13 @@ impl NodeContainerState {
 
         self.menu_property_node = Some(node_entity);
 
-        bc.append_child(self.menu_property, property_stack);
+        let container = Container::create()
+            .background("#ff0000")
+            .build(bc);
+
+        bc.append_child(container, property_stack);
+        bc.append_child(self.menu_property, container);
+
     }
 
     fn handle_dragged_entity(&mut self, ctx: &mut Context) {

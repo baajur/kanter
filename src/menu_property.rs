@@ -1,11 +1,6 @@
 use orbtk::prelude::*;
 
-type OptionU32 = Option<u32>;
-
-widget!(
-    MenuProperty<MenuPropertyState> {
-    }
-);
+widget!(MenuProperty<MenuPropertyState> {});
 
 impl Template for MenuProperty {
     fn template(self, _id: Entity, _ctx: &mut BuildContext) -> Self {
@@ -36,8 +31,6 @@ impl MenuProperty {
 }
 
 #[derive(Default, AsAny)]
-pub struct MenuPropertyState {
-}
+pub struct MenuPropertyState {}
 
-impl State for MenuPropertyState {
-}
+impl State for MenuPropertyState {}
