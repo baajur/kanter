@@ -112,18 +112,18 @@ impl Template for Workspace {
                     //         .text("InputRgba")
                     //         .build(ctx),
                     // )
-                    // .child(
-                    //     Button::create()
-                    //         .element("button")
-                    //         .on_click(move |states, _| {
-                    //             states
-                    //                 .get_mut::<WorkspaceState>(id)
-                    //                 .add_node(NodeType::OutputGray);
-                    //             true
-                    //         })
-                    //         .text("OutputGray")
-                    //         .build(ctx),
-                    // )
+                    .child(
+                        Button::create()
+                            .element("button")
+                            .on_click(move |states, _| {
+                                states
+                                    .get_mut::<WorkspaceState>(id)
+                                    .add_node(NodeType::OutputGray);
+                                true
+                            })
+                            .text("OutputGray")
+                            .build(ctx),
+                    )
                     // .child(
                     //     Button::create()
                     //         .element("button")

@@ -132,6 +132,7 @@ impl NodeContainerState {
                     self.node_graph_spatial.node_graph.set_image_node_path(node_id, path_menu.to_string()).unwrap();
                 }
             }
+            NodeType::OutputGray => (),
             _ => todo!()
         }
     }
@@ -254,6 +255,7 @@ impl NodeContainerState {
 
                 vec![path_box]
             }
+            NodeType::OutputGray => Vec::new(),
             _ => todo!()
         };
 
